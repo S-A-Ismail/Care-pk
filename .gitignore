@@ -23,9 +23,13 @@ yarn-debug.log*
 yarn-error.log*
 
 # design reference images (not part of the codebase)
-*.jpeg
-*.jpg
-*.png
+WhatsApp*.jpeg
+WhatsApp*.jpg
+
+# exclude loose images in root but allow public/ assets
+/*.png
+/*.jpg
+/*.jpeg
 
 # typescript
 *.tsbuildinfo

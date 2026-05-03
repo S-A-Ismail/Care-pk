@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import NewsletterForm from "@/components/NewsletterForm";
@@ -10,7 +11,7 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-gold rounded-full flex items-center justify-center text-green-dark font-bold text-lg">C</div>
+            <Image src="/logo.jpeg" alt="CARE Logo" width={40} height={40} className="rounded-full object-cover" />
             <div>
               <div className="text-gold font-bold text-lg">CARE</div>
               <div className="text-white/60 text-[10px] uppercase tracking-wider">Care, Aid & Rehabilitation</div>

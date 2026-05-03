@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube, FaLinkedin, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 import { MdEmail, MdPhone } from "react-icons/md";
 
@@ -79,7 +80,7 @@ export default function Navbar() {
       <nav className="bg-green text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 bg-gold rounded-full flex items-center justify-center text-green-dark font-bold text-lg">C</div>
+            <Image src="/logo.jpeg" alt="CARE Logo" width={40} height={40} className="rounded-full object-cover" />
             <div className="leading-tight">
               <div className="text-gold font-bold text-lg tracking-wide">CARE</div>
               <div className="text-white/70 text-[10px] uppercase tracking-wider">Care, Aid & Rehabilitation in Emergency</div>

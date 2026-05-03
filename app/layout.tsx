@@ -12,6 +12,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
 export const metadata: Metadata = {
+  icons: { icon: "/logo.jpeg" },
   title: "CARE — Care, Aid & Rehabilitation in Emergency",
   description:
     "A non-profit organization dedicated to providing emergency medical aid, patient support and rehabilitation services to underserved communities in Pakistan.",
