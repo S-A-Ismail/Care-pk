@@ -11,7 +11,7 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <Image src="/logo.jpeg" alt="CARE Logo" width={40} height={40} className="rounded-full object-cover" />
+            <Image src="/logo.png" alt="CARE Logo" width={40} height={40} />
             <div>
               <div className="text-gold font-bold text-lg">CARE</div>
               <div className="text-white/60 text-[10px] uppercase tracking-wider">Care, Aid & Rehabilitation</div>

@@ -80,7 +80,7 @@ export default function Navbar() {
       <nav className="bg-green text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-3 shrink-0">
-            <Image src="/logo.jpeg" alt="CARE Logo" width={40} height={40} className="rounded-full object-cover" />
+            <Image src="/logo.png" alt="CARE Logo" width={40} height={40} />
             <div className="leading-tight">
               <div className="text-gold font-bold text-lg tracking-wide">CARE</div>
               <div className="text-white/70 text-[10px] uppercase tracking-wider">Care, Aid & Rehabilitation in Emergency</div>
