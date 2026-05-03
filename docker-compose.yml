@@ -1,0 +1,26 @@
+services:
+  web:
+    build:
+      context: .
+      # Uses the 'dev' stage from the Dockerfile — includes devDependencies
+      # and runs `next dev` instead of the production server.
+      target: dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount the project root into /app so file edits on the host are
+      # immediately visible inside the container (enables hot reload).
+      - .:/app
+      # Anonymous volume for node_modules. Without this, the host-side
+      # mount above would overwrite /app/node_modules with whatever is on
+      # the host (possibly empty, or a different OS build). The anonymous
+      # volume takes precedence over the bind mount for this path only,
+      # preserving the node_modules installed inside the container.
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    # Loads variables from .env.local into the container at runtime.
+    # Copy .env.example → .env.local before running docker compose up.
+    env_file:
+      - .env.local
+    restart: unless-stopped

@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-gray-800 font-sans;
+  }
+
+  /* Apply the serif font to all headings globally so individual components
+     don't have to repeat font-serif on every h1/h2/h3/h4. */
+  h1, h2, h3, h4 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  /* ── Buttons ─────────────────────────────────────────────── */
+
+  /* Primary CTA — gold fill, dark text. Used on dark backgrounds (hero, footer). */
+  .btn-gold {
+    @apply bg-gold text-green-dark font-semibold px-6 py-3 hover:bg-gold-light transition-colors duration-200 uppercase tracking-wide text-sm;
+  }
+
+  /* Ghost button — transparent with gold border. Only readable on dark backgrounds. */
+  .btn-outline {
+    @apply border-2 border-gold text-white font-semibold px-6 py-3 hover:bg-gold hover:text-green-dark transition-colors duration-200 uppercase tracking-wide text-sm;
+  }
+
+  /* Secondary CTA — green fill, white text. Used on light backgrounds. */
+  .btn-green {
+    @apply bg-green text-white font-semibold px-6 py-3 hover:bg-green-light transition-colors duration-200 uppercase tracking-wide text-sm;
+  }
+
+  /* ── Section typography ──────────────────────────────────── */
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-serif text-green text-center;
+  }
+
+  .section-subtitle {
+    @apply text-gray-500 text-center mt-2 mb-10;
+  }
+
+  /* ── Gold divider ────────────────────────────────────────── */
+
+  /* Renders a short gold horizontal rule beneath section titles.
+     Uses an ::after pseudo-element so the <div className="gold-divider" />
+     in JSX stays empty — no extra markup needed inside it. */
+  .gold-divider {
+    @apply flex justify-center mt-3 mb-8;
+  }
+
+  .gold-divider::after {
+    content: '';
+    @apply block w-12 h-0.5 bg-gold;
+  }
+
+  /* ── Navigation ──────────────────────────────────────────── */
+
+  .nav-link {
+    @apply text-white hover:text-gold transition-colors duration-150 text-sm font-medium uppercase tracking-wide;
+  }
+
+  /* ── Cards ───────────────────────────────────────────────── */
+
+  .card {
+    @apply bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 p-6 text-center;
+  }
+}
