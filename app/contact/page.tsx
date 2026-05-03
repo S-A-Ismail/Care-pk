@@ -50,7 +50,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-green">Email</div>
-                  <a href="mailto:info@care.org.pk" className="text-gray-500 text-sm hover:text-gold transition-colors">info@care.org.pk</a>
+                  <a href="mailto:carejmdc22@gmail.com" className="text-gray-500 text-sm hover:text-gold transition-colors">carejmdc22@gmail.com</a>
                 </div>
               </div>
             </div>

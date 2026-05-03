@@ -56,9 +56,9 @@ export default function Navbar() {
       <div className="bg-green-dark text-white text-xs py-2 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <a href="mailto:info@care.org.pk" className="flex items-center gap-1 hover:text-gold transition-colors">
+            <a href="mailto:carejmdc22@gmail.com" className="flex items-center gap-1 hover:text-gold transition-colors">
               <MdEmail className="text-gold" />
-              info@care.org.pk
+              carejmdc22@gmail.com
             </a>
             <a href="tel:+923001234567" className="flex items-center gap-1 hover:text-gold transition-colors">
               <MdPhone className="text-gold" />

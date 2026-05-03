@@ -6,7 +6,7 @@ The site has low traffic initially but must be architected to scale as traffic g
 
 NGO Name: **CARE — Care, Aid & Rehabilitation in Emergency**
 Brand Colors: Dark green (#1a3a2a) and gold/amber (#c9a227)
-Contact: info@care.org.pk | +92 300 1234567
+Contact: carejmdc22@gmail.com | +92 300 1234567
 
 ---
 
