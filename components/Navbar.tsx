@@ -52,24 +52,24 @@ export default function Navbar() {
   return (
     <header className="w-full z-50 sticky top-0 bg-white shadow-sm">
       {/* Top info bar — off-white, contact + socials */}
-      <div className="bg-off-white border-b border-light-gray text-xs py-2 px-4">
+      <div className="bg-off-white border-b border-light-gray text-sm py-2.5 px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-6 text-mid-gray">
-            <a href="mailto:carejmdc22@gmail.com" className="flex items-center gap-1 hover:text-primary transition-colors">
-              <MdEmail className="text-primary" />
+          <div className="flex items-center gap-8 text-mid-gray">
+            <a href="mailto:carejmdc22@gmail.com" className="flex items-center gap-1.5 hover:text-primary transition-colors whitespace-nowrap">
+              <MdEmail className="text-primary" size={16} />
               carejmdc22@gmail.com
             </a>
-            <a href="tel:+923001234567" className="flex items-center gap-1 hover:text-primary transition-colors">
-              <MdPhone className="text-primary" />
+            <a href="tel:+923001234567" className="flex items-center gap-1.5 hover:text-primary transition-colors whitespace-nowrap">
+              <MdPhone className="text-primary" size={16} />
               +92 300 1234567
             </a>
           </div>
-          <div className="flex items-center gap-3 text-mid-gray">
+          <div className="flex items-center gap-4 text-mid-gray">
             <a href="https://www.facebook.com/profile.php?id=100084957522371" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-primary transition-colors">
-              <FaFacebook size={14} />
+              <FaFacebook size={16} />
             </a>
             <a href="https://www.instagram.com/care_jmdc/" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-primary transition-colors">
-              <FaInstagram size={14} />
+              <FaInstagram size={16} />
             </a>
           </div>
         </div>
