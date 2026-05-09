@@ -40,34 +40,34 @@ const past = [
 export default function EventsPage() {
   return (
     <>
-      <div className="bg-green text-white py-16 px-4 text-center">
+      <div className="bg-dark text-white py-16 px-4 text-center">
         <h1 className="text-4xl font-serif mb-2">Events & Workshops</h1>
         <p className="text-white/60 text-sm">
-          <Link href="/" className="hover:text-gold">Home</Link> / Events
+          <Link href="/" className="hover:text-primary">Home</Link> / Events
         </p>
       </div>
 
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="section-title">Upcoming Events</h2>
-          <div className="gold-divider" />
+          <div className="red-divider" />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {upcoming.map((e) => (
-              <div key={e.title} className="border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className="bg-green text-white text-center py-5">
-                  <div className="text-5xl font-bold text-gold">{e.day}</div>
+              <div key={e.title} className="border border-light-gray shadow-card hover:shadow-card-hover transition-shadow rounded-card overflow-hidden">
+                <div className="bg-dark text-white text-center py-5">
+                  <div className="text-5xl font-bold text-primary">{e.day}</div>
                   <div className="text-sm uppercase tracking-widest text-white/70">{e.month}</div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-green font-semibold text-lg mb-3">{e.title}</h3>
-                  <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
-                    <FaMapMarkerAlt className="text-gold shrink-0" /> {e.location}
+                  <h3 className="text-dark font-semibold text-lg mb-3">{e.title}</h3>
+                  <div className="flex items-center gap-2 text-mid-gray text-sm mb-1">
+                    <FaMapMarkerAlt className="text-primary shrink-0" /> {e.location}
                   </div>
-                  <div className="flex items-center gap-2 text-gray-400 text-sm mb-4">
-                    <FaClock className="text-gold shrink-0" /> {e.time}
+                  <div className="flex items-center gap-2 text-mid-gray text-sm mb-4">
+                    <FaClock className="text-primary shrink-0" /> {e.time}
                   </div>
-                  <p className="text-gray-500 text-sm leading-relaxed">{e.desc}</p>
+                  <p className="text-mid-gray text-sm leading-relaxed">{e.desc}</p>
                 </div>
               </div>
             ))}
@@ -75,17 +75,17 @@ export default function EventsPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-cream">
+      <section className="py-20 bg-off-white">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="section-title">Past Events</h2>
-          <div className="gold-divider" />
+          <div className="red-divider" />
           <div className="space-y-4 max-w-2xl mx-auto">
             {past.map((e) => (
-              <div key={e.title} className="flex items-center gap-4 bg-white p-4 shadow-sm">
-                <FaCalendarAlt className="text-gold text-xl shrink-0" />
+              <div key={e.title} className="flex items-center gap-4 bg-white p-4 shadow-card rounded-card">
+                <FaCalendarAlt className="text-primary text-xl shrink-0" />
                 <div>
-                  <div className="font-semibold text-green">{e.title}</div>
-                  <div className="text-gray-400 text-sm">{e.date} · {e.location}</div>
+                  <div className="font-semibold text-dark">{e.title}</div>
+                  <div className="text-mid-gray text-sm">{e.date} · {e.location}</div>
                 </div>
               </div>
             ))}

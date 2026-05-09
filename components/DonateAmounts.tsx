@@ -17,9 +17,9 @@ export default function DonateAmounts() {
   // 3. Use the returned client_secret to mount a Stripe Elements checkout
   // 4. STRIPE_SECRET_KEY lives only in the Lambda env — never send it to the browser
   return (
-    <div className="border-2 border-dashed border-gold/40 p-6 text-center">
-      <div className="text-gold font-semibold mb-2">Online Payment — Coming Soon</div>
-      <div className="text-gray-400 text-sm mb-4">
+    <div className="border-2 border-dashed border-primary/40 p-6 text-center">
+      <div className="text-primary font-semibold mb-2">Online Payment — Coming Soon</div>
+      <div className="text-mid-gray text-sm mb-4">
         Secure online donations via card / mobile wallets will be available shortly.
       </div>
       <div className="flex flex-wrap gap-2 justify-center">
@@ -27,10 +27,10 @@ export default function DonateAmounts() {
           <button
             key={a}
             onClick={() => setSelected(a)}
-            className={`border px-4 py-2 text-sm transition-colors ${
+            className={`border px-4 py-2 text-sm transition-colors rounded ${
               selected === a
-                ? "bg-gold text-green-dark border-gold"
-                : "border-gold text-gold hover:bg-gold hover:text-green-dark"
+                ? "bg-primary text-white border-primary"
+                : "border-primary text-primary hover:bg-primary hover:text-white"
             }`}
           >
             PKR {a.toLocaleString()}
@@ -38,7 +38,7 @@ export default function DonateAmounts() {
         ))}
         <button
           onClick={() => setSelected(null)}
-          className="border border-gold text-gold px-4 py-2 text-sm hover:bg-gold hover:text-green-dark transition-colors"
+          className="border border-primary text-primary px-4 py-2 text-sm hover:bg-primary hover:text-white transition-colors rounded"
         >
           Custom
         </button>

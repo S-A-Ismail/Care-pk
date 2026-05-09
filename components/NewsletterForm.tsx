@@ -22,14 +22,14 @@ export default function NewsletterForm() {
       <input
         type="text"
         placeholder="Your Name"
-        className="bg-green px-3 py-2 text-sm text-white placeholder-white/40 border border-white/20 focus:outline-none focus:border-gold"
+        className="bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 border border-white/20 focus:outline-none focus:border-primary rounded"
       />
       <input
         type="email"
         placeholder="Your Email"
-        className="bg-green px-3 py-2 text-sm text-white placeholder-white/40 border border-white/20 focus:outline-none focus:border-gold"
+        className="bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 border border-white/20 focus:outline-none focus:border-primary rounded"
       />
-      <button type="submit" className="btn-gold text-center">Subscribe</button>
+      <button type="submit" className="btn-primary text-center">Subscribe</button>
     </form>
   );
 }

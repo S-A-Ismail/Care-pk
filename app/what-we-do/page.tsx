@@ -45,32 +45,32 @@ const timeline = [
 export default function WhatWeDoPage() {
   return (
     <>
-      <div className="bg-green text-white py-16 px-4 text-center">
+      <div className="bg-dark text-white py-16 px-4 text-center">
         <h1 className="text-4xl font-serif mb-2">What We Do</h1>
         <p className="text-white/60 text-sm">
-          <Link href="/" className="hover:text-gold">Home</Link> / What We Do
+          <Link href="/" className="hover:text-primary">Home</Link> / What We Do
         </p>
       </div>
 
       {/* Services */}
       {services.map(({ id, icon: Icon, title, desc, achievements }, i) => (
-        <section id={id} key={id} className={`py-20 ${i % 2 === 0 ? "bg-white" : "bg-cream"}`}>
+        <section id={id} key={id} className={`py-20 ${i % 2 === 0 ? "bg-white" : "bg-off-white"}`}>
           <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {i % 2 === 0 ? (
               <>
-                <div className="h-72 bg-green/10 flex items-center justify-center text-green/30 uppercase tracking-widest text-sm">
+                <div className="h-72 bg-soft-red flex items-center justify-center text-primary/30 uppercase tracking-widest text-sm rounded-card">
                   Program Photo
                 </div>
                 <div>
-                  <div className="w-14 h-14 bg-gold/10 flex items-center justify-center rounded-full mb-4">
-                    <Icon className="text-green text-2xl" />
+                  <div className="w-14 h-14 bg-soft-red flex items-center justify-center rounded-full mb-4">
+                    <Icon className="text-primary text-2xl" />
                   </div>
-                  <h2 className="text-3xl font-serif text-green mb-4">{title}</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">{desc}</p>
+                  <h2 className="text-3xl font-serif text-dark mb-4">{title}</h2>
+                  <p className="text-mid-gray leading-relaxed mb-6">{desc}</p>
                   <ul className="space-y-2">
                     {achievements.map((a) => (
-                      <li key={a} className="flex items-center gap-2 text-gray-600 text-sm">
-                        <span className="w-2 h-2 bg-gold rounded-full shrink-0" />
+                      <li key={a} className="flex items-center gap-2 text-mid-gray text-sm">
+                        <span className="w-2 h-2 bg-primary rounded-full shrink-0" />
                         {a}
                       </li>
                     ))}
@@ -80,21 +80,21 @@ export default function WhatWeDoPage() {
             ) : (
               <>
                 <div>
-                  <div className="w-14 h-14 bg-gold/10 flex items-center justify-center rounded-full mb-4">
-                    <Icon className="text-green text-2xl" />
+                  <div className="w-14 h-14 bg-soft-red flex items-center justify-center rounded-full mb-4">
+                    <Icon className="text-primary text-2xl" />
                   </div>
-                  <h2 className="text-3xl font-serif text-green mb-4">{title}</h2>
-                  <p className="text-gray-600 leading-relaxed mb-6">{desc}</p>
+                  <h2 className="text-3xl font-serif text-dark mb-4">{title}</h2>
+                  <p className="text-mid-gray leading-relaxed mb-6">{desc}</p>
                   <ul className="space-y-2">
                     {achievements.map((a) => (
-                      <li key={a} className="flex items-center gap-2 text-gray-600 text-sm">
-                        <span className="w-2 h-2 bg-gold rounded-full shrink-0" />
+                      <li key={a} className="flex items-center gap-2 text-mid-gray text-sm">
+                        <span className="w-2 h-2 bg-primary rounded-full shrink-0" />
                         {a}
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="h-72 bg-green/10 flex items-center justify-center text-green/30 uppercase tracking-widest text-sm">
+                <div className="h-72 bg-soft-red flex items-center justify-center text-primary/30 uppercase tracking-widest text-sm rounded-card">
                   Program Photo
                 </div>
               </>
@@ -104,14 +104,14 @@ export default function WhatWeDoPage() {
       ))}
 
       {/* Timeline */}
-      <section className="py-20 bg-green text-white">
+      <section className="py-20 bg-dark text-white">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="section-title text-white mb-10">Our Journey</h2>
-          <div className="relative border-l-2 border-gold pl-10 space-y-10">
+          <div className="relative border-l-2 border-primary pl-10 space-y-10">
             {timeline.map(({ year, event }) => (
               <div key={year} className="relative">
-                <div className="absolute -left-[2.85rem] w-5 h-5 bg-gold rounded-full border-4 border-green" />
-                <div className="text-gold font-bold text-lg mb-1">{year}</div>
+                <div className="absolute -left-[2.85rem] w-5 h-5 bg-primary rounded-full border-4 border-dark" />
+                <div className="text-primary font-bold text-lg mb-1">{year}</div>
                 <p className="text-white/70">{event}</p>
               </div>
             ))}

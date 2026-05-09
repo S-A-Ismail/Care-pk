@@ -8,31 +8,39 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Defining 'green' as an object inside `extend` replaces Tailwind's
-        // built-in green scale (green-100, green-200, …) entirely with our
-        // custom shades. That's intentional — we never want the default greens
-        // on this site. DEFAULT maps to the bare class (bg-green, text-green).
-        green: {
-          DEFAULT: "#1a3a2a",
-          dark: "#0f2318",
-          mid: "#1e4530",
-          light: "#2a5c3f",
+        // ── Primary action colour ────────────────────────────────
+        // Used for CTAs, highlights, icons, borders, and links.
+        primary: {
+          DEFAULT: "#D32F2F",
+          dark: "#B71C1C", // hover / active state
         },
-        gold: {
-          DEFAULT: "#c9a227",
-          light: "#d4b44a",
-          dark: "#a88520",
-        },
-        // Single-value colour (no shades needed) — used as bg-cream, text-cream.
-        cream: "#f8f5ef",
+
+        // ── Dark (headings + footer background) ─────────────────
+        // Used only for text headings and the footer bg.
+        // Never use as a large section background.
+        dark: "#111111",
+
+        // ── Neutral scale ────────────────────────────────────────
+        "off-white": "#FAFAFA",   // page sections, alternating bg
+        "light-gray": "#E5E7EB", // borders, dividers
+        "mid-gray": "#6B7280",   // body text, subtitles
+
+        // ── Soft red tint ────────────────────────────────────────
+        // Used for impact strip, bank box, card highlights.
+        // Keep white at 70–80 % of UI; use soft-red sparingly.
+        "soft-red": "#FDECEC",
       },
       fontFamily: {
         // CSS custom properties injected by next/font in app/layout.tsx.
-        // Tailwind reads these at runtime via var(), so fonts are never
-        // embedded in the CSS bundle — they're fetched from Google CDN once
-        // and then cached by the browser / Next.js font optimisation.
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
         serif: ["var(--font-playfair)", "Georgia", "serif"],
+      },
+      borderRadius: {
+        card: "12px",
+      },
+      boxShadow: {
+        card: "0 4px 12px rgba(0,0,0,0.05)",
+        "card-hover": "0 8px 24px rgba(0,0,0,0.10)",
       },
     },
   },
