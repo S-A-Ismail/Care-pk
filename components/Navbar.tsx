@@ -40,7 +40,6 @@ const navLinks = [
   { label: "Events", href: "/events" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "Join Us", href: "/join-us" },
-  { label: "Donate", href: "/donate" },
   { label: "Contact Us", href: "/contact" },
 ];
 
@@ -66,10 +65,10 @@ export default function Navbar() {
           </div>
           <div className="flex items-center gap-4 text-mid-gray">
             <a href="https://www.facebook.com/profile.php?id=100084957522371" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-primary transition-colors">
-              <FaFacebook size={16} />
+              <FaFacebook size={18} />
             </a>
             <a href="https://www.instagram.com/care_jmdc/" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-primary transition-colors">
-              <FaInstagram size={16} />
+              <FaInstagram size={18} />
             </a>
           </div>
         </div>
@@ -89,14 +88,14 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop links */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-0">
             {navLinks.map((link) =>
               link.children ? (
                 // Both the trigger button AND the dropdown panel need onMouseEnter/Leave
                 // to prevent the menu closing as the cursor moves between them.
                 <div key={link.label} className="relative">
                   <button
-                    className="nav-link flex items-center gap-1 px-3 py-5"
+                    className="nav-link flex items-center gap-1 px-2.5 py-5 whitespace-nowrap"
                     onMouseEnter={() => setOpenDropdown(link.label)}
                     onMouseLeave={() => setOpenDropdown(null)}
                   >
@@ -115,12 +114,12 @@ export default function Navbar() {
                   </div>
                 </div>
               ) : (
-                <Link key={link.label} href={link.href} className="nav-link px-3 py-5">
+                <Link key={link.label} href={link.href} className="nav-link px-2.5 py-5 whitespace-nowrap">
                   {link.label}
                 </Link>
               )
             )}
-            <Link href="/donate" className="ml-4 btn-primary">
+            <Link href="/donate" className="ml-3 btn-primary whitespace-nowrap">
               Donate Now
             </Link>
           </div>
