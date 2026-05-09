@@ -27,11 +27,11 @@ function TeamGrid({ members }: { members: { name: string; role: string }[] }) {
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
       {members.map(({ name, role }) => (
         <div key={name} className="text-center group">
-          <div className="w-28 h-28 rounded-full bg-green/10 mx-auto mb-3 flex items-center justify-center text-green/30 text-xs uppercase tracking-widest group-hover:bg-gold/10 transition-colors">
+          <div className="w-28 h-28 rounded-full bg-soft-red mx-auto mb-3 flex items-center justify-center text-primary/30 text-xs uppercase tracking-widest group-hover:bg-primary/10 transition-colors">
             Photo
           </div>
-          <h4 className="font-semibold text-green">{name}</h4>
-          <p className="text-gray-400 text-sm">{role}</p>
+          <h4 className="font-semibold text-dark">{name}</h4>
+          <p className="text-mid-gray text-sm">{role}</p>
         </div>
       ))}
     </div>
@@ -41,28 +41,28 @@ function TeamGrid({ members }: { members: { name: string; role: string }[] }) {
 export default function TeamPage() {
   return (
     <>
-      <div className="bg-green text-white py-16 px-4 text-center">
+      <div className="bg-dark text-white py-16 px-4 text-center">
         <h1 className="text-4xl font-serif mb-2">Our Team</h1>
         <p className="text-white/60 text-sm">
-          <Link href="/" className="hover:text-gold">Home</Link> / Our Team
+          <Link href="/" className="hover:text-primary">Home</Link> / Our Team
         </p>
       </div>
 
       <section id="core" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="section-title">Core Team</h2>
-          <div className="gold-divider" />
+          <div className="red-divider" />
           <TeamGrid members={coreTeam} />
           <div className="text-center mt-10">
-            <Link href="/team#board" className="btn-green inline-block">View All Team Members</Link>
+            <Link href="/team#board" className="btn-primary inline-block">View All Team Members</Link>
           </div>
         </div>
       </section>
 
-      <section id="board" className="py-20 bg-cream">
+      <section id="board" className="py-20 bg-off-white">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="section-title">Board of Governors</h2>
-          <div className="gold-divider" />
+          <div className="red-divider" />
           <TeamGrid members={board} />
         </div>
       </section>
@@ -71,7 +71,7 @@ export default function TeamPage() {
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="section-title">Advisory Board</h2>
           <p className="section-subtitle">Strategic (Advisory)</p>
-          <div className="gold-divider" />
+          <div className="red-divider" />
           <TeamGrid members={advisory} />
         </div>
       </section>

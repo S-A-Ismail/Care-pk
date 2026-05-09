@@ -20,12 +20,12 @@ export default function VolunteerForm() {
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <input type="text" placeholder="First Name" required className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full" />
-        <input type="text" placeholder="Last Name" required className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full" />
+        <input type="text" placeholder="First Name" required className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full rounded" />
+        <input type="text" placeholder="Last Name" required className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full rounded" />
       </div>
-      <input type="email" placeholder="Email Address" required className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full" />
-      <input type="tel" placeholder="Phone Number" className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full" />
-      <select className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full text-gray-500">
+      <input type="email" placeholder="Email Address" required className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full rounded" />
+      <input type="tel" placeholder="Phone Number" className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full rounded" />
+      <select className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full text-mid-gray rounded">
         <option value="">Area of Interest</option>
         <option>Medical / Paramedic</option>
         <option>Community Outreach</option>
@@ -36,9 +36,9 @@ export default function VolunteerForm() {
       <textarea
         placeholder="Tell us about yourself and why you want to volunteer..."
         rows={4}
-        className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full resize-none"
+        className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full resize-none rounded"
       />
-      <button type="submit" className="btn-green w-full">Submit Application</button>
+      <button type="submit" className="btn-primary w-full">Submit Application</button>
     </form>
   );
 }

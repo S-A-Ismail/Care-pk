@@ -51,13 +51,13 @@ function StatItem({ icon: Icon, value, suffix, label }: (typeof stats)[0]) {
   }, []);
 
   return (
-    <div ref={ref} className="flex items-center gap-4 px-8 py-6 border-r border-gray-200 last:border-r-0 flex-1 justify-center">
-      <Icon className="text-green text-4xl shrink-0" />
+    <div ref={ref} className="flex items-center gap-4 px-8 py-6 border-r border-light-gray last:border-r-0 flex-1 justify-center">
+      <Icon className="text-primary text-4xl shrink-0" />
       <div>
-        <div className="text-3xl font-bold text-green-dark">
+        <div className="text-3xl font-bold text-dark">
           {count}{suffix}
         </div>
-        <div className="text-gray-500 text-sm">{label}</div>
+        <div className="text-mid-gray text-sm">{label}</div>
       </div>
     </div>
   );
@@ -65,8 +65,8 @@ function StatItem({ icon: Icon, value, suffix, label }: (typeof stats)[0]) {
 
 export default function Stats() {
   return (
-    <section className="bg-cream border-b border-gray-200">
-      <div className="max-w-7xl mx-auto flex flex-wrap divide-y md:divide-y-0 divide-gray-200">
+    <section className="bg-off-white border-b border-light-gray">
+      <div className="max-w-7xl mx-auto flex flex-wrap divide-y md:divide-y-0 divide-light-gray">
         {stats.map((s) => <StatItem key={s.label} {...s} />)}
       </div>
     </section>

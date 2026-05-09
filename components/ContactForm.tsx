@@ -7,7 +7,7 @@ export default function ContactForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // AWS INTEGRATION POINT (Phase 1):
-    // POST to API Gateway → Lambda → SES (forwards message to info@care.org.pk).
+    // POST to API Gateway → Lambda → SES (forwards message to carejmdc22@gmail.com).
     // Example:
     //   const data = Object.fromEntries(new FormData(e.target as HTMLFormElement));
     //   await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contact`, {
@@ -20,18 +20,18 @@ export default function ContactForm() {
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <input type="text" placeholder="Your Name" required className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full" />
-        <input type="email" placeholder="Email Address" required className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full" />
+        <input type="text" placeholder="Your Name" required className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full rounded" />
+        <input type="email" placeholder="Email Address" required className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full rounded" />
       </div>
-      <input type="tel" placeholder="Phone Number (optional)" className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full" />
-      <input type="text" placeholder="Subject" required className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full" />
+      <input type="tel" placeholder="Phone Number (optional)" className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full rounded" />
+      <input type="text" placeholder="Subject" required className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full rounded" />
       <textarea
         placeholder="Your message..."
         rows={5}
         required
-        className="border border-gray-200 px-4 py-3 focus:outline-none focus:border-gold w-full resize-none"
+        className="border border-light-gray px-4 py-3 focus:outline-none focus:border-primary w-full resize-none rounded"
       />
-      <button type="submit" className="btn-green w-full">Send Message</button>
+      <button type="submit" className="btn-primary w-full">Send Message</button>
     </form>
   );
 }

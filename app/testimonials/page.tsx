@@ -30,10 +30,10 @@ const written = [
 export default function TestimonialsPage() {
   return (
     <>
-      <div className="bg-green text-white py-16 px-4 text-center">
+      <div className="bg-dark text-white py-16 px-4 text-center">
         <h1 className="text-4xl font-serif mb-2">Testimonials</h1>
         <p className="text-white/60 text-sm">
-          <Link href="/" className="hover:text-gold">Home</Link> / Testimonials
+          <Link href="/" className="hover:text-primary">Home</Link> / Testimonials
         </p>
       </div>
 
@@ -41,15 +41,15 @@ export default function TestimonialsPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="section-title">Written Testimonials</h2>
-          <div className="gold-divider" />
+          <div className="red-divider" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {written.map(({ quote, author, location }) => (
-              <div key={author} className="bg-cream p-8 relative">
-                <FaQuoteLeft className="text-gold text-3xl mb-4 opacity-50" />
-                <p className="text-gray-600 italic leading-relaxed mb-6">&ldquo;{quote}&rdquo;</p>
-                <div className="border-t border-gold/30 pt-4">
-                  <div className="font-semibold text-green">{author}</div>
-                  <div className="text-gray-400 text-sm">{location}</div>
+              <div key={author} className="bg-off-white p-8 relative rounded-card">
+                <FaQuoteLeft className="text-primary text-3xl mb-4 opacity-50" />
+                <p className="text-mid-gray italic leading-relaxed mb-6">&ldquo;{quote}&rdquo;</p>
+                <div className="border-t border-primary/30 pt-4">
+                  <div className="font-semibold text-dark">{author}</div>
+                  <div className="text-mid-gray text-sm">{location}</div>
                 </div>
               </div>
             ))}
@@ -58,13 +58,13 @@ export default function TestimonialsPage() {
       </section>
 
       {/* Video testimonials */}
-      <section className="py-20 bg-cream">
+      <section className="py-20 bg-off-white">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="section-title">Video Testimonials</h2>
-          <div className="gold-divider" />
+          <div className="red-divider" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-green/10 aspect-video flex items-center justify-center text-green/30 text-sm uppercase tracking-widest">
+              <div key={i} className="bg-soft-red aspect-video flex items-center justify-center text-primary/30 text-sm uppercase tracking-widest rounded-card">
                 Video {i} — Coming Soon
               </div>
             ))}

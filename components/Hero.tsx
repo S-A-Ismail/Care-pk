@@ -13,19 +13,19 @@ const slides = [
     heading: "Serving Humanity",
     subheading: "in Times of Need",
     body: "CARE is a non-profit organization dedicated to providing emergency medical aid, patient support and rehabilitation services to the underserved communities.",
-    bg: "bg-green-dark",
+    bg: "bg-dark",
   },
   {
     heading: "Emergency Aid",
     subheading: "When Every Second Counts",
     body: "Our rapid response teams are on the ground 24/7, delivering life-saving medical assistance to those who need it most.",
-    bg: "bg-green",
+    bg: "bg-primary",
   },
   {
     heading: "Rebuilding Lives",
     subheading: "Through Rehabilitation",
     body: "We walk alongside patients through their recovery journey — providing emotional, physical and financial support every step of the way.",
-    bg: "bg-green-mid",
+    bg: "bg-primary-dark",
   },
 ];
 
@@ -49,23 +49,23 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full py-20">
         <div className="max-w-xl">
-          <p className="text-gold uppercase tracking-widest text-sm font-semibold mb-3">
+          <p className="text-primary uppercase tracking-widest text-sm font-semibold mb-3">
             Care, Aid & Rehabilitation in Emergency
           </p>
           <h1 className="text-white text-5xl md:text-6xl font-serif leading-tight mb-2">
             {slides[current].heading}
           </h1>
-          <h2 className="text-gold text-4xl md:text-5xl font-serif italic mb-6">
+          <h2 className="text-white/90 text-4xl md:text-5xl font-serif italic mb-6">
             {slides[current].subheading}
           </h2>
           <p className="text-white/80 text-lg leading-relaxed mb-8 max-w-md">
             {slides[current].body}
           </p>
           <div className="flex flex-wrap gap-4">
-            <Link href="/donate" className="btn-gold flex items-center gap-2">
+            <Link href="/donate" className="btn-primary flex items-center gap-2">
               <FaHeart /> Donate Now
             </Link>
-            <Link href="/join-us" className="btn-outline flex items-center gap-2">
+            <Link href="/join-us" className="btn-outline-white flex items-center gap-2">
               <FaUsers /> Join Our Mission
             </Link>
           </div>
@@ -86,7 +86,7 @@ export default function Hero() {
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`w-3 h-3 rounded-full transition-colors ${i === current ? "bg-gold" : "bg-white/50"}`}
+            className={`w-3 h-3 rounded-full transition-colors ${i === current ? "bg-primary" : "bg-white/50"}`}
             aria-label={`Go to slide ${i + 1}`}
           />
         ))}

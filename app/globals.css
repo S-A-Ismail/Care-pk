@@ -8,67 +8,71 @@
   }
 
   body {
-    @apply bg-white text-gray-800 font-sans;
+    @apply bg-white text-dark font-sans;
   }
 
-  /* Apply the serif font to all headings globally so individual components
-     don't have to repeat font-serif on every h1/h2/h3/h4. */
+  /* Headings use the serif font globally — soft black for readability. */
   h1, h2, h3, h4 {
-    @apply font-serif;
+    @apply font-serif text-dark;
   }
 }
 
 @layer components {
   /* ── Buttons ─────────────────────────────────────────────── */
 
-  /* Primary CTA — gold fill, dark text. Used on dark backgrounds (hero, footer). */
-  .btn-gold {
-    @apply bg-gold text-green-dark font-semibold px-6 py-3 hover:bg-gold-light transition-colors duration-200 uppercase tracking-wide text-sm;
+  /* Primary CTA — red fill, white text. Used for Donate, Submit, etc. */
+  .btn-primary {
+    @apply bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors duration-150 uppercase tracking-wide text-sm;
   }
 
-  /* Ghost button — transparent with gold border. Only readable on dark backgrounds. */
+  /* Outline button — red border and text, transparent bg.
+     Readable on both white and light backgrounds. */
   .btn-outline {
-    @apply border-2 border-gold text-white font-semibold px-6 py-3 hover:bg-gold hover:text-green-dark transition-colors duration-200 uppercase tracking-wide text-sm;
+    @apply border-2 border-primary text-primary font-semibold px-6 py-3 rounded-lg hover:bg-primary hover:text-white transition-colors duration-150 uppercase tracking-wide text-sm;
   }
 
-  /* Secondary CTA — green fill, white text. Used on light backgrounds. */
-  .btn-green {
-    @apply bg-green text-white font-semibold px-6 py-3 hover:bg-green-light transition-colors duration-200 uppercase tracking-wide text-sm;
+  /* Outline white — for use on dark/red backgrounds (hero, CTA sections). */
+  .btn-outline-white {
+    @apply border-2 border-white text-white font-semibold px-6 py-3 rounded-lg hover:bg-white hover:text-primary transition-colors duration-150 uppercase tracking-wide text-sm;
+  }
+
+  /* Dark button — black fill, white text. Footer or special sections only. */
+  .btn-dark {
+    @apply bg-dark text-white font-semibold px-6 py-3 rounded-lg hover:bg-dark/80 transition-colors duration-150 uppercase tracking-wide text-sm;
   }
 
   /* ── Section typography ──────────────────────────────────── */
 
   .section-title {
-    @apply text-3xl md:text-4xl font-serif text-green text-center;
+    @apply text-3xl md:text-4xl font-serif text-dark text-center;
   }
 
   .section-subtitle {
-    @apply text-gray-500 text-center mt-2 mb-10;
+    @apply text-mid-gray text-center mt-2 mb-10;
   }
 
-  /* ── Gold divider ────────────────────────────────────────── */
+  /* ── Red divider ─────────────────────────────────────────── */
 
-  /* Renders a short gold horizontal rule beneath section titles.
-     Uses an ::after pseudo-element so the <div className="gold-divider" />
-     in JSX stays empty — no extra markup needed inside it. */
-  .gold-divider {
+  /* Short red horizontal rule rendered via ::after — no extra HTML needed. */
+  .red-divider {
     @apply flex justify-center mt-3 mb-8;
   }
 
-  .gold-divider::after {
+  .red-divider::after {
     content: '';
-    @apply block w-12 h-0.5 bg-gold;
+    @apply block w-12 h-0.5 bg-primary;
   }
 
   /* ── Navigation ──────────────────────────────────────────── */
 
+  /* Desktop nav link — dark text, red on hover. */
   .nav-link {
-    @apply text-white hover:text-gold transition-colors duration-150 text-sm font-medium uppercase tracking-wide;
+    @apply text-dark hover:text-primary transition-colors duration-150 text-sm font-medium uppercase tracking-wide;
   }
 
   /* ── Cards ───────────────────────────────────────────────── */
 
   .card {
-    @apply bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 p-6 text-center;
+    @apply bg-white border border-light-gray rounded-[12px] shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-200 p-6 text-center;
   }
 }

@@ -17,10 +17,10 @@ const bankDetails = [
 export default function DonatePage() {
   return (
     <>
-      <div className="bg-green text-white py-16 px-4 text-center">
+      <div className="bg-dark text-white py-16 px-4 text-center">
         <h1 className="text-4xl font-serif mb-2">Donate</h1>
         <p className="text-white/60 text-sm">
-          <Link href="/" className="hover:text-gold">Home</Link> / Donate
+          <Link href="/" className="hover:text-primary">Home</Link> / Donate
         </p>
       </div>
 
@@ -30,19 +30,19 @@ export default function DonatePage() {
           {/* Bank Details */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <FaUniversity className="text-gold text-2xl" />
-              <h2 className="text-2xl font-serif text-green">Bank Details</h2>
+              <FaUniversity className="text-primary text-2xl" />
+              <h2 className="text-2xl font-serif text-dark">Bank Details</h2>
             </div>
-            <p className="text-gray-500 text-sm mb-6">Transfer directly to our account. All donations are used transparently for patient care and operations.</p>
+            <p className="text-mid-gray text-sm mb-6">Transfer directly to our account. All donations are used transparently for patient care and operations.</p>
             <div className="space-y-3">
               {bankDetails.map(({ label, value }) => (
-                <div key={label} className="flex justify-between border-b border-gray-100 pb-3">
-                  <span className="text-gray-400 text-sm">{label}</span>
-                  <span className="text-green font-medium text-sm">{value}</span>
+                <div key={label} className="flex justify-between border-b border-light-gray pb-3">
+                  <span className="text-mid-gray text-sm">{label}</span>
+                  <span className="text-dark font-medium text-sm">{value}</span>
                 </div>
               ))}
             </div>
-            <button className="btn-green flex items-center gap-2 mt-6">
+            <button className="btn-primary flex items-center gap-2 mt-6">
               <FaDownload /> Download Bank Details
             </button>
           </div>
@@ -50,8 +50,8 @@ export default function DonatePage() {
           {/* Other ways + online form placeholder */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <FaHandHoldingUsd className="text-gold text-2xl" />
-              <h2 className="text-2xl font-serif text-green">Other Ways to Donate</h2>
+              <FaHandHoldingUsd className="text-primary text-2xl" />
+              <h2 className="text-2xl font-serif text-dark">Other Ways to Donate</h2>
             </div>
 
             <div className="space-y-4 mb-8">
@@ -60,11 +60,11 @@ export default function DonatePage() {
                 { title: "JazzCash / EasyPaisa", desc: "Mobile wallet transfers accepted. Send to 0300-1234567 with reference 'CARE'." },
                 { title: "Standing Collection", desc: "We can collect donations from your home or office. Contact us to arrange." },
               ].map(({ title, desc }) => (
-                <div key={title} className="flex gap-4 bg-cream p-4">
-                  <span className="w-2 h-2 bg-gold rounded-full mt-2 shrink-0" />
+                <div key={title} className="flex gap-4 bg-off-white p-4 rounded-card">
+                  <span className="w-2 h-2 bg-primary rounded-full mt-2 shrink-0" />
                   <div>
-                    <div className="font-semibold text-green text-sm">{title}</div>
-                    <div className="text-gray-500 text-sm">{desc}</div>
+                    <div className="font-semibold text-dark text-sm">{title}</div>
+                    <div className="text-mid-gray text-sm">{desc}</div>
                   </div>
                 </div>
               ))}
@@ -76,7 +76,7 @@ export default function DonatePage() {
       </section>
 
       {/* Trust statement */}
-      <section className="py-12 bg-green text-white text-center px-4">
+      <section className="py-12 bg-dark text-white text-center px-4">
         <div className="max-w-2xl mx-auto">
           <p className="text-white/80 italic">
             &ldquo;Your support can save lives. All donations are used transparently for patient care and operations. We are proud to share regular impact reports with all donors.&rdquo;
