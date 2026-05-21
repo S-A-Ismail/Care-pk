@@ -21,8 +21,8 @@ const written = [
     location: "Karachi",
   },
   {
-    quote: "After my accident, CARE's rehabilitation program helped me walk again. I am forever grateful to every person on the team.",
-    author: "Rehab Patient",
+    quote: "The free medical camp in Islamabad was a blessing. The doctors were thorough and the medicines were provided without any charge.",
+    author: "Camp Attendee",
     location: "Islamabad",
   },
 ];

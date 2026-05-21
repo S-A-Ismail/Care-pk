@@ -12,7 +12,7 @@ const slides = [
   {
     heading: "Serving Humanity",
     subheading: "in Times of Need",
-    body: "CARE is a non-profit organization dedicated to providing emergency medical aid, patient support and rehabilitation services to the underserved communities.",
+    body: "CARE is a non-profit organization dedicated to providing emergency medical aid and patient support to underserved communities across Pakistan.",
     bg: "bg-dark",
   },
   {
@@ -22,9 +22,9 @@ const slides = [
     bg: "bg-primary",
   },
   {
-    heading: "Rebuilding Lives",
-    subheading: "Through Rehabilitation",
-    body: "We walk alongside patients through their recovery journey — providing emotional, physical and financial support every step of the way.",
+    heading: "Reaching Communities",
+    subheading: "Where Help is Needed Most",
+    body: "Through free medical camps, awareness drives and on-the-ground outreach, we bring healthcare directly to those who cannot access it.",
     bg: "bg-primary-dark",
   },
 ];

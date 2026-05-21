@@ -13,7 +13,7 @@ export default function ImpactSection() {
           {[
             { title: "Emergency Response", year: "2024", desc: "Deployed rapid medical teams across 3 cities during monsoon flooding, reaching 200+ families." },
             { title: "Free Medical Camp", year: "2025", desc: "Hosted 10 free medical camps serving 500+ patients with zero cost consultations and medicines." },
-            { title: "Rehabilitation Drive", year: "2026", desc: "Ongoing rehabilitation program supporting 80 post-surgery patients with physiotherapy." },
+            { title: "Community Health Camp", year: "2026", desc: "Ongoing free medical camps providing consultations, diagnostics and medicines to underserved communities." },
           ].map((item) => (
             <div key={item.title} className="bg-white shadow-card overflow-hidden group rounded-card">
               {/* Image placeholder */}

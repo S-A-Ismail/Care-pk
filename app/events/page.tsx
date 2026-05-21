@@ -33,7 +33,7 @@ const upcoming = [
 
 const past = [
   { title: "Flood Relief Medical Camp 2024", date: "Sep 2024", location: "Dera Ghazi Khan" },
-  { title: "Winter Rehabilitation Drive", date: "Jan 2025", location: "Lahore" },
+  { title: "Winter Medical Aid Drive", date: "Jan 2025", location: "Lahore" },
   { title: "Community Health Fair", date: "Mar 2025", location: "Karachi" },
 ];
 
