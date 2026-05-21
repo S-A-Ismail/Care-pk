@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaAmbulance, FaUserMd, FaHeartbeat, FaHandshake } from "react-icons/fa";
+import { FaAmbulance, FaUserMd, FaHandshake } from "react-icons/fa";
 
 const services = [
   {
@@ -13,12 +13,6 @@ const services = [
     title: "Patient Support",
     desc: "Supporting patients with treatment, medications and essential needs throughout their care journey.",
     href: "/what-we-do#patient",
-  },
-  {
-    icon: FaHeartbeat,
-    title: "Rehabilitation",
-    desc: "Helping patients recover and regain a better quality of life through structured rehabilitation programs.",
-    href: "/what-we-do#rehab",
   },
   {
     icon: FaHandshake,

@@ -33,7 +33,6 @@ const navLinks = [
     children: [
       { label: "Emergency Aid", href: "/what-we-do#emergency" },
       { label: "Patient Support", href: "/what-we-do#patient" },
-      { label: "Rehabilitation", href: "/what-we-do#rehab" },
       { label: "Community Outreach", href: "/what-we-do#outreach" },
     ],
   },

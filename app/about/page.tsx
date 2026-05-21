@@ -29,7 +29,7 @@ export default function AboutPage() {
               Care, Aid & Rehabilitation in Emergency
             </h2>
             <p className="text-mid-gray leading-relaxed mb-4">
-              CARE (Care, Aid & Rehabilitation in Emergency) is a non-profit organization committed to providing immediate medical assistance, patient support, and long-term rehabilitation services to underserved communities across Pakistan.
+              CARE (Care, Aid & Rehabilitation in Emergency) is a non-profit organization committed to providing immediate medical assistance and patient support to underserved communities across Pakistan.
             </p>
             <p className="text-mid-gray leading-relaxed mb-4">
               Founded with the mission to serve the most vulnerable, CARE has grown into a trusted humanitarian organization — running free medical camps, operating ambulance services, and funding treatment for those who cannot afford care.
@@ -49,7 +49,7 @@ export default function AboutPage() {
             {[
               {
                 title: "Our Mission",
-                text: "To provide immediate, compassionate medical and rehabilitative care to underserved communities, regardless of financial status.",
+                text: "To provide immediate, compassionate medical care and patient support to underserved communities, regardless of financial status.",
               },
               {
                 title: "Our Vision",

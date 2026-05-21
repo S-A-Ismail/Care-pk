@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   icons: { icon: "/logo.png" },
   title: "CARE — Care, Aid & Rehabilitation in Emergency",
   description:
-    "A non-profit organization dedicated to providing emergency medical aid, patient support and rehabilitation services to underserved communities in Pakistan.",
-  keywords: ["NGO", "Pakistan", "emergency aid", "rehabilitation", "humanitarian"],
+    "A non-profit organization dedicated to providing emergency medical aid and patient support to underserved communities in Pakistan.",
+  keywords: ["NGO", "Pakistan", "emergency aid", "patient support", "humanitarian"],
   openGraph: {
     title: "CARE — Care, Aid & Rehabilitation in Emergency",
     description: "Serving Humanity in Times of Need",

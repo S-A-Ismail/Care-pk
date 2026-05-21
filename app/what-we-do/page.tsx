@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FaAmbulance, FaUserMd, FaHeartbeat, FaHandshake } from "react-icons/fa";
+import { FaAmbulance, FaUserMd, FaHandshake } from "react-icons/fa";
 import CallToAction from "@/components/CallToAction";
 
 export const metadata: Metadata = { title: "What We Do | CARE Pakistan" };
@@ -19,13 +19,6 @@ const services = [
     title: "Patient Support",
     desc: "Many patients cannot afford the treatments they need. CARE steps in to cover medications, diagnostics, hospital bills and follow-up care — ensuring no one is turned away due to cost.",
     achievements: ["500+ patients supported financially", "Medicine distribution drives", "Hospital bill assistance"],
-  },
-  {
-    id: "rehab",
-    icon: FaHeartbeat,
-    title: "Rehabilitation",
-    desc: "Recovery doesn't end at discharge. Our rehabilitation program provides physiotherapy, counselling, and long-term support to help patients regain independence and a quality life.",
-    achievements: ["80+ active rehab patients", "Partnered physiotherapy centers", "Mental health support"],
   },
   {
     id: "outreach",
