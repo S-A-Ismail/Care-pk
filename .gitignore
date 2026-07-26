@@ -31,6 +31,8 @@ WhatsApp*.jpg
 /*.jpg
 /*.jpeg
 
+/Audio/*
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
