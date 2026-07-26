@@ -32,6 +32,7 @@ WhatsApp*.jpg
 /*.jpeg
 
 /Audio/*
+/Audios/
 
 # typescript
 *.tsbuildinfo
