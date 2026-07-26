@@ -18,8 +18,8 @@ import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # -> static-site/
 
 # ---- Site config -------------------------------------------
-PHONE = "+92 300 1234567"
-PHONE_HREF = "tel:+923001234567"
+PHONE = "+92 332 3610790"
+PHONE_HREF = "tel:+923323610790"
 EMAIL = "carejmdc22@gmail.com"
 FB = "https://www.facebook.com/profile.php?id=100084957522371"
 IG = "https://www.instagram.com/care_jmdc/"
@@ -27,18 +27,52 @@ IG_HANDLE = "@CARE_JMDC"
 # Interim office address: Jinnah Medical & Dental College, Karachi (per CARE, "for now").
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "4"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "7"  # bump to cache-bust styles.css / JS after a redesign
 
+# Each nav item: (label, href, [ (child_label, child_href), ... ]).
+# Children render as a dropdown (desktop) / collapsible submenu (mobile),
+# linking to that page's internal sections.
 NAV = [
-    ("Home", "index.html"),
-    ("About", "about.html"),
-    ("Care Programs", "programs.html"),
-    ("Impact", "impact.html"),
-    ("Get Involved", "get-involved.html"),
-    ("Donate", "donate.html"),
-    ("News &amp; Events", "news-events.html"),
-    ("Resources", "resources.html"),
-    ("Contact", "contact.html"),
+    ("Home", "index.html", []),
+    ("About", "about.html", [
+        ("Mission &amp; Vision", "about.html#mission"),
+        ("Our Story", "about.html#story"),
+        ("Leadership", "about.html#leadership"),
+        ("Governance &amp; Partners", "about.html#governance"),
+        ("Policies", "about.html#policies"),
+        ("Annual Reports", "about.html#annual-reports"),
+    ]),
+    ("Care Programs", "programs.html", [
+        ("Drug Bank", "programs.html#drug-bank"),
+        ("Medical Camps", "programs.html#medical-camps"),
+        ("Health Awareness", "programs.html#health-awareness"),
+        ("Community Outreach", "programs.html#community-outreach"),
+        ("Emergency Support", "programs.html#emergency-support"),
+        ("Volunteer Initiatives", "programs.html#volunteer-initiatives"),
+    ]),
+    ("Impact", "impact.html", [
+        ("In Numbers", "impact.html#numbers"),
+        ("Impact Dashboard", "impact.html#dashboard"),
+    ]),
+    ("Get Involved", "get-involved.html", [
+        ("Volunteer", "get-involved.html#volunteer"),
+        ("Partner", "get-involved.html#partner"),
+        ("Corporate", "get-involved.html#corporate"),
+        ("CSR", "get-involved.html#csr"),
+        ("Universities", "get-involved.html#universities"),
+        ("Funders", "get-involved.html#funders"),
+    ]),
+    ("Donate", "donate.html", []),
+    ("News &amp; Events", "news-events.html", [
+        ("Upcoming", "news-events.html#upcoming"),
+        ("Past Events", "news-events.html#past"),
+        ("Latest News", "news-events.html#news"),
+    ]),
+    ("Resources", "resources.html", [
+        ("Dearly Loved (CSR)", "resources.html#dearly-loved"),
+        ("Policies &amp; Reports", "resources.html#policies-reports"),
+    ]),
+    ("Contact", "contact.html", []),
 ]
 
 # ---- Icon set (Feather-style stroke SVGs, currentColor) -----
@@ -70,6 +104,7 @@ ICONS = {
     "plus-square": '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>',
     "clipboard": '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>',
     "arrow-right": '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+    "chevron-down": '<polyline points="6 9 12 15 18 9"/>',
     "bank": '<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
     "eye": '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>',
     "map": '<polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>',
@@ -121,16 +156,32 @@ def header(active):
         '</div>'
         '</div></div>'
     )
-    # Desktop links
+    # Desktop links (items with children get a hover/focus dropdown)
     links = ""
-    for label, href in NAV:
+    for label, href, children in NAV:
         cur = ' aria-current="page"' if href == active else ""
-        links += '<a class="nav-link" href="' + href + '"' + cur + '>' + label + '</a>'
-    # Mobile links
+        if children:
+            align = " align-right" if href in ("news-events.html", "resources.html") else ""
+            dd = "".join('<a href="' + chref + '">' + clabel + '</a>' for clabel, chref in children)
+            links += ('<div class="nav-item">'
+                      '<a class="nav-link" href="' + href + '"' + cur + '>' + label
+                      + icon("chevron-down", "nav-caret") + '</a>'
+                      '<div class="nav-dropdown' + align + '">' + dd + '</div></div>')
+        else:
+            links += '<a class="nav-link" href="' + href + '"' + cur + '>' + label + '</a>'
+    # Mobile links (items with children get a collapsible submenu)
     mlinks = ""
-    for label, href in NAV:
+    for label, href, children in NAV:
         cur = ' aria-current="page"' if href == active else ""
-        mlinks += '<a href="' + href + '"' + cur + '>' + label + '</a>'
+        if children:
+            sub = "".join('<a href="' + chref + '">' + clabel + '</a>' for clabel, chref in children)
+            mlinks += ('<div class="m-item"><div class="m-row">'
+                       '<a href="' + href + '"' + cur + '>' + label + '</a>'
+                       '<button class="m-toggle" aria-label="Toggle ' + label.replace("&amp;", "and") + ' submenu" aria-expanded="false">'
+                       + icon("chevron-down") + '</button></div>'
+                       '<div class="m-sub">' + sub + '</div></div>')
+        else:
+            mlinks += '<a href="' + href + '"' + cur + '>' + label + '</a>'
 
     nav = (
         '<nav class="navbar"><div class="container">'
@@ -169,7 +220,7 @@ def header(active):
 
 def footer():
     links = ""
-    for label, href in NAV:
+    for label, href, _children in NAV:
         links += '<li><a href="' + href + '">' + label + '</a></li>'
     return (
         '<footer class="site-footer"><div class="container"><div class="footer-grid">'
@@ -583,13 +634,13 @@ def impact():
                    '<div style="margin-top:.6rem">' + todo("figure pending") + '</div></div>')
     return (
         banner("Impact", "Impact") +
-        '<section class="section bg-white"><div class="container">'
+        '<section id="numbers" class="section bg-white"><div class="container">'
         '<h2 class="section-title">Our Impact in Numbers</h2>'
         '<p class="section-subtitle">Verified figures are being finalised by the CARE team.</p><div class="red-divider"></div>'
         '<!-- TODO: blocked on verified figures, same as homepage -->'
         '<div class="grid grid-3">' + matrix + '</div>'
         '</div></section>'
-        '<section class="section bg-off-white"><div class="container">'
+        '<section id="dashboard" class="section bg-off-white"><div class="container">'
         '<h2 class="section-title">Impact Dashboard</h2>'
         '<p class="section-subtitle">Detailed breakdowns by programme, region and year</p><div class="red-divider"></div>'
         + '<div class="max-720">' + note("Impact Dashboard is blocked on verified figures. Once the CARE team supplies the numbers, this area will show breakdowns (e.g. patients by programme, medicines by category, camps by city).") + '</div>'
@@ -688,21 +739,16 @@ def get_involved():
 
 
 def donate():
-    bank = [
-        ("Account Title", "CARE"),
-        ("Account No", "PK46MEZN0001230104370178"),
-        ("Bank Name", "Meezan Bank"),
-        ("Branch Name", "Johar Town"),
-        ("Branch Code", "1234 576 9702"),
-        ("IBAN", "PK46MEZN0001234567890178"),
-    ]
-    bank_html = ""
-    for k, v in bank:
-        bank_html += '<div class="bank-row"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>'
+    # Bank details are placeholders pending real account information.
+    bank_labels = ["Account Title", "Account No", "Bank Name", "Branch Name", "Branch Code", "IBAN"]
+    bank_html = "<!-- TODO: bank details pending — empty placeholders for now -->"
+    for k in bank_labels:
+        bank_html += ('<div class="bank-row"><span class="k">' + k + '</span>'
+                      '<span class="v" style="color:var(--muted);font-weight:400">To be provided</span></div>')
 
     ways = [
         ("In-Person Donation", "Visit our office and contribute directly. Our team will issue an official receipt."),
-        ("JazzCash / EasyPaisa", "Mobile wallet transfers accepted. Send to 0300-1234567 with reference &lsquo;CARE&rsquo;."),
+        ("JazzCash / EasyPaisa", "Mobile wallet transfers accepted. Send to 0332 3610790 with reference &lsquo;CARE&rsquo;."),
         ("Standing Collection", "We can collect donations from your home or office. Contact us to arrange."),
     ]
     ways_html = ""
@@ -722,6 +768,7 @@ def donate():
         '<h2 style="font-size:1.6rem">Bank Details</h2></div>'
         '<p style="color:var(--mid-gray);font-size:.9rem;margin-bottom:1.5rem">Transfer directly to our account. All donations are used transparently for patient care and operations.</p>'
         '<div data-bank>' + bank_html + '</div>'
+        '<p class="mt-2">' + todo("bank details pending confirmation") + '</p>'
         '<button class="btn btn-primary mt-3" data-download-bank>' + icon("download") + 'Download Bank Details</button>'
         '</div>'
         # Other ways + amounts
@@ -807,13 +854,13 @@ def news_events():
 def resources():
     return (
         banner("Resources", "Resources") +
-        '<section class="section bg-white"><div class="container">'
+        '<section id="dearly-loved" class="section bg-white"><div class="container">'
         '<h2 class="section-title">Dearly Loved (CSR)</h2>'
         '<p class="section-subtitle">Our corporate social responsibility programme</p><div class="red-divider"></div>'
         '<div class="max-720"><!-- TODO: content pending -->'
         + note("Dearly Loved (CSR) programme content is pending.") + '</div>'
         '</div></section>'
-        '<section class="section bg-off-white"><div class="container max-720" style="text-align:center">'
+        '<section id="policies-reports" class="section bg-off-white"><div class="container max-720" style="text-align:center">'
         '<h2 class="section-title">Policies &amp; Reports</h2><div class="red-divider"></div>'
         '<p style="color:var(--mid-gray);line-height:1.8">Our policies and annual reports live on the About page.</p>'
         '<div class="cta-actions mt-3">'

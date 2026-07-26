@@ -16,6 +16,16 @@
     });
   }
 
+  /* ---- Mobile submenu toggles (nav dropdowns) ------------- */
+  document.querySelectorAll(".m-toggle").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var item = btn.closest(".m-item");
+      if (!item) return;
+      var open = item.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
+
   /* ---- Search overlay ------------------------------------- */
   var searchOverlay = document.querySelector("[data-search-overlay]");
   var searchOpenBtns = document.querySelectorAll("[data-search-open]");
@@ -68,6 +78,18 @@
       });
     });
   });
+
+  /* ---- Activate a tab from the URL hash (e.g. news-events.html#past) --- */
+  function activateTabFromHash() {
+    var h = (location.hash || "").replace("#", "");
+    if (!h) return;
+    document.querySelectorAll("[data-tabs]").forEach(function (group) {
+      var btn = group.querySelector('.tab-btn[data-tab="' + h + '"]');
+      if (btn) { btn.click(); }
+    });
+  }
+  activateTabFromHash();
+  window.addEventListener("hashchange", activateTabFromHash);
 
   /* ---- Donate amount selection ---------------------------- */
   document.querySelectorAll("[data-amounts] .amount-btn").forEach(function (btn) {
