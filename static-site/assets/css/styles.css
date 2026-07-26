@@ -131,24 +131,29 @@ button { font-family: inherit; cursor: pointer; }
 .topbar-social a { display: inline-flex; align-items: center; gap: .35rem; transition: color .2s; }
 .topbar-social a:hover { color: var(--red); }
 .topbar-social .handle { font-size: .74rem; letter-spacing: .04em; }
+.topbar-social .icon { width: 1.35rem; height: 1.35rem; }
+.topbar-contact .icon { width: 1.05rem; height: 1.05rem; }
 .icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; display: inline-block; vertical-align: -0.125em; flex-shrink: 0; }
 .topbar .icon { color: var(--red); }
 
 /* ---- Header / nav ----------------------------------------- */
 .site-header { position: sticky; top: 0; z-index: 50; background: rgba(250,250,250,.85); backdrop-filter: saturate(1.4) blur(12px); border-bottom: 1px solid var(--line); }
-.navbar .container { display: flex; align-items: center; justify-content: space-between; min-height: 4.5rem; gap: 1rem; }
-.brand { display: flex; align-items: center; gap: .8rem; flex-shrink: 1; min-width: 0; }
-.brand img { width: 42px; height: 42px; }
-.brand-name { font-family: var(--serif); color: var(--ink); font-weight: 700; font-size: 1.4rem; letter-spacing: -0.01em; line-height: 1; }
-.brand-tag { color: var(--muted); font-family: var(--sans); font-size: .58rem; text-transform: uppercase; letter-spacing: .16em; }
+/* Header spreads full-width (content elsewhere stays capped) so the brand + nav
+   sit on one line instead of cramming inside the 1220px content column. */
+.site-header .container { max-width: none; padding-left: 2rem; padding-right: 2rem; }
+.navbar .container { display: flex; align-items: center; justify-content: space-between; min-height: 4.75rem; gap: 1.5rem; }
+.brand { display: flex; align-items: center; gap: .9rem; flex-shrink: 0; }
+.brand img { width: 54px; height: 54px; }
+.brand-name { font-family: var(--serif); color: var(--ink); font-weight: 700; font-size: 1.5rem; letter-spacing: -0.01em; line-height: 1.05; }
+.brand-tag { color: var(--muted); font-family: var(--sans); font-size: .56rem; text-transform: uppercase; letter-spacing: .14em; white-space: nowrap; }
 
 .nav-links { display: none; align-items: center; gap: .1rem; }
 .nav-link {
-  position: relative; color: var(--ink); font-family: var(--sans); font-size: .78rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: .06em; padding: .5rem .55rem; white-space: nowrap;
+  position: relative; color: var(--ink); font-family: var(--sans); font-size: .76rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .03em; padding: .5rem .5rem; white-space: nowrap;
 }
 .nav-link::after {
-  content: ""; position: absolute; left: .55rem; right: .55rem; bottom: .15rem; height: 2px;
+  content: ""; position: absolute; left: .5rem; right: .5rem; bottom: .15rem; height: 2px;
   background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease);
 }
 .nav-link:hover::after, .nav-link[aria-current="page"]::after { transform: scaleX(1); }
@@ -169,7 +174,7 @@ button { font-family: inherit; cursor: pointer; }
 .mobile-menu .btn { margin-top: 1rem; width: 100%; }
 
 @media (max-width: 479px) { .brand-tag { display: none; } .brand-name { font-size: 1.2rem; } }
-@media (min-width: 1160px) {
+@media (min-width: 1360px) {
   .nav-links { display: flex; }
   .nav-actions { display: flex; }
   .hamburger { display: none; }

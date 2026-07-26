@@ -27,7 +27,7 @@ IG_HANDLE = "@CARE_JMDC"
 # Interim office address: Jinnah Medical & Dental College, Karachi (per CARE, "for now").
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "3"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "4"  # bump to cache-bust styles.css / JS after a redesign
 
 NAV = [
     ("Home", "index.html"),
@@ -117,7 +117,7 @@ def header(active):
         '</div>'
         '<div class="topbar-social">'
         '<a href="' + FB + '" target="_blank" rel="noreferrer" aria-label="Facebook on Facebook">' + icon("facebook") + '</a>'
-        '<a href="' + IG + '" target="_blank" rel="noreferrer" aria-label="CARE on Instagram">' + icon("instagram") + '<span class="handle">' + IG_HANDLE + '</span></a>'
+        '<a href="' + IG + '" target="_blank" rel="noreferrer" aria-label="CARE on Instagram">' + icon("instagram") + '</a>'
         '</div>'
         '</div></div>'
     )
