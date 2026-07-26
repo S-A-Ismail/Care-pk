@@ -140,4 +140,41 @@
   /* ---- Footer year --------------------------------------- */
   var yearEl = document.querySelector("[data-year]");
   if (yearEl) { yearEl.textContent = new Date().getFullYear(); }
+
+  /* ---- Scroll reveal (progressive enhancement) ------------ */
+  // The hidden state in CSS only applies under :root.js, which is added
+  // here — so if this script never runs, all content stays visible.
+  var revealSel = ".hero-inner, .section-title, .section-subtitle, .info-box, .card, " +
+    ".feature-media, .feature-body, .flow-step, .partner-cat, .t-card, .quote-card, " +
+    ".timeline-item, .team-member, .event-card, .acc-item, .donate-way, .amount-box, .anchor-nav";
+  var revealEls = Array.prototype.slice.call(document.querySelectorAll(revealSel));
+  if (revealEls.length) {
+    document.documentElement.classList.add("js");
+    var counts = (typeof Map !== "undefined") ? new Map() : null;
+    revealEls.forEach(function (el) {
+      el.setAttribute("data-animate", "");
+      // Stagger by position within the same parent container.
+      var i = 0;
+      if (counts) { i = counts.get(el.parentElement) || 0; counts.set(el.parentElement, i + 1); }
+      el.style.transitionDelay = (Math.min(i, 6) * 70) + "ms";
+    });
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add("in-view"); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+      revealEls.forEach(function (el) { io.observe(el); });
+      // Failsafe: if nothing was revealed shortly after load (unusual
+      // environments where the observer never fires), reveal everything so
+      // content is never stuck hidden.
+      setTimeout(function () {
+        if (!document.querySelector("[data-animate].in-view")) {
+          revealEls.forEach(function (el) { el.classList.add("in-view"); });
+        }
+      }, 1800);
+    } else {
+      revealEls.forEach(function (el) { el.classList.add("in-view"); });
+    }
+  }
 })();

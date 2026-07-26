@@ -27,6 +27,7 @@ IG_HANDLE = "@CARE_JMDC"
 # Interim office address: Jinnah Medical & Dental College, Karachi (per CARE, "for now").
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
+VERSION = "3"  # bump to cache-bust styles.css / JS after a redesign
 
 NAV = [
     ("Home", "index.html"),
@@ -101,8 +102,8 @@ def head(title, description):
         '<link rel="icon" href="assets/logo.png">\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-        '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">\n'
-        '<link rel="stylesheet" href="assets/css/styles.css">'
+        '<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n'
+        '<link rel="stylesheet" href="assets/css/styles.css?v=' + VERSION + '">'
     )
 
 
@@ -208,9 +209,9 @@ def footer():
 
 def scripts():
     return (
-        '<script src="assets/js/search-index.js"></script>'
-        '<script src="assets/js/search.js"></script>'
-        '<script src="assets/js/main.js"></script>'
+        '<script src="assets/js/search-index.js?v=' + VERSION + '"></script>'
+        '<script src="assets/js/search.js?v=' + VERSION + '"></script>'
+        '<script src="assets/js/main.js?v=' + VERSION + '"></script>'
     )
 
 
