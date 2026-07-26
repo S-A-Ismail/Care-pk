@@ -24,6 +24,8 @@ EMAIL = "carejmdc22@gmail.com"
 FB = "https://www.facebook.com/profile.php?id=100084957522371"
 IG = "https://www.instagram.com/care_jmdc/"
 IG_HANDLE = "@CARE_JMDC"
+# Interim office address: Jinnah Medical & Dental College, Karachi (per CARE, "for now").
+ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
 
 NAV = [
@@ -184,8 +186,7 @@ def footer():
         # Contact
         '<div class="footer"><h4>Contact Us</h4><ul class="footer-contact">'
         '<li>' + icon("pin") +
-        # TODO: confirm new office address (\"STH\" floated but unconfirmed) — Lahore address stays for now.
-        '<span><!-- TODO: confirm new office address -->115 CARE Office, Johar Town, Lahore, Pakistan</span></li>'
+        '<span><!-- Interim address: JMDC Karachi (per CARE) -->' + ADDRESS + '</span></li>'
         '<li>' + icon("phone") + '<a href="' + PHONE_HREF + '">' + PHONE + '</a></li>'
         '<li>' + icon("mail") + '<a href="mailto:' + EMAIL + '">' + EMAIL + '</a></li>'
         '</ul></div>'
@@ -741,9 +742,9 @@ def donate():
 
 def news_events():
     upcoming = [
-        ("25", "May", "Health Awareness Workshop", "Lahore", "10:00 AM", "A free health awareness session covering preventive care, nutrition and hygiene for underserved communities."),
-        ("10", "Jun", "Free Medical Camp", "Faisalabad", "9:00 AM", "General medical consultations, basic diagnostics and medicine distribution at no cost."),
-        ("20", "Jun", "Blood Donation Drive", "Islamabad", "11:00 AM", "Community blood donation drive in partnership with local hospitals. All blood types needed."),
+        ("25", "May", "Health Awareness Workshop", "Karachi", "10:00 AM", "A free health awareness session covering preventive care, nutrition and hygiene for underserved communities."),
+        ("10", "Jun", "Free Medical Camp", "Karachi", "9:00 AM", "General medical consultations, basic diagnostics and medicine distribution at no cost."),
+        ("20", "Jun", "Blood Donation Drive", "Karachi", "11:00 AM", "Community blood donation drive in partnership with local hospitals. All blood types needed."),
     ]
     up_html = ""
     for day, month, title, loc, time, desc in upcoming:
@@ -757,8 +758,8 @@ def news_events():
         )
 
     past = [
-        ("Flood Relief Medical Camp 2024", "Sep 2024", "Dera Ghazi Khan"),
-        ("Winter Medical Aid Drive", "Jan 2025", "Lahore"),
+        ("Flood Relief Medical Camp 2024", "Sep 2024", "Karachi"),
+        ("Winter Medical Aid Drive", "Jan 2025", "Karachi"),
         ("Community Health Fair", "Mar 2025", "Karachi"),
     ]
     past_html = ""
@@ -917,9 +918,8 @@ def contact():
         '<div style="display:flex;flex-direction:column;gap:1.25rem">'
         '<div style="display:flex;gap:1rem"><div class="card-icon" style="width:2.5rem;height:2.5rem;margin:0">' + icon("pin") + '</div>'
         '<div><div style="font-weight:600">Office Address</div>'
-        '<!-- TODO: confirm new office address -->'
-        '<div style="color:var(--mid-gray);font-size:.9rem">115 CARE Office, Johar Town, Lahore, Pakistan</div>'
-        '<div class="mt-1">' + todo("new office address pending confirmation") + '</div></div></div>'
+        '<!-- Interim address: JMDC Karachi (per CARE) -->'
+        '<div style="color:var(--mid-gray);font-size:.9rem">' + ADDRESS + '</div></div></div>'
         '<div style="display:flex;gap:1rem"><div class="card-icon" style="width:2.5rem;height:2.5rem;margin:0">' + icon("phone") + '</div>'
         '<div><div style="font-weight:600">Phone</div><a href="' + PHONE_HREF + '" style="color:var(--mid-gray);font-size:.9rem">' + PHONE + '</a></div></div>'
         '<div style="display:flex;gap:1rem"><div class="card-icon" style="width:2.5rem;height:2.5rem;margin:0">' + icon("mail") + '</div>'
