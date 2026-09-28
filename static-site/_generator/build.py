@@ -13,6 +13,8 @@
 #      python _generator/build.py
 #  ...to regenerate every page with the header/footer inlined.
 # ============================================================
+import datetime
+import json
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # -> static-site/
@@ -26,8 +28,16 @@ IG = "https://www.instagram.com/care_jmdc/"
 IG_HANDLE = "@CARE_JMDC"
 # Interim office address: Jinnah Medical & Dental College, Karachi (per CARE, "for now").
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
-FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "7"  # bump to cache-bust styles.css / JS after a redesign
+MAP_QUERY = "Jinnah+Medical+%26+Dental+College+Shaheed-e-Millat+Road+Karachi"
+# TODO: replace YOUR_FORM_ID once the Formspree account is set up. Until then,
+# main.js falls back to opening the visitor's email app with the form pre-filled.
+FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"
+SITE_URL = "https://care-pk.vercel.app"  # canonical / OG / sitemap base — switch to the custom domain when live
+VERSION = "8"  # bump to cache-bust styles.css / JS after a redesign
+# TODO: fill in once CARE confirms the account. While None, the donate page
+# shows "details on request" instead of a table of blanks + a download button.
+BANK_DETAILS = None  # e.g. [("Account Title", "..."), ("Account No", "..."), ("Bank Name", "..."), ("Branch Name", "..."), ("Branch Code", "..."), ("IBAN", "...")]
+JAZZCASH = "0332 3610790"
 
 # Each nav item: (label, href, [ (child_label, child_href), ... ]).
 # Children render as a dropdown (desktop) / collapsible submenu (mobile),
@@ -105,7 +115,8 @@ ICONS = {
     "clipboard": '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>',
     "arrow-right": '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
     "chevron-down": '<polyline points="6 9 12 15 18 9"/>',
-    "bank": '<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+    "copy": '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    "tick": '<polyline points="20 6 9 17 4 12"/>',    "bank": '<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
     "eye": '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>',
     "map": '<polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>',
 }
@@ -118,23 +129,67 @@ def icon(name, cls=""):
             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%s</svg>') % (c, inner)
 
 
-def todo(text):
-    """Visible [TODO] tag + rendered note text (also carries an HTML comment)."""
-    return '<!-- TODO --><span class="todo">TODO</span> ' + text
+# Pending content is marked in two places only: a neutral public
+# "Coming soon" pill / note on the page, and a "# TODO:" Python comment
+# here in the generator. Internal notes (who to ask, what's blocked)
+# never go into the published HTML.
+def todo():
+    """Public 'Coming soon' pill for a pending item."""
+    return '<span class="soon-pill">Coming soon</span>'
 
 
 def note(text):
-    return '<div class="pending-note">' + todo(text) + '</div>'
+    """Public-facing note for a section whose content is pending."""
+    return '<div class="pending-note">' + todo() + ' ' + text + '</div>'
+
+
+AUTOCOMPLETE = {"name": "name", "first_name": "given-name", "last_name": "family-name",
+                "email": "email", "phone": "tel", "organization": "organization"}
+
+
+def field(fid, name, label, kind="text", required=False, options=None):
+    """Form control with a real <label> that floats (Watermelon UI 'Floating Input')."""
+    req = " required" if required else ""
+    star = ' <span class="req" aria-hidden="true">*</span>' if required else ""
+    ac = ' autocomplete="' + AUTOCOMPLETE[name] + '"' if name in AUTOCOMPLETE else ""
+    common = ' id="' + fid + '" name="' + name + '"' + req
+    if kind == "textarea":
+        ctrl = '<textarea' + common + ' placeholder=" "></textarea>'
+    elif kind == "select":
+        opts = '<option value="">Select&hellip;</option>' + "".join('<option>' + o + '</option>' for o in options)
+        ctrl = '<select' + common + '>' + opts + '</select>'
+    else:
+        ctrl = '<input type="' + kind + '"' + common + ac + ' placeholder=" ">'
+    return '<div class="field">' + ctrl + '<label for="' + fid + '">' + label + star + '</label></div>'
+
+
+def copy_btn(value, what):
+    """Copy-to-clipboard pill (Watermelon UI 'Copy Confirm'); wired up in main.js.
+    `what` names the value for screen readers, e.g. "email address"."""
+    return ('<button type="button" class="copy-btn" data-copy="' + value + '">'
+            '<span class="copy-ico">' + icon("copy", "i-copy") + icon("tick", "i-check") + '</span>'
+            '<span class="copy-label" aria-live="polite">Copy</span><span class="sr-only"> ' + what + '</span></button>')
 
 
 # ---- Shared chrome -----------------------------------------
-def head(title, description):
+def head(title, description, filename):
+    url = SITE_URL + "/" + ("" if filename == "index.html" else filename)
     return (
         '<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
         '<title>' + title + '</title>\n'
         '<meta name="description" content="' + description + '">\n'
-        '<link rel="icon" href="assets/logo.png">\n'
+        '<meta name="theme-color" content="#111111">\n'
+        '<link rel="canonical" href="' + url + '">\n'
+        '<meta property="og:type" content="website">\n'
+        '<meta property="og:site_name" content="CARE Pakistan">\n'
+        '<meta property="og:title" content="' + title + '">\n'
+        '<meta property="og:description" content="' + description + '">\n'
+        '<meta property="og:url" content="' + url + '">\n'
+        '<meta property="og:image" content="' + SITE_URL + '/assets/og-image.png">\n'
+        '<meta name="twitter:card" content="summary_large_image">\n'
+        '<link rel="icon" href="assets/logo.png" type="image/png">\n'
+        '<link rel="apple-touch-icon" href="assets/logo.png">\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
         '<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n'
@@ -205,17 +260,23 @@ def header(active):
         '</nav>'
     )
     # Hide desktop nav-actions duplicate on mobile handled by CSS; hide mobile actions on desktop:
+    # Search dialog — result list behaviour ported from Watermelon UI "Command Search".
     search_overlay = (
-        '<div class="search-overlay" data-search-overlay>'
+        '<div class="search-overlay" data-search-overlay role="dialog" aria-modal="true" aria-label="Search the site">'
         '<div class="search-panel">'
         '<div class="search-panel-head">' + icon("search") +
-        '<input type="search" data-search-input placeholder="Search pages…" aria-label="Search pages">'
+        '<input type="search" data-search-input placeholder="Search pages…" aria-label="Search pages" '
+        'role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" autocomplete="off">'
+        '<kbd>Esc</kbd>'
         '<button class="icon-btn" data-search-close aria-label="Close search">' + icon("x") + '</button>'
         '</div>'
-        '<div class="search-results" data-search-results></div>'
+        '<div class="search-results" id="search-results" role="listbox" data-search-results></div>'
+        '<div class="search-foot" aria-hidden="true"><span><kbd>&uarr;</kbd><kbd>&darr;</kbd> to move</span>'
+        '<span><kbd>Enter</kbd> to open</span><span><kbd>/</kbd> to search anywhere</span></div>'
         '</div></div>'
     )
-    return '<header class="site-header">' + top + nav + '</header>' + search_overlay
+    skip = '<a class="skip-link" href="#main">Skip to content</a>'
+    return skip + '<header class="site-header">' + top + nav + '</header>' + search_overlay
 
 
 def footer():
@@ -238,7 +299,7 @@ def footer():
         # Contact
         '<div class="footer"><h4>Contact Us</h4><ul class="footer-contact">'
         '<li>' + icon("pin") +
-        '<span><!-- Interim address: JMDC Karachi (per CARE) -->' + ADDRESS + '</span></li>'
+        '<span>' + ADDRESS + '</span></li>'
         '<li>' + icon("phone") + '<a href="' + PHONE_HREF + '">' + PHONE + '</a></li>'
         '<li>' + icon("mail") + '<a href="mailto:' + EMAIL + '">' + EMAIL + '</a></li>'
         '</ul></div>'
@@ -246,9 +307,8 @@ def footer():
         '<div class="footer"><h4>Newsletter</h4>'
         '<p style="color:rgba(255,255,255,.7);font-size:.9rem;margin-bottom:1rem">Stay updated with our latest news and events.</p>'
         '<form class="newsletter" data-ajax action="' + FORMSPREE + '" method="POST">'
-        '<!-- TODO: replace YOUR_FORM_ID with your Formspree (or Mailchimp) form ID -->'
-        '<input type="text" name="name" placeholder="Your Name" aria-label="Your name">'
-        '<input type="email" name="email" placeholder="Your Email" required aria-label="Your email">'
+        '<input type="hidden" name="_subject" value="Newsletter signup">'
+        + field("nl-name", "name", "Your name") + field("nl-email", "email", "Your email", "email", True) +
         '<button type="submit" class="btn btn-primary">Subscribe</button>'
         '<p class="form-status" role="status"></p>'
         '</form></div>'
@@ -266,10 +326,10 @@ def scripts():
     )
 
 
-def page(filename, title, description, active, body):
+def page(filename, title, description, active, body, extra_head=""):
     doc = (
-        '<!doctype html>\n<html lang="en">\n<head>\n' + head(title, description) + '\n</head>\n<body>\n'
-        + header(active) + '\n<main>\n' + body + '\n</main>\n' + footer() + '\n' + scripts() + '\n</body>\n</html>\n'
+        '<!doctype html>\n<html lang="en">\n<head>\n' + extra_head + head(title, description, filename) + '\n</head>\n<body>\n'
+        + header(active) + '\n<main id="main" tabindex="-1">\n' + body + '\n</main>\n' + footer() + '\n' + scripts() + '\n</body>\n</html>\n'
     )
     with open(os.path.join(ROOT, filename), "w", encoding="utf-8") as f:
         f.write(doc)
@@ -298,6 +358,19 @@ def banner(title, crumb):
         '<p class="breadcrumb"><a href="index.html">Home</a> / ' + crumb + '</p>'
         '</div></section>'
     )
+
+
+# The two figures already published on the site. Shown identically on the
+# home strip and the Impact page so the site never contradicts itself.
+HEADLINE_STATS = [("users", "500+", "Patients Supported"), ("heart", "50+", "Dedicated Volunteers")]
+PENDING_STATS = ["Medications Provided", "Medical Camps", "Partner Hospitals", "Beneficiary Families"]
+
+
+def impact_soon_panel():
+    chips = "".join('<span>' + s + '</span>' for s in PENDING_STATS)
+    return ('<div class="soon-panel"><div><h3>Full impact report ' + todo() + '</h3>'
+            '<p>We&rsquo;re verifying the rest of our figures before we publish them, so every number here can be trusted.</p></div>'
+            '<div class="soon-chips">' + chips + '</div></div>')
 
 
 def cta_band():
@@ -330,13 +403,9 @@ def home():
         cards_html += ('<a class="card" href="' + href + '"><div class="card-icon">' + icon(ic) +
                        '</div><h3>' + title + '</h3><p>' + desc + '</p></a>')
 
-    impact_labels = ["Patients Supported", "Medications Provided", "Medical Camps",
-                     "Volunteers", "Partner Hospitals", "Beneficiary Families"]
-    matrix = ""
-    for lbl in impact_labels:
-        matrix += ('<div class="card"><div class="stat-value" style="color:var(--mid-gray);font-size:1.15rem">Coming soon</div>'
-                   '<div class="stat-label" style="margin-top:.35rem">' + lbl + '</div>'
-                   '<div style="margin-top:.6rem">' + todo("figure pending") + '</div></div>')
+    # TODO: CARE team to supply verified figures; until then one compact
+    # panel replaces six empty stat cards.
+    impact_soon = impact_soon_panel()
 
     journey = ["Patient Visits Care", "Medical Assessment", "Prescription Verification",
                "Medicine Support", "Follow-up", "Improved Healthcare Outcomes"]
@@ -353,8 +422,7 @@ def home():
     ]
     partner_html = ""
     for ic, name in partners:
-        partner_html += ('<div class="partner-cat">' + icon(ic) + '<h4>' + name + '</h4>'
-                         '<p>Logos coming soon</p></div>')
+        partner_html += '<div class="partner-cat">' + icon(ic) + '<h4>' + name + '</h4></div>'
 
     transparency = [
         ("file", "Annual Report", "Yearly overview of our work and reach.", "about.html#annual-reports"),
@@ -390,9 +458,9 @@ def home():
 
         # 2. Impact snapshot teaser
         '<section class="stat-strip"><div class="container">'
-        '<div class="stat-item">' + icon("users") + '<div><div class="stat-value">500+</div><div class="stat-label">Patients Supported</div></div></div>'
-        '<!-- TODO: confirm volunteer figure with CARE team -->'
-        '<div class="stat-item">' + icon("heart") + '<div><div class="stat-value">50+</div><div class="stat-label">Dedicated Volunteers</div></div></div>'
+        # TODO: confirm the volunteer figure with the CARE team (shared with impact()).
+        + "".join('<div class="stat-item">' + icon(ic) + '<div><div class="stat-value" data-count>' + val + '</div>'
+                  '<div class="stat-label">' + lbl + '</div></div></div>' for ic, val, lbl in HEADLINE_STATS) +
         '</div></section>'
 
         # 3. Why CARE Exists
@@ -420,10 +488,9 @@ def home():
         # 5. Our Impact matrix
         '<section class="section bg-white"><div class="container">'
         '<h2 class="section-title">Our Impact</h2>'
-        '<p class="section-subtitle">Verified figures are being finalised by the CARE team.</p><div class="red-divider"></div>'
-        '<!-- TODO: CARE team to supply verified figures for all six -->'
-        '<div class="grid grid-3">' + matrix + '</div>'
-        '<div class="center-btn"><a class="btn btn-outline" href="impact.html">See Full Impact</a></div>'
+        '<p class="section-subtitle">Every figure we publish is verified first.</p><div class="red-divider"></div>'
+        + impact_soon +
+        '<div class="center-btn"><a class="btn btn-outline" href="impact.html">See Our Impact</a></div>'
         '</div></section>'
 
         # 6. Patient Journey
@@ -432,7 +499,7 @@ def home():
         '<p class="section-subtitle">How support reaches a patient, step by step</p><div class="red-divider"></div>'
         '<div class="flow">' + flow + '</div>'
         '<div class="grid grid-3 mt-4">'
-        '<!-- TODO: photos pending from Adeena -->'
+        # TODO: journey photos pending from the CARE team.
         '<div class="placeholder-box">Volunteers distributing medication &mdash; photo coming soon</div>'
         '<div class="placeholder-box">Prescription verification &mdash; photo coming soon</div>'
         '<div class="placeholder-box">Zakat form being completed &mdash; photo coming soon</div>'
@@ -442,8 +509,9 @@ def home():
         '<section class="section bg-white"><div class="container">'
         '<h2 class="section-title">Our Partners</h2>'
         '<p class="section-subtitle">We work alongside a growing network of partners across sectors.</p><div class="red-divider"></div>'
+        # TODO: partner logos and names pending.
         '<div class="partner-grid">' + partner_html + '</div>'
-        '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("partner logos and names pending") + '</p>'
+        '<p class="text-center mt-3" style="color:var(--muted);font-size:.85rem">' + todo() + ' Partner logos</p>'
         '</div></section>'
 
         # 8. Transparency
@@ -529,8 +597,9 @@ def about():
         '<div class="prose max-720" style="text-align:center">'
         '<p>CARE began with a simple conviction: that no one should go without essential care because of cost or circumstance. From a small student-led effort, we have grown into an organization running a Drug Bank, medical camps and community outreach.</p>'
         '</div>'
-        '<div class="max-720 mt-4"><!-- TODO: confirm founding/launch date with Junaid Bhai -->'
-        + note("confirm founding / launch dates and other milestone dates with Junaid Bhai.") +
+        # TODO: confirm founding / launch and other milestone dates with the CARE team.
+        '<div class="max-720 mt-4">'
+        + note("Milestone dates will be added shortly.") +
         '<div class="timeline mt-3">' + tl + '</div></div>'
         '</div></section>'
 
@@ -541,7 +610,8 @@ def about():
         '<h3 style="text-align:center;margin-bottom:1.5rem">Core Team</h3>' + team_grid(core) +
         '<h3 style="text-align:center;margin:3rem 0 1.5rem">Board of Governors</h3>' + team_grid(board) +
         '<h3 style="text-align:center;margin:3rem 0 1.5rem">Advisory Board</h3>' + team_grid(advisory) +
-        '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm names, roles and photos of leadership") + '</p>'
+        # TODO: confirm names, roles and photos of leadership.
+        '<p class="text-center mt-3" style="color:var(--muted);font-size:.85rem">' + todo() + ' Team photos</p>'
         '</div></section>'
 
         # Governance & Partners
@@ -564,7 +634,7 @@ def about():
         # Annual Reports
         '<section id="annual-reports" class="section bg-white"><div class="container max-720" style="text-align:center">'
         '<h2 class="section-title">Annual Reports</h2><div class="red-divider"></div>'
-        '<!-- TODO: reports pending -->'
+        # TODO: reports pending.
         + note("Annual Reports and Financial Statements will be published here as downloadable PDFs once available.") +
         '</div></section>'
 
@@ -599,12 +669,14 @@ def programs():
 
     rows = ""
     for i, (sid, ic, title, desc, bullets) in enumerate(sections):
-        media = '<div class="feature-media"><div class="placeholder-box" style="min-height:18rem"><!-- TODO: photos pending from Adeena -->Program photo &mdash; coming soon</div></div>'
+        # TODO: programme photos pending from the CARE team.
+        media = '<div class="feature-media"><div class="placeholder-box" style="min-height:18rem">Program photo &mdash; coming soon</div></div>'
         if desc is None:
+            # TODO: Drug Bank copy pending — the CARE team is writing it.
             body = ('<div class="feature-body"><div class="badge">' + icon(ic) + '</div>'
                     '<h2>' + title + '</h2>'
-                    '<!-- TODO: content pending, CARE team is writing this one -->'
-                    + note("Drug Bank programme copy is being written by the CARE team.") + '</div>')
+                    '<p>Our Drug Bank supports access to prescribed medicines for patients who cannot afford them.</p>'
+                    + note("A full write-up of how the Drug Bank works is on its way.") + '</div>')
         else:
             bl = "".join('<li>' + b + '</li>' for b in bullets)
             body = ('<div class="feature-body"><div class="badge">' + icon(ic) + '</div>'
@@ -625,25 +697,23 @@ def programs():
 
 
 def impact():
-    labels = ["Patients Supported", "Medications Provided", "Medical Camps",
-              "Volunteers", "Partner Hospitals", "Beneficiary Families"]
-    matrix = ""
-    for lbl in labels:
-        matrix += ('<div class="card"><div class="stat-value" style="color:var(--mid-gray);font-size:1.15rem">Coming soon</div>'
-                   '<div class="stat-label" style="margin-top:.35rem">' + lbl + '</div>'
-                   '<div style="margin-top:.6rem">' + todo("figure pending") + '</div></div>')
+    stats = "".join('<div class="card impact-stat"><div class="card-icon">' + icon(ic) + '</div>'
+                    '<div class="stat-value" data-count>' + val + '</div><div class="stat-label">' + lbl + '</div></div>'
+                    for ic, val, lbl in HEADLINE_STATS)
+    # TODO: blocked on verified figures (same as homepage) — add them to
+    # HEADLINE_STATS as they are confirmed and drop them from PENDING_STATS.
     return (
         banner("Impact", "Impact") +
         '<section id="numbers" class="section bg-white"><div class="container">'
         '<h2 class="section-title">Our Impact in Numbers</h2>'
-        '<p class="section-subtitle">Verified figures are being finalised by the CARE team.</p><div class="red-divider"></div>'
-        '<!-- TODO: blocked on verified figures, same as homepage -->'
-        '<div class="grid grid-3">' + matrix + '</div>'
+        '<p class="section-subtitle">Every figure we publish is verified first.</p><div class="red-divider"></div>'
+        '<div class="grid grid-2 max-720">' + stats + '</div>'
+        '<div class="mt-4">' + impact_soon_panel() + '</div>'
         '</div></section>'
         '<section id="dashboard" class="section bg-off-white"><div class="container">'
         '<h2 class="section-title">Impact Dashboard</h2>'
         '<p class="section-subtitle">Detailed breakdowns by programme, region and year</p><div class="red-divider"></div>'
-        + '<div class="max-720">' + note("Impact Dashboard is blocked on verified figures. Once the CARE team supplies the numbers, this area will show breakdowns (e.g. patients by programme, medicines by category, camps by city).") + '</div>'
+        + '<div class="max-720">' + note("Once our figures are verified, this area will show breakdowns such as patients by programme, medicines by category and camps by city.") + '</div>'
         '</div></section>'
         + cta_band()
     )
@@ -669,7 +739,6 @@ def get_involved():
             '<h2 class="section-title">' + title + '</h2>'
             '<p class="section-subtitle">' + desc + '</p><div class="red-divider"></div>'
             '<form class="form" data-ajax action="' + FORMSPREE + '" method="POST">'
-            '<!-- TODO: replace YOUR_FORM_ID with your Formspree form ID -->'
             '<input type="hidden" name="_subject" value="Get Involved: ' + title + '">'
             + extra_fields +
             '<button type="submit" class="btn btn-primary">Submit</button>'
@@ -682,39 +751,34 @@ def get_involved():
     # Volunteer (carry over existing fields incl. Area of Interest)
     volunteer_fields = (
         '<div class="form-row">'
-        '<input type="text" name="first_name" placeholder="First Name" required>'
-        '<input type="text" name="last_name" placeholder="Last Name" required>'
+        + field("vol-first", "first_name", "First name", required=True)
+        + field("vol-last", "last_name", "Last name", required=True) +
         '</div>'
-        '<input type="email" name="email" placeholder="Email Address" required>'
-        '<input type="tel" name="phone" placeholder="Phone Number">'
-        '<select name="area_of_interest" aria-label="Area of Interest">'
-        '<option value="">Area of Interest</option>'
-        '<option>Medical / Paramedic</option>'
-        '<option>Community Outreach</option>'
-        '<option>Administration</option>'
-        '<option>Fundraising</option>'
-        '<option>Social Media / Communications</option>'
-        '</select>'
-        '<textarea name="message" placeholder="Tell us about yourself and why you want to volunteer..."></textarea>'
+        + field("vol-email", "email", "Email address", "email", True)
+        + field("vol-phone", "phone", "Phone number", "tel")
+        + field("vol-area", "area_of_interest", "Area of interest", "select",
+                options=["Medical / Paramedic", "Community Outreach", "Administration",
+                         "Fundraising", "Social Media / Communications"])
+        + field("vol-msg", "message", "Tell us about yourself and why you want to volunteer", "textarea")
     )
 
-    def org_fields(org_label, msg_label):
+    def org_fields(pid, org_label, msg_label):
         return (
             '<div class="form-row">'
-            '<input type="text" name="name" placeholder="Contact Name" required>'
-            '<input type="email" name="email" placeholder="Email Address" required>'
+            + field(pid + "-name", "name", "Contact name", required=True)
+            + field(pid + "-email", "email", "Email address", "email", True) +
             '</div>'
-            '<input type="text" name="organization" placeholder="' + org_label + '" required>'
-            '<textarea name="message" placeholder="' + msg_label + '"></textarea>'
+            + field(pid + "-org", "organization", org_label, required=True)
+            + field(pid + "-msg", "message", msg_label, "textarea")
         )
 
     fields_by_id = {
         "volunteer": volunteer_fields,
-        "partner": org_fields("Organisation Name", "How would you like to partner with CARE?"),
-        "corporate": org_fields("Company Name", "Tell us about your corporate giving or engagement goals."),
-        "csr": org_fields("Company / Organisation", "Tell us about your CSR objectives (e.g. Dearly Loved)."),
-        "universities": org_fields("University / Institution", "How would your university like to get involved?"),
-        "funders": org_fields("Organisation / Foundation", "Tell us about your funding interests and focus areas."),
+        "partner": org_fields("partner", "Organisation name", "How would you like to partner with CARE?"),
+        "corporate": org_fields("corporate", "Company name", "Your corporate giving or engagement goals"),
+        "csr": org_fields("csr", "Company / organisation", "Your CSR objectives (e.g. Dearly Loved)"),
+        "universities": org_fields("universities", "University / institution", "How would your university like to get involved?"),
+        "funders": org_fields("funders", "Organisation / foundation", "Your funding interests and focus areas"),
     }
 
     blocks = ""
@@ -739,46 +803,46 @@ def get_involved():
 
 
 def donate():
-    # Bank details are placeholders pending real account information.
-    bank_labels = ["Account Title", "Account No", "Bank Name", "Branch Name", "Branch Code", "IBAN"]
-    bank_html = "<!-- TODO: bank details pending — empty placeholders for now -->"
-    for k in bank_labels:
-        bank_html += ('<div class="bank-row"><span class="k">' + k + '</span>'
-                      '<span class="v" style="color:var(--muted);font-weight:400">To be provided</span></div>')
+    # Bank table + download button appear only once BANK_DETAILS is filled in;
+    # until then visitors get a clear "on request" path instead of blanks.
+    if BANK_DETAILS:
+        bank_html = "".join('<div class="bank-row"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>'
+                            for k, v in BANK_DETAILS)
+        bank_block = ('<div data-bank>' + bank_html + '</div>'
+                      '<button class="btn btn-primary mt-3" data-download-bank>' + icon("download") + 'Download Bank Details</button>')
+    else:
+        bank_block = ('<div class="donate-way"><div><div class="w-title">Account details on request</div>'
+                      '<div class="w-desc">Our bank account details will be published here shortly. In the meantime, email or call us and we&rsquo;ll share them directly.</div>'
+                      '<div class="copy-row"><a class="btn btn-outline" href="mailto:' + EMAIL + '?subject=Bank%20transfer%20details" style="padding:.55rem 1.1rem">'
+                      + icon("mail") + 'Request by email</a>' + copy_btn(EMAIL, "email address") + '</div></div></div>')
 
     ways = [
-        ("In-Person Donation", "Visit our office and contribute directly. Our team will issue an official receipt."),
-        ("JazzCash / EasyPaisa", "Mobile wallet transfers accepted. Send to 0332 3610790 with reference &lsquo;CARE&rsquo;."),
-        ("Standing Collection", "We can collect donations from your home or office. Contact us to arrange."),
+        ("In-Person Donation", "Visit our office and contribute directly. Our team will issue an official receipt.", ""),
+        ("JazzCash / EasyPaisa", "Mobile wallet transfers accepted. Send to <strong>" + JAZZCASH + "</strong> with reference &lsquo;CARE&rsquo;.",
+         '<div class="copy-row">' + copy_btn(JAZZCASH.replace(" ", ""), "JazzCash / EasyPaisa number") + '</div>'),
+        ("Standing Collection", "We can collect donations from your home or office. Contact us to arrange.", ""),
     ]
     ways_html = ""
-    for t, d in ways:
+    for t, d, extra in ways:
         ways_html += ('<div class="donate-way"><div><div class="w-title">' + t + '</div>'
-                      '<div class="w-desc">' + d + '</div></div></div>')
-
-    amounts = [1000, 2500, 5000, 10000, 25000]
-    amt_btns = "".join('<button type="button" class="amount-btn">PKR ' + format(a, ",") + '</button>' for a in amounts)
-    amt_btns += '<button type="button" class="amount-btn">Custom</button>'
+                      '<div class="w-desc">' + d + '</div>' + extra + '</div></div>')
 
     return (
         banner("Donate", "Donate") +
         '<section class="section bg-white"><div class="container grid grid-2">'
         # Bank details
         '<div><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">' + icon("bank", "") +
-        '<h2 style="font-size:1.6rem">Bank Details</h2></div>'
-        '<p style="color:var(--mid-gray);font-size:.9rem;margin-bottom:1.5rem">Transfer directly to our account. All donations are used transparently for patient care and operations.</p>'
-        '<div data-bank>' + bank_html + '</div>'
-        '<p class="mt-2">' + todo("bank details pending confirmation") + '</p>'
-        '<button class="btn btn-primary mt-3" data-download-bank>' + icon("download") + 'Download Bank Details</button>'
+        '<h2 style="font-size:1.6rem">Bank Transfer</h2></div>'
+        '<p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem">Transfer directly to our account. All donations are used transparently for patient care and operations.</p>'
+        + bank_block +
         '</div>'
-        # Other ways + amounts
+        # Other ways
         '<div><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">' + icon("dollar") +
         '<h2 style="font-size:1.6rem">Other Ways to Donate</h2></div>'
         + ways_html +
-        '<div class="amount-box mt-3" data-amounts>'
-        '<div style="color:var(--primary);font-weight:600;margin-bottom:.5rem">Online Payment &mdash; Coming Soon</div>'
-        '<div style="color:var(--mid-gray);font-size:.9rem">Secure online donations via card / mobile wallets will be available shortly.</div>'
-        '<div class="amount-grid">' + amt_btns + '</div>'
+        '<div class="amount-box mt-3">'
+        '<div style="color:var(--red);font-weight:700;margin-bottom:.5rem">Online Payment ' + todo() + '</div>'
+        '<div style="color:var(--muted);font-size:.9rem">Secure card and mobile-wallet donations will be available here shortly.</div>'
         '</div></div>'
         '</div></section>'
         # Trust statement
@@ -790,20 +854,37 @@ def donate():
 
 def news_events():
     upcoming = [
-        ("25", "May", "Health Awareness Workshop", "Karachi", "10:00 AM", "A free health awareness session covering preventive care, nutrition and hygiene for underserved communities."),
-        ("10", "Jun", "Free Medical Camp", "Karachi", "9:00 AM", "General medical consultations, basic diagnostics and medicine distribution at no cost."),
-        ("20", "Jun", "Blood Donation Drive", "Karachi", "11:00 AM", "Community blood donation drive in partnership with local hospitals. All blood types needed."),
+        # (ISO date, title, location, time, description). Events past their date are
+        # dropped at build time AND hidden in the browser by main.js, so the page
+        # never shows a stale "upcoming" event even if nobody rebuilds it.
+        # The earlier May/June entries (25 May workshop, 10 Jun medical camp,
+        # 20 Jun blood drive) had no year and have passed, so they were removed.
+        # TODO: add the next confirmed events here, e.g.
+        # ("2026-11-15", "Free Medical Camp", "Karachi", "9:00 AM", "General consultations, basic diagnostics and medicines at no cost."),
     ]
+    today = datetime.date.today().isoformat()
     up_html = ""
-    for day, month, title, loc, time, desc in upcoming:
+    for iso, title, loc, time, desc in upcoming:
+        if iso < today:
+            continue
+        d = datetime.date.fromisoformat(iso)
         up_html += (
-            '<div class="event-card"><div class="event-date"><div class="day">' + day + '</div>'
-            '<div class="month">' + month + '</div></div>'
+            '<div class="event-card" data-date="' + iso + '"><div class="event-date"><div class="day">' + str(d.day) + '</div>'
+            '<div class="month">' + d.strftime("%b %Y") + '</div></div>'
             '<div class="event-body"><h3>' + title + '</h3>'
             '<div class="event-meta">' + icon("pin") + loc + '</div>'
             '<div class="event-meta">' + icon("clock") + time + '</div>'
             '<p>' + desc + '</p></div></div>'
         )
+    no_upcoming = (
+        '<div class="empty-state" data-events-empty' + ('' if not up_html else ' hidden') + '>'
+        '<h3>No upcoming events right now</h3>'
+        '<p>New medical camps, workshops and drives are announced first on our social channels.</p>'
+        '<div class="cta-actions">'
+        '<a class="btn btn-outline" href="' + IG + '" target="_blank" rel="noreferrer">' + icon("instagram") + 'Follow on Instagram</a>'
+        '<a class="btn btn-outline" href="' + FB + '" target="_blank" rel="noreferrer">' + icon("facebook") + 'Follow on Facebook</a>'
+        '</div></div>'
+    )
 
     past = [
         ("Flood Relief Medical Camp 2024", "Sep 2024", "Karachi"),
@@ -813,18 +894,20 @@ def news_events():
     past_html = ""
     for title, date, loc in past:
         past_html += (
+            # TODO: past-event photos pending from the CARE team.
             '<div class="event-card"><div class="placeholder-box" style="min-height:9rem;border-radius:var(--radius) var(--radius) 0 0">'
-            '<!-- TODO: photos pending from Adeena -->Photo coming soon</div>'
+            'Photo coming soon</div>'
             '<div class="event-body"><h3>' + title + '</h3>'
             '<div class="event-meta">' + icon("calendar") + date + '</div>'
             '<div class="event-meta">' + icon("pin") + loc + '</div></div></div>'
         )
 
+    # TODO: latest news content pending.
     news_cats = ["Medical Camps", "Volunteer Activities", "Outreach", "Partnership", "CSR (Dearly Loved)"]
-    news_html = ""
-    for cat in news_cats:
-        news_html += ('<div class="card"><h3>' + cat + '</h3>'
-                      '<p>' + todo("latest news content pending") + '</p></div>')
+    news_html = ('<div class="empty-state"><h3>News updates ' + todo() + '</h3>'
+                 '<p>Stories from across our programmes will be posted here.</p>'
+                 '<div class="soon-chips" style="justify-content:center;margin-top:1.25rem">'
+                 + "".join('<span>' + c + '</span>' for c in news_cats) + '</div></div>')
 
     return (
         banner("News &amp; Events", "News &amp; Events") +
@@ -837,7 +920,7 @@ def news_events():
         # Upcoming
         '<div class="tab-panel active" data-panel="upcoming">'
         '<h2 class="section-title">Upcoming Events</h2><div class="red-divider"></div>'
-        '<div class="event-grid">' + up_html + '</div></div>'
+        '<div class="event-grid" data-events>' + up_html + '</div>' + no_upcoming + '</div>'
         # Past
         '<div class="tab-panel" data-panel="past">'
         '<h2 class="section-title">Past Events</h2><div class="red-divider"></div>'
@@ -846,7 +929,7 @@ def news_events():
         '<div class="tab-panel" data-panel="news">'
         '<h2 class="section-title">Latest News</h2>'
         '<p class="section-subtitle">Updates across our programmes</p><div class="red-divider"></div>'
-        '<div class="grid grid-3">' + news_html + '</div></div>'
+        + news_html + '</div>'
         '</div></section>'
     )
 
@@ -857,8 +940,9 @@ def resources():
         '<section id="dearly-loved" class="section bg-white"><div class="container">'
         '<h2 class="section-title">Dearly Loved (CSR)</h2>'
         '<p class="section-subtitle">Our corporate social responsibility programme</p><div class="red-divider"></div>'
-        '<div class="max-720"><!-- TODO: content pending -->'
-        + note("Dearly Loved (CSR) programme content is pending.") + '</div>'
+        # TODO: Dearly Loved content pending.
+        '<div class="max-720">'
+        + note("Details of the Dearly Loved programme will be published here shortly. Interested in CSR? <a href=\"get-involved.html#csr\" style=\"color:var(--red);font-weight:600\">Get in touch</a>.") + '</div>'
         '</div></section>'
         '<section id="policies-reports" class="section bg-off-white"><div class="container max-720" style="text-align:center">'
         '<h2 class="section-title">Policies &amp; Reports</h2><div class="red-divider"></div>'
@@ -883,24 +967,26 @@ def governance():
         '<section class="section bg-white"><div class="container">'
         '<h2 class="section-title">Governance Structure</h2>'
         '<p class="section-subtitle">How CARE is governed and held accountable</p><div class="red-divider"></div>'
-        '<div class="max-720"><!-- TODO: content pending -->'
-        + note("Full governance structure and registration details are pending.") + '</div>'
+        # TODO: governance structure + registration details pending; confirm board details and photos.
+        '<div class="max-720">'
+        + note("Our full governance structure and registration details will be published here shortly.") + '</div>'
         '<h3 style="text-align:center;margin:3rem 0 1.5rem">Board of Governors</h3>' + grid +
-        '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm board details and photos") + '</p>'
         '</div></section>'
     )
 
 
 def faq():
+    # TODO: CARE team to confirm the allocation breakdown, security / receipting
+    # details and verified reach figures for the answers below.
+    # TODO: a 4th FAQ item from the original notes came through unclear — possibly
+    # registration / legitimacy, or Zakat / tax eligibility. Add it once confirmed.
     items = [
         ("Where does my money go?",
-         'Donations support CARE&rsquo;s programmes &mdash; essential medicines and the Drug Bank, medical camps, patient support, and community outreach. ' + todo("CARE team to confirm the exact allocation breakdown.")),
+         'Donations support CARE&rsquo;s programmes &mdash; essential medicines and the Drug Bank, medical camps, patient support, and community outreach.'),
         ("How secure is it?",
-         'Contributions can be made by direct bank transfer to our verified account, and all donations are used transparently for patient care and operations, with regular impact reports shared with donors. ' + todo("confirm security / receipting details.")),
+         'Contributions can be made by direct bank transfer to our verified account, and all donations are used transparently for patient care and operations, with regular impact reports shared with donors.'),
         ("How many people does it reach?",
-         'CARE has supported hundreds of patients and dozens of volunteers to date. Verified, up-to-date figures are being finalised &mdash; see the <a href="impact.html">Impact</a> page. ' + todo("verified reach figures pending.")),
-        ("[TODO] Confirm the intended 4th FAQ topic",
-         '<!-- TODO: confirm the intended 4th FAQ topic --> ' + todo("one FAQ item from the original notes came through unclear &mdash; possibly about registration / legitimacy, or Zakat / tax eligibility (a Zakat form was mentioned elsewhere in the notes). Confirm the intended question and answer.")),
+         'CARE has supported hundreds of patients and dozens of volunteers to date &mdash; see the <a href="impact.html" style="color:var(--red);font-weight:600">Impact</a> page for our verified figures.'),
     ]
     acc = '<div class="accordion">'
     for q, a in items:
@@ -924,8 +1010,10 @@ def policy_page(title, crumb, intro):
         '<section class="section bg-white"><div class="container max-720">'
         '<h2 class="section-title">' + title + '</h2><div class="red-divider"></div>'
         '<p style="color:var(--mid-gray);line-height:1.8;text-align:center">' + intro + '</p>'
-        '<div class="mt-4"><!-- TODO: check whether the org\'s lawyer already drafted these during registration before writing from scratch -->'
-        + note("Before writing this policy from scratch, check whether the organisation&rsquo;s lawyer already drafted it during registration. Final policy text is pending.") +
+        # TODO: before writing policies from scratch, check whether the org's lawyer
+        # already drafted them during registration.
+        '<div class="mt-4">'
+        + note("The full policy text will be published here shortly. For questions in the meantime, email <a href=\"mailto:" + EMAIL + "\" style=\"color:var(--red);font-weight:600\">" + EMAIL + "</a>.") +
         '</div></div></section>'
     )
 
@@ -966,12 +1054,13 @@ def contact():
         '<div style="display:flex;flex-direction:column;gap:1.25rem">'
         '<div style="display:flex;gap:1rem"><div class="card-icon" style="width:2.5rem;height:2.5rem;margin:0">' + icon("pin") + '</div>'
         '<div><div style="font-weight:600">Office Address</div>'
-        '<!-- Interim address: JMDC Karachi (per CARE) -->'
         '<div style="color:var(--mid-gray);font-size:.9rem">' + ADDRESS + '</div></div></div>'
         '<div style="display:flex;gap:1rem"><div class="card-icon" style="width:2.5rem;height:2.5rem;margin:0">' + icon("phone") + '</div>'
-        '<div><div style="font-weight:600">Phone</div><a href="' + PHONE_HREF + '" style="color:var(--mid-gray);font-size:.9rem">' + PHONE + '</a></div></div>'
+        '<div><div style="font-weight:600">Phone</div><a href="' + PHONE_HREF + '" style="color:var(--mid-gray);font-size:.9rem">' + PHONE + '</a>'
+        '<div class="copy-row">' + copy_btn(PHONE, "phone number") + '</div></div></div>'
         '<div style="display:flex;gap:1rem"><div class="card-icon" style="width:2.5rem;height:2.5rem;margin:0">' + icon("mail") + '</div>'
-        '<div><div style="font-weight:600">Email</div><a href="mailto:' + EMAIL + '" style="color:var(--mid-gray);font-size:.9rem">' + EMAIL + '</a></div></div>'
+        '<div><div style="font-weight:600">Email</div><a href="mailto:' + EMAIL + '" style="color:var(--mid-gray);font-size:.9rem">' + EMAIL + '</a>'
+        '<div class="copy-row">' + copy_btn(EMAIL, "email address") + '</div></div></div>'
         '</div>'
         '<div class="footer-social mt-3" style="margin-top:2rem">'
         '<a href="' + FB + '" target="_blank" rel="noreferrer" aria-label="Facebook" style="color:var(--mid-gray)">' + icon("facebook") + '</a>'
@@ -980,22 +1069,34 @@ def contact():
         # Form
         '<div><h2 style="font-size:1.8rem;margin-bottom:1.5rem">Send Us a Message</h2>'
         '<form class="form" data-ajax action="' + FORMSPREE + '" method="POST">'
-        '<!-- TODO: replace YOUR_FORM_ID with your Formspree form ID -->'
         '<div class="form-row">'
-        '<input type="text" name="name" placeholder="Your Name" required>'
-        '<input type="email" name="email" placeholder="Email Address" required>'
+        + field("c-name", "name", "Your name", required=True)
+        + field("c-email", "email", "Email address", "email", True) +
         '</div>'
-        '<input type="tel" name="phone" placeholder="Phone Number (optional)">'
-        '<input type="text" name="subject" placeholder="Subject" required>'
-        '<textarea name="message" placeholder="Your message..." required></textarea>'
+        + field("c-phone", "phone", "Phone number (optional)", "tel")
+        + field("c-subject", "subject", "Subject", required=True)
+        + field("c-msg", "message", "Your message", "textarea", True) +
         '<button type="submit" class="btn btn-primary">Send Message</button>'
         '<p class="form-status" role="status"></p>'
         '</form></div>'
         '</div></section>'
-        # Map placeholder
-        '<div class="map-placeholder placeholder-box" style="border-radius:0">'
-        '<!-- TODO: Google Maps embed needs an API key; carrying over the placeholder until one is available -->'
-        'Google Maps embed &mdash; pending API key</div>'
+        # Map: a link out to Google Maps (no API key, no third-party iframe).
+        '<a class="map-placeholder placeholder-box map-link" style="border-radius:0" target="_blank" rel="noreferrer" '
+        'href="https://www.google.com/maps/search/?api=1&amp;query=' + MAP_QUERY + '">'
+        + icon("map") + '<span>Open our office in Google Maps</span></a>'
+    )
+
+
+def not_found():
+    return (
+        '<section class="hero"><div class="container"><div class="hero-inner">'
+        '<p class="eyebrow">Error 404</p>'
+        '<h1>Page not found</h1>'
+        '<p>The page you&rsquo;re looking for may have moved. Try the search, or head back to the home page.</p>'
+        '<div class="hero-cta">'
+        '<a class="btn btn-primary" href="index.html">' + icon("home") + 'Back to Home</a>'
+        '<button class="btn btn-outline-white" data-search-open>' + icon("search") + 'Search the site</button>'
+        '</div></div></div></section>'
     )
 
 
@@ -1039,13 +1140,26 @@ def build():
     for filename, target, label in REDIRECTS:
         redirect(filename, target, label)
 
+    # 404 — the host serves it for any missing path (possibly nested), so
+    # <base href="/"> keeps its relative asset/nav links working.
+    page("404.html", "Page not found | CARE Pakistan", "The page you were looking for could not be found.", "",
+         not_found(), '<base href="/">\n<meta name="robots" content="noindex">\n')
+
     # Emit search index as a JS file (works from file:// — no fetch/CORS)
-    import json
     idx = "window.CARE_SEARCH_INDEX = " + json.dumps(search_entries, ensure_ascii=False, indent=2) + ";\n"
     with open(os.path.join(ROOT, "assets", "js", "search-index.js"), "w", encoding="utf-8") as f:
         f.write(idx)
 
-    print("Built %d pages + %d redirects + search index." % (len(PAGES), len(REDIRECTS)))
+    # robots.txt + sitemap.xml
+    today = datetime.date.today().isoformat()
+    urls = "".join("  <url><loc>" + SITE_URL + "/" + ("" if fn == "index.html" else fn) + "</loc><lastmod>" + today + "</lastmod></url>\n"
+                   for fn, _, _, _, _ in PAGES)
+    with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '</urlset>\n')
+    with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
+        f.write("User-agent: *\nAllow: /\n\nSitemap: " + SITE_URL + "/sitemap.xml\n")
+
+    print("Built %d pages + 404 + %d redirects + search index + sitemap." % (len(PAGES), len(REDIRECTS)))
 
 
 if __name__ == "__main__":
