@@ -105,7 +105,7 @@
   if (dlBtn) {
     dlBtn.addEventListener("click", function () {
       var rows = document.querySelectorAll("[data-bank] .bank-row");
-      var lines = ["CARE — Care, Aid & Rehabilitation in Emergency", "Bank Transfer Details", ""];
+      var lines = ["CARE Aid & Rehabilitation in Emergency", "Bank Transfer Details", ""];
       rows.forEach(function (r) {
         var k = r.querySelector(".k"), v = r.querySelector(".v");
         if (k && v) { lines.push(k.textContent.trim() + ": " + v.textContent.trim()); }
@@ -151,7 +151,7 @@
           }
         })
         .catch(function () {
-          if (status) { status.textContent = "Sorry, something went wrong. Please email us at carejmdc22@gmail.com."; status.className = "form-status error show"; }
+          if (status) { status.textContent = "Sorry, something went wrong. Please email us at info@carepk.org."; status.className = "form-status error show"; }
         })
         .finally(function () {
           if (btn) { btn.disabled = false; btn.textContent = original; }

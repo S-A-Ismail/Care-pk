@@ -1,4 +1,4 @@
-# CARE — Care, Aid & Rehabilitation in Emergency
+# CARE Aid & Rehabilitation in Emergency
 
 Website for the CARE NGO (Pakistan). A **framework-free static site**: plain HTML, CSS
 and vanilla JavaScript — **no Node.js, no npm, no framework, no build step**. Every page
