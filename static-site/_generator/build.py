@@ -36,11 +36,16 @@ BRAND = "CARE"
 BRAND_TAG = "CARE Aid &amp; Rehabilitation in Emergency"        # body text / tags
 LEGAL_NAME = "CARE AID &amp; REHABILITATION IN EMERGENCY (C.A.R.E)"  # exact legal name (HTML)
 # Registration placeholders — fill in from the registration certificate. Do not guess.
-REG_NO = "{{REG_NO}}"
-REG_AUTHORITY = "{{REG_AUTHORITY}}"
-REG_ACT = "{{REG_ACT}}"
-REG_DATE = "{{REG_DATE}}"
-REG_ADDRESS = "{{REGISTERED_ADDRESS}}"
+# Source: SECP licensed Section 42 companies register (secp.gov.pk/data-and-statistics/).
+REG_NO = "LD/Co. 42/201/2026"
+REG_AUTHORITY = "Securities and Exchange Commission of Pakistan (SECP)"
+REG_ACT = "Section 42 of the Companies Act, 2017"
+REG_LICENCE_TYPE = "Section 42 Company (not-for-profit)"
+REG_EXPIRY = "Nil"
+REG_QR_ID = "6551"
+REG_VERIFY_URL = "https://www.secp.gov.pk/data-and-statistics/"
+REG_DATE = "{{REG_DATE}}"              # TODO: date on the SECP certificate / licence
+REG_ADDRESS = "{{REGISTERED_ADDRESS}}"  # TODO: registered office per SECP records
 
 
 def page_url(filename):
@@ -944,10 +949,14 @@ def governance():
         ("Registration number", REG_NO),
         ("Registering authority", REG_AUTHORITY),
         ("Registered under", REG_ACT),
+        ("Licence type", REG_LICENCE_TYPE),
+        ("Licence expiry", REG_EXPIRY),
+        ("SECP QR ID", REG_QR_ID),
         ("Date of registration", REG_DATE),
         ("Registered address", REG_ADDRESS),
         ("Official website", '<a href="' + SITE_URL + '">' + SITE_URL + '</a>'),
         ("Official email", '<a href="mailto:' + EMAIL + '">' + EMAIL + '</a>'),
+        ("Verify", '<a href="' + REG_VERIFY_URL + '" target="_blank" rel="noopener">SECP data &amp; statistics</a>'),
     ]
     reg_dl = '<dl>'
     for k, v in reg_rows:
