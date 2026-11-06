@@ -25,7 +25,7 @@ FB = "https://www.facebook.com/profile.php?id=100084957522371"
 IG = "https://www.instagram.com/care_jmdc/"
 IG_HANDLE = "@CARE_JMDC"
 # Interim office / contact address: Jinnah Medical & Dental College, Karachi (per CARE, "for now").
-# This is NOT the registered address — that is REG_ADDRESS below.
+# REG_ADDRESS below currently reuses this as a PLACEHOLDER until the SECP registered office is confirmed.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
 VERSION = "8"  # bump to cache-bust styles.css / JS after a redesign
@@ -44,8 +44,11 @@ REG_LICENCE_TYPE = "Section 42 Company (not-for-profit)"
 REG_EXPIRY = "Nil"
 REG_QR_ID = "6551"
 REG_VERIFY_URL = "https://www.secp.gov.pk/data-and-statistics/"
-REG_DATE = "{{REG_DATE}}"              # TODO: date on the SECP certificate / licence
-REG_ADDRESS = "{{REGISTERED_ADDRESS}}"  # TODO: registered office per SECP records
+# PLACEHOLDER: not confirmed. Replace with the date of incorporation / licence on the SECP certificate.
+REG_DATE = "5th October 2026"
+# PLACEHOLDER: not confirmed. Reuses the office/contact address (ADDRESS). Replace with the
+# registered office address as recorded by SECP.
+REG_ADDRESS = ADDRESS
 
 
 def page_url(filename):
@@ -164,7 +167,7 @@ def org_jsonld():
         "email": EMAIL,
         "telephone": PHONE,
         "address": {
-            # Office / contact address (JMDC Karachi), not the registered address.
+            # Office / contact address (JMDC Karachi).
             "@type": "PostalAddress",
             "streetAddress": "Jinnah Medical & Dental College, 22-23 Shaheed-e-Millat Road",
             "addressLocality": "Karachi",
@@ -291,7 +294,7 @@ def footer():
         # Contact
         '<div class="footer"><h4>Contact Us</h4><ul class="footer-contact">'
         '<li>' + icon("pin") +
-        '<span><!-- Interim office/contact address: JMDC Karachi (per CARE). Not the registered address. -->'
+        '<span><!-- Interim office/contact address: JMDC Karachi (per CARE). -->'
         '<strong style="color:rgba(255,255,255,.85);font-weight:600">Office / Contact address</strong><br>'
         + ADDRESS + '</span></li>'
         '<li>' + icon("phone") + '<a href="' + PHONE_HREF + '">' + PHONE + '</a></li>'
