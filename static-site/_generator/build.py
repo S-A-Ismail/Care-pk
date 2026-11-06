@@ -25,7 +25,7 @@ FB = "https://www.facebook.com/profile.php?id=100084957522371"
 IG = "https://www.instagram.com/care_jmdc/"
 IG_HANDLE = "@CARE_JMDC"
 # Interim office / contact address: Jinnah Medical & Dental College, Karachi (per CARE, "for now").
-# REG_ADDRESS below currently reuses this as a PLACEHOLDER until the SECP registered office is confirmed.
+# This is NOT the registered address — that is REG_ADDRESS below.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
 VERSION = "8"  # bump to cache-bust styles.css / JS after a redesign
@@ -35,7 +35,7 @@ SITE_URL = "https://carepk.org"
 BRAND = "CARE"
 BRAND_TAG = "CARE Aid &amp; Rehabilitation in Emergency"        # body text / tags
 LEGAL_NAME = "CARE AID &amp; REHABILITATION IN EMERGENCY (C.A.R.E)"  # exact legal name (HTML)
-# Registration placeholders — fill in from the registration certificate. Do not guess.
+# Registration details — must match the SECP records exactly. Do not guess.
 # Source: SECP licensed Section 42 companies register (secp.gov.pk/data-and-statistics/).
 REG_NO = "LD/Co. 42/201/2026"
 REG_AUTHORITY = "Securities and Exchange Commission of Pakistan (SECP)"
@@ -44,11 +44,8 @@ REG_LICENCE_TYPE = "Section 42 Company (not-for-profit)"
 REG_EXPIRY = "Nil"
 REG_QR_ID = "6551"
 REG_VERIFY_URL = "https://www.secp.gov.pk/data-and-statistics/"
-# PLACEHOLDER: not confirmed. Replace with the date of incorporation / licence on the SECP certificate.
-REG_DATE = "5th October 2026"
-# PLACEHOLDER: not confirmed. Reuses the office/contact address (ADDRESS). Replace with the
-# registered office address as recorded by SECP.
-REG_ADDRESS = ADDRESS
+REG_DATE = "30th October 2026"
+REG_ADDRESS = "S. R-6, 7/A, Street 6, Sector 7-A, Korangi Industrial Area Karachi"
 
 
 def page_url(filename):
@@ -167,7 +164,7 @@ def org_jsonld():
         "email": EMAIL,
         "telephone": PHONE,
         "address": {
-            # Office / contact address (JMDC Karachi).
+            # Office / contact address (JMDC Karachi), not the registered address.
             "@type": "PostalAddress",
             "streetAddress": "Jinnah Medical & Dental College, 22-23 Shaheed-e-Millat Road",
             "addressLocality": "Karachi",
@@ -294,7 +291,7 @@ def footer():
         # Contact
         '<div class="footer"><h4>Contact Us</h4><ul class="footer-contact">'
         '<li>' + icon("pin") +
-        '<span><!-- Interim office/contact address: JMDC Karachi (per CARE). -->'
+        '<span><!-- Interim office/contact address: JMDC Karachi (per CARE). Not the registered address. -->'
         '<strong style="color:rgba(255,255,255,.85);font-weight:600">Office / Contact address</strong><br>'
         + ADDRESS + '</span></li>'
         '<li>' + icon("phone") + '<a href="' + PHONE_HREF + '">' + PHONE + '</a></li>'
