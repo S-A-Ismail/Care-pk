@@ -20,14 +20,32 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # -> static-
 # ---- Site config -------------------------------------------
 PHONE = "+92 332 3610790"
 PHONE_HREF = "tel:+923323610790"
-EMAIL = "carejmdc22@gmail.com"
+EMAIL = "info@carepk.org"
 FB = "https://www.facebook.com/profile.php?id=100084957522371"
 IG = "https://www.instagram.com/care_jmdc/"
 IG_HANDLE = "@CARE_JMDC"
-# Interim office address: Jinnah Medical & Dental College, Karachi (per CARE, "for now").
+# Interim office / contact address: Jinnah Medical & Dental College, Karachi (per CARE, "for now").
+# This is NOT the registered address — that is REG_ADDRESS below.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "7"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "8"  # bump to cache-bust styles.css / JS after a redesign
+
+# ---- Official identity (domain verification, e.g. Google for Nonprofits) ----
+SITE_URL = "https://carepk.org"
+BRAND = "CARE"
+BRAND_TAG = "CARE Aid &amp; Rehabilitation in Emergency"        # body text / tags
+LEGAL_NAME = "CARE AID &amp; REHABILITATION IN EMERGENCY (C.A.R.E)"  # exact legal name (HTML)
+# Registration placeholders — fill in from the registration certificate. Do not guess.
+REG_NO = "{{REG_NO}}"
+REG_AUTHORITY = "{{REG_AUTHORITY}}"
+REG_ACT = "{{REG_ACT}}"
+REG_DATE = "{{REG_DATE}}"
+REG_ADDRESS = "{{REGISTERED_ADDRESS}}"
+
+
+def page_url(filename):
+    """Absolute canonical URL for a page (index -> site root)."""
+    return SITE_URL + "/" if filename == "index.html" else SITE_URL + "/" + filename
 
 # Each nav item: (label, href, [ (child_label, child_href), ... ]).
 # Children render as a dropdown (desktop) / collapsible submenu (mobile),
@@ -128,12 +146,42 @@ def note(text):
 
 
 # ---- Shared chrome -----------------------------------------
-def head(title, description):
+def org_jsonld():
+    """Organization structured data (index.html only). JSON inside <script> is raw
+    text, so the legal name uses a literal '&' here, not '&amp;'."""
+    import json
+    data = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": BRAND,
+        "legalName": LEGAL_NAME.replace("&amp;", "&"),
+        "url": SITE_URL,
+        "email": EMAIL,
+        "telephone": PHONE,
+        "address": {
+            # Office / contact address (JMDC Karachi), not the registered address.
+            "@type": "PostalAddress",
+            "streetAddress": "Jinnah Medical & Dental College, 22-23 Shaheed-e-Millat Road",
+            "addressLocality": "Karachi",
+            "postalCode": "74000",
+            "addressCountry": "PK",
+        },
+        "sameAs": [FB, IG],
+    }
+    body = json.dumps(data, ensure_ascii=False, indent=2).replace("</", "<\\/")
+    return '<script type="application/ld+json">\n' + body + '\n</script>'
+
+
+def head(title, description, filename):
+    url = page_url(filename)
     return (
         '<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
         '<title>' + title + '</title>\n'
         '<meta name="description" content="' + description + '">\n'
+        '<link rel="canonical" href="' + url + '">\n'
+        '<meta property="og:url" content="' + url + '">\n'
+        + (org_jsonld() + '\n' if filename == "index.html" else '') +
         '<link rel="icon" href="assets/logo.png">\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
@@ -187,7 +235,7 @@ def header(active):
         '<nav class="navbar"><div class="container">'
         '<a class="brand" href="index.html">'
         '<img src="assets/logo.png" alt="CARE logo" width="40" height="40">'
-        '<span><span class="brand-name">CARE</span><br><span class="brand-tag">Care, Aid &amp; Rehabilitation in Emergency</span></span>'
+        '<span><span class="brand-name">CARE</span><br><span class="brand-tag">' + BRAND_TAG + '</span></span>'
         '</a>'
         '<div class="nav-links">' + links + '</div>'
         '<div class="nav-actions">'
@@ -227,7 +275,7 @@ def footer():
         # Brand
         '<div class="footer-brand">'
         '<div class="brand"><img src="assets/logo.png" alt="CARE logo" width="40" height="40">'
-        '<span><span class="brand-name">CARE</span><br><span class="brand-tag">Care, Aid &amp; Rehabilitation</span></span></div>'
+        '<span><span class="brand-name">CARE</span><br><span class="brand-tag">' + BRAND_TAG + '</span></span></div>'
         '<p>CARE is dedicated to serving humanity with compassion, transparency and commitment — improving access to essential medicines and healthcare for those who need it most.</p>'
         '<div class="footer-social">'
         '<a href="' + FB + '" target="_blank" rel="noreferrer" aria-label="Facebook">' + icon("facebook") + '</a>'
@@ -238,7 +286,9 @@ def footer():
         # Contact
         '<div class="footer"><h4>Contact Us</h4><ul class="footer-contact">'
         '<li>' + icon("pin") +
-        '<span><!-- Interim address: JMDC Karachi (per CARE) -->' + ADDRESS + '</span></li>'
+        '<span><!-- Interim office/contact address: JMDC Karachi (per CARE). Not the registered address. -->'
+        '<strong style="color:rgba(255,255,255,.85);font-weight:600">Office / Contact address</strong><br>'
+        + ADDRESS + '</span></li>'
         '<li>' + icon("phone") + '<a href="' + PHONE_HREF + '">' + PHONE + '</a></li>'
         '<li>' + icon("mail") + '<a href="mailto:' + EMAIL + '">' + EMAIL + '</a></li>'
         '</ul></div>'
@@ -253,7 +303,10 @@ def footer():
         '<p class="form-status" role="status"></p>'
         '</form></div>'
         '</div></div>'
-        '<div class="footer-bottom">&copy; <span data-year>2026</span> CARE. All Rights Reserved.</div>'
+        '<div class="footer-bottom">'
+        '<p>&copy; <span data-year>2026</span> ' + LEGAL_NAME + ' &middot; Registration No. ' + REG_NO + '</p>'
+        '<p style="margin-top:.4rem">carepk.org is the official website of ' + LEGAL_NAME + '.</p>'
+        '</div>'
         '</footer>'
     )
 
@@ -268,7 +321,7 @@ def scripts():
 
 def page(filename, title, description, active, body):
     doc = (
-        '<!doctype html>\n<html lang="en">\n<head>\n' + head(title, description) + '\n</head>\n<body>\n'
+        '<!doctype html>\n<html lang="en">\n<head>\n' + head(title, description, filename) + '\n</head>\n<body>\n'
         + header(active) + '\n<main>\n' + body + '\n</main>\n' + footer() + '\n' + scripts() + '\n</body>\n</html>\n'
     )
     with open(os.path.join(ROOT, filename), "w", encoding="utf-8") as f:
@@ -276,11 +329,15 @@ def page(filename, title, description, active, body):
 
 
 def redirect(filename, target, label):
+    # Redirect stubs canonicalise to the page they forward to (fragment dropped),
+    # not to themselves — they are not real pages.
+    canon = page_url(target.split("#")[0])
     doc = (
         '<!doctype html>\n<html lang="en">\n<head>\n'
         '<meta charset="utf-8">\n'
         '<meta http-equiv="refresh" content="0; url=' + target + '">\n'
-        '<link rel="canonical" href="' + target + '">\n'
+        '<link rel="canonical" href="' + canon + '">\n'
+        '<meta property="og:url" content="' + canon + '">\n'
         '<title>Redirecting…</title>\n'
         '<link rel="stylesheet" href="assets/css/styles.css">\n</head>\n'
         '<body><div class="container" style="padding:4rem 1rem;text-align:center">'
@@ -361,7 +418,7 @@ def home():
         ("dollar", "Financial Statements", "How funds are received and used.", "about.html#annual-reports"),
         ("book", "Policies", "The standards that guide our work.", "about.html#policies"),
         ("shield", "Safeguarding", "Protecting those we serve.", "safeguarding-policy.html"),
-        ("check", "Registration", "Our legal registration details.", "governance.html"),
+        ("check", "Registration", "Our legal registration details.", "governance.html#registration"),
     ]
     t_html = ""
     for ic, title, desc, href in transparency:
@@ -380,7 +437,7 @@ def home():
     return (
         # 1. Hero
         '<section class="hero"><div class="container"><div class="hero-inner">'
-        '<p class="eyebrow">Care, Aid &amp; Rehabilitation in Emergency</p>'
+        '<p class="eyebrow">' + BRAND_TAG + '</p>'
         '<h1>Healthcare Within Reach</h1>'
         '<p>Improving access to essential medicines, healthcare services, and community support for underserved populations across Pakistan through student leadership, medical partnerships, and compassionate action.</p>'
         '<div class="hero-cta">'
@@ -509,7 +566,7 @@ def about():
         '<section class="section bg-white"><div class="container feature-row">'
         '<div class="feature-media"><div class="placeholder-box" style="min-height:20rem">Organization photo &mdash; coming soon</div></div>'
         '<div class="feature-body"><p class="eyebrow">About CARE</p>'
-        '<h2>Care, Aid &amp; Rehabilitation in Emergency</h2>'
+        '<h2>' + BRAND_TAG + '</h2>'
         '<p>CARE is a non-profit organization committed to improving access to essential medicines and healthcare for underserved communities across Pakistan &mdash; driven by student leadership, medical partnerships and compassionate action.</p>'
         '<p>We help bridge gaps in care by supporting access to medicines, promoting preventive health, and working alongside hospitals and community partners to improve health outcomes.</p>'
         '<a class="btn btn-primary" href="programs.html">Our Programs</a>'
@@ -528,6 +585,8 @@ def about():
         '<div class="red-divider"></div>'
         '<div class="prose max-720" style="text-align:center">'
         '<p>CARE began with a simple conviction: that no one should go without essential care because of cost or circumstance. From a small student-led effort, we have grown into an organization running a Drug Bank, medical camps and community outreach.</p>'
+        '<p><a href="governance.html#registration" style="color:var(--red);text-decoration:underline;text-underline-offset:3px">'
+        + LEGAL_NAME + ' is a registered nonprofit in Pakistan. carepk.org is our official website.</a></p>'
         '</div>'
         '<div class="max-720 mt-4"><!-- TODO: confirm founding/launch date with Junaid Bhai -->'
         + note("confirm founding / launch dates and other milestone dates with Junaid Bhai.") +
@@ -878,13 +937,32 @@ def governance():
         grid += ('<div class="team-member"><div class="team-photo">Photo</div>'
                  '<div class="name">' + name + '</div><div class="role">' + role + '</div></div>')
     grid += '</div>'
+
+    # Legal Registration — reuses the existing .bank-row key/value styling (no new CSS).
+    reg_rows = [
+        ("Legal name", LEGAL_NAME),
+        ("Registration number", REG_NO),
+        ("Registering authority", REG_AUTHORITY),
+        ("Registered under", REG_ACT),
+        ("Date of registration", REG_DATE),
+        ("Registered address", REG_ADDRESS),
+        ("Official website", '<a href="' + SITE_URL + '">' + SITE_URL + '</a>'),
+        ("Official email", '<a href="mailto:' + EMAIL + '">' + EMAIL + '</a>'),
+    ]
+    reg_dl = '<dl>'
+    for k, v in reg_rows:
+        reg_dl += '<div class="bank-row"><dt class="k">' + k + '</dt><dd class="v">' + v + '</dd></div>'
+    reg_dl += '</dl>'
+
     return (
         banner("Governance", "Governance") +
         '<section class="section bg-white"><div class="container">'
         '<h2 class="section-title">Governance Structure</h2>'
         '<p class="section-subtitle">How CARE is governed and held accountable</p><div class="red-divider"></div>'
-        '<div class="max-720"><!-- TODO: content pending -->'
-        + note("Full governance structure and registration details are pending.") + '</div>'
+        '<section id="registration" class="max-720" aria-labelledby="registration-title">'
+        '<h3 id="registration-title" style="text-align:center;margin-bottom:1.5rem">Legal Registration</h3>'
+        + reg_dl +
+        '</section>'
         '<h3 style="text-align:center;margin:3rem 0 1.5rem">Board of Governors</h3>' + grid +
         '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm board details and photos") + '</p>'
         '</div></section>'
@@ -1045,7 +1123,16 @@ def build():
     with open(os.path.join(ROOT, "assets", "js", "search-index.js"), "w", encoding="utf-8") as f:
         f.write(idx)
 
-    print("Built %d pages + %d redirects + search index." % (len(PAGES), len(REDIRECTS)))
+    # robots.txt (allow all) + sitemap.xml (real pages only; redirect stubs are
+    # excluded because they canonicalise elsewhere and would be flagged by Search Console)
+    with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
+        f.write("User-agent: *\nAllow: /\n\nSitemap: " + SITE_URL + "/sitemap.xml\n")
+    urls = "".join("  <url><loc>" + page_url(fn) + "</loc></url>\n" for fn, *_ in PAGES)
+    with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '</urlset>\n')
+
+    print("Built %d pages + %d redirects + search index + robots.txt + sitemap.xml." % (len(PAGES), len(REDIRECTS)))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 # CARE — Static Website
 
-A fully static rebuild of the CARE (Care, Aid & Rehabilitation in Emergency) site:
+A fully static rebuild of the CARE (CARE Aid & Rehabilitation in Emergency) site:
 plain **HTML + CSS + vanilla JS**. No Node.js, no npm, no framework, **no build step**
 required to host or view it. Every page is a flat `.html` file that works when opened
 directly (`file://`) or served by any static host (Netlify, GitHub Pages, S3, Amplify,
@@ -90,6 +90,10 @@ as HTML comments). Nothing was fabricated; every unfinished item is a marked pla
   of every form (6 on Get Involved, plus Contact and the footer newsletter) with a real
   [Formspree](https://formspree.io) form ID — or swap for Netlify Forms / Getform / a
   Mailchimp embed. Forms already degrade gracefully without JS (plain HTML POST).
+- **Registration details:** replace the `{{REG_NO}}`, `{{REG_AUTHORITY}}`, `{{REG_ACT}}`,
+  `{{REG_DATE}}` and `{{REGISTERED_ADDRESS}}` tokens (constants at the top of
+  `_generator/build.py`, then rebuild) with the values from the registration certificate.
+  They render in every footer and in the Legal Registration section of `governance.html`.
 - **Impact figures:** all six stat categories show "Coming soon" pending verified numbers.
 - **Office address:** footer + contact still show the Lahore address pending confirmation
   of the new one.
