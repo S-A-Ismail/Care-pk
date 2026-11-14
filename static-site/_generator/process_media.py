@@ -248,7 +248,9 @@ def main():
             if not m.get("poster"):
                 variants.insert(0, ("card", card_crop(img, m["focus"]), CARD_BUDGET))
             for kind, im, budget in variants:
-                im = apply_watermark(im, m["wm"])
+                # optional per-variant corner (set after visual review, e.g. badge over a hand in the 3:2 crop)
+                corner = m.get("wmCard", m["wm"]) if kind == "card" else m["wm"]
+                im = apply_watermark(im, corner)
                 data, q = encode_webp(im, budget, "%s-%s" % (mid, kind))
                 write_if_changed(os.path.join(out_dir, "%s-%s.webp" % (mid, kind)), data)
                 entry[kind] = {"src": "assets/images/events/%s-%s.webp" % (mid, kind),
@@ -256,14 +258,17 @@ def main():
         else:  # video: copy bytes as-is, poster from a frame
             with open(src, "rb") as f:
                 write_if_changed(os.path.join(out_dir, m["source"]), f.read())
-            frame = extract_frame(src, m.get("posterAt", 1.0))
+            frame = extract_frame(src, m.get("posterAt", 1.0))   # ffmpeg applies rotation metadata
+            if frame.size != (m["width"], m["height"]):
+                stats["warnings"].append("%s: displays at %dx%d, media.json says %dx%d"
+                                         % (mid, frame.width, frame.height, m["width"], m["height"]))
             poster = card_crop(frame, m["focus"])
             data, q = encode_webp(poster, CARD_BUDGET, mid + "-poster")
             write_if_changed(os.path.join(out_dir if held else IMG_OUT, mid + "-poster.webp"), data)
             fdata, fq = encode_webp(full_resize(frame), FULL_BUDGET, mid + "-frame")
             write_if_changed(os.path.join(out_dir if held else IMG_OUT, mid + "-frame.webp"), fdata)
             entry.update({
-                "video": {"src": "assets/videos/events/" + m["source"], "width": m["width"], "height": m["height"]},
+                "video": {"src": "assets/videos/events/" + m["source"], "width": frame.width, "height": frame.height},
                 "card": {"src": "assets/images/events/%s-poster.webp" % mid, "width": poster.width,
                          "height": poster.height, "bytes": len(data), "q": q},
                 "frame": {"src": "assets/images/events/%s-frame.webp" % mid, "width": frame.width,

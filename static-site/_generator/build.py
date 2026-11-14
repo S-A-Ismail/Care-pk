@@ -31,7 +31,7 @@ IG_HANDLE = "@CARE_JMDC"
 # This is NOT the registered address — that is REG_ADDRESS below.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "8"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "9"  # bump to cache-bust styles.css / JS after a redesign
 
 # ---- Official identity (domain verification, e.g. Google for Nonprofits) ----
 SITE_URL = "https://carepk.org"
