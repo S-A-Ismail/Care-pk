@@ -1,0 +1,7 @@
+FullCalendar Standard Bundle v6.1.22 (npm: fullcalendar@6.1.22, MIT)
+Source: https://registry.npmjs.org/fullcalendar/-/fullcalendar-6.1.22.tgz
+npm integrity: sha512-Nd5NGL2ELAQkRWMORFJIrrHJjdwlgfyw9ZXUB6O1j9biXhtDtdWZTqYS/7mk9mys10ehhNbSiwZetFZGiOC5rw==
+Files: index.global.min.js (unmodified), LICENSE.md
+Standard (MIT) plugins only: daygrid, timegrid, list, multimonth, interaction. No premium/scheduler plugin, no licence key.
+Why not v7: 7.1.5 (npm latest, released 2026-11-12) ships only an unminified 957 KB global bundle and needs a separate Temporal polyfill; 6.1.22 (legacy tag, 2026-10-16) is the maintained self-contained Standard Bundle.
+sha256 index.global.min.js: 65f927f1802cb35428b9c5e2a8d2276633880a89ee5ea5f9a7727f79892786ea
