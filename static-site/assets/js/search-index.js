@@ -39,7 +39,7 @@ window.CARE_SEARCH_INDEX = [
     "title": "News & Events",
     "url": "news-events.html",
     "summary": "Upcoming and past events, plus the latest news.",
-    "keywords": "news events workshops medical camp blood donation past latest"
+    "keywords": "news events workshops medical camp blood donation past latest sports week sports awareness session: skin rejuvenation (dermatology) awareness medical camp — anmol zindagi medical camp heat relief camp community outreach medical camp — mubarak village medical camp blood donation drive blood drive first responder course (bls workshop) course"
   },
   {
     "title": "Resources",
@@ -63,19 +63,25 @@ window.CARE_SEARCH_INDEX = [
     "title": "Privacy Policy",
     "url": "privacy-policy.html",
     "summary": "How CARE handles personal information.",
-    "keywords": "privacy policy data personal information"
+    "keywords": "privacy policy notice data personal information photography consent"
+  },
+  {
+    "title": "Terms & Conditions",
+    "url": "terms.html",
+    "summary": "The terms and conditions for using the CARE website.",
+    "keywords": "terms conditions website use legal"
   },
   {
     "title": "Safeguarding Policy",
     "url": "safeguarding-policy.html",
     "summary": "How CARE protects the people it serves.",
-    "keywords": "safeguarding policy protection"
+    "keywords": "safeguarding policy protection code of conduct harassment complaints whistleblowing"
   },
   {
     "title": "Volunteer Policy",
     "url": "volunteer-policy.html",
     "summary": "The standards and expectations for CARE volunteers.",
-    "keywords": "volunteer policy standards conduct"
+    "keywords": "volunteer policy standards conduct student council"
   },
   {
     "title": "Testimonials",

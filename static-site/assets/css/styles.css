@@ -491,3 +491,132 @@ button { font-family: inherit; cursor: pointer; }
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
   :root.js [data-animate] { opacity: 1; transform: none; }
 }
+
+/* ============================================================
+   Events calendar, event media, policy documents, Board page
+   (existing tokens only — no new brand colours)
+   ============================================================ */
+.btn-sm { padding: .6rem 1.1rem; font-size: .78rem; }
+.text-link { color: var(--red-dark); text-decoration: underline; text-underline-offset: 3px; }
+.text-link:hover { color: var(--ink); }
+
+/* Visible keyboard focus on the new interactive elements */
+.btn:focus-visible, .tab-btn:focus-visible, .icon-btn:focus-visible, .text-link:focus-visible,
+.doc-card a:focus-visible, .footer-policies a:focus-visible, .events-empty a:focus-visible,
+.fc .fc-button:focus-visible, .fc .fc-event:focus-visible, .fc .fc-list-event:focus-visible {
+  outline: 3px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 6px var(--white);
+}
+.fc .fc-button:focus { box-shadow: none; }
+
+/* ---- Photos in existing placeholder slots ----------------- */
+.feature-media.has-photo { min-height: 0; }
+.media-photo { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 14px; margin: 0 auto; background: var(--tint); }
+
+/* ---- Event cards (reuse .event-card / .event-body) -------- */
+.event-grid { padding: 0; }
+.event-card { display: flex; flex-direction: column; }
+.event-cover { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; background: var(--tint); }
+.event-cover-ph { min-height: 0; aspect-ratio: 3 / 2; border-radius: 0; border-width: 0 0 1px; }
+.event-card .event-body { flex: 1; display: flex; flex-direction: column; align-items: flex-start; }
+.event-card .event-body .btn { margin-top: auto; }
+.event-card .event-body p + .btn, .event-card .event-meta + .btn { margin-top: 1rem; }
+.events-empty { text-align: center; color: var(--muted); max-width: 36rem; margin: 0 auto; font-size: 1.05rem; }
+.events-empty a { color: var(--red-dark); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+[data-events-upcoming]:empty { display: none; }
+
+/* ---- Calendar (FullCalendar Standard, themed via its CSS vars) */
+.events-calendar {
+  --fc-border-color: var(--line);
+  --fc-button-bg-color: var(--white);
+  --fc-button-border-color: var(--line);
+  --fc-button-text-color: var(--ink);
+  --fc-button-hover-bg-color: var(--paper);
+  --fc-button-hover-border-color: var(--ink);
+  --fc-button-active-bg-color: var(--ink);
+  --fc-button-active-border-color: var(--ink);
+  --fc-today-bg-color: var(--tint);
+  --fc-event-bg-color: var(--red);
+  --fc-event-border-color: var(--red);
+  --fc-event-text-color: var(--white);
+  --fc-page-bg-color: var(--white);
+  --fc-neutral-bg-color: var(--paper);
+  --fc-list-event-hover-bg-color: var(--tint);
+  background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 1rem;
+  font-family: var(--sans);
+}
+.events-calendar .fc-toolbar-title { font-family: var(--serif); font-size: 1.5rem; }
+.events-calendar .fc-button { font-family: var(--sans); font-weight: 700; font-size: .8rem; text-transform: none; border-radius: 999px !important; margin: 0 .15rem !important; padding: .45rem .95rem; }
+.events-calendar .fc-button-primary:not(:disabled).fc-button-active, .events-calendar .fc-button-primary:not(:disabled):active { color: var(--white); }
+.events-calendar .fc-button:disabled { opacity: .55; }
+.events-calendar .fc-col-header-cell-cushion, .events-calendar .fc-daygrid-day-number { color: var(--ink); font-size: .85rem; }
+.events-calendar .fc-event { cursor: pointer; font-size: .8rem; font-weight: 600; padding: .1rem .3rem; border-radius: 6px; }
+.events-calendar .fc-event-main { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; white-space: normal; }
+.events-calendar .ev-past { background: var(--white); border: 1px dashed var(--muted); }
+.events-calendar .ev-past .fc-event-main, .events-calendar .fc-list-event.ev-past td { color: var(--muted); }
+.events-calendar .fc-list-event.ev-past .fc-list-event-dot { border-color: var(--muted); }
+.events-calendar .fc-list-event.ev-upcoming .fc-list-event-dot { border-color: var(--red); }
+.events-calendar .fc-list-event-title, .events-calendar .fc-list-event-time { color: var(--ink); }
+.events-calendar .fc-list-day-cushion { background: var(--paper); }
+.ev-tag { display: inline-block; font-size: .64rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; border: 1px solid currentColor; border-radius: 999px; padding: 0 .4rem; line-height: 1.5; margin-right: .35rem; }
+.calendar-legend { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .5rem; color: var(--muted); font-size: .9rem; margin: -1.5rem 0 1.5rem; }
+.ev-key { width: 1rem; height: 1rem; border-radius: 4px; display: inline-block; }
+.ev-key--upcoming { background: var(--red); }
+.ev-key--past { background: var(--white); border: 1px dashed var(--muted); margin-left: 1rem; }
+@media (max-width: 719px) {
+  .events-calendar { padding: .6rem; }
+  .events-calendar .fc-header-toolbar { flex-direction: column; gap: .6rem; }
+  .events-calendar .fc-toolbar-title { font-size: 1.25rem; }
+}
+
+/* ---- Event dialog / gallery ------------------------------- */
+.event-dialog { margin: auto; /* the global `* { margin:0 }` reset would un-centre the modal */ border: none; border-radius: 16px; padding: 0; width: min(920px, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); box-shadow: var(--shadow); color: var(--ink); background: var(--white); }
+.event-dialog::backdrop { background: rgba(17,17,17,.7); }
+.event-dialog-inner { position: relative; padding: 2rem 1.5rem 1.5rem; }
+.event-dialog-close { position: absolute; top: .75rem; right: .75rem; }
+.event-dialog h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin: .5rem 2.5rem .75rem 0; }
+.event-dialog .eyebrow:empty { display: none; }
+.event-dialog-meta { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; margin-bottom: .75rem; }
+.event-dialog-meta .event-meta { margin: 0; }
+.event-dialog-summary { color: var(--muted); line-height: 1.7; margin-bottom: 1.25rem; }
+.event-dialog-summary:empty { display: none; }
+.event-gallery { margin: 0; }
+.event-gallery-stage { background: var(--ink); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; height: min(60vh, 560px); touch-action: pan-y; }
+.event-gallery-stage img, .event-gallery-stage video { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
+.event-gallery-stage .placeholder-box { width: 100%; height: 100%; border-radius: 0; }
+.event-gallery-caption { color: var(--muted); font-size: .9rem; margin-top: .75rem; min-height: 1.4em; }
+.event-gallery-controls { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; }
+.event-gallery-controls[hidden] { display: none; }
+.event-gallery-counter { color: var(--ink); font-weight: 700; font-size: .9rem; }
+.event-gallery-controls .btn:disabled { opacity: .45; cursor: default; transform: none; }
+@media (max-width: 559px) { .event-gallery-stage { height: 52vh; } .event-dialog-inner { padding: 1.75rem 1rem 1rem; } }
+
+/* ---- Policy documents ------------------------------------- */
+.docs-block { text-align: left; }
+.docs-notice { display: flex; gap: .6rem; align-items: flex-start; background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--ink); border-radius: 0 10px 10px 0; padding: 1rem 1.25rem; color: var(--ink); font-size: .95rem; line-height: 1.6; margin-bottom: 1.25rem; }
+.docs-notice .icon { color: var(--red-dark); margin-top: .2rem; }
+.doc-list { display: flex; flex-direction: column; gap: .85rem; }
+.docs-subhead { font-size: 1.15rem; margin: 2rem 0 .85rem; }
+.docs-subhead:empty { display: none; }
+.doc-card { display: flex; gap: 1rem; background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.25rem; }
+.doc-card-icon { flex-shrink: 0; width: 2.6rem; height: 2.6rem; border-radius: 10px; background: var(--tint); display: flex; align-items: center; justify-content: center; }
+.doc-card-icon .icon { width: 1.3rem; height: 1.3rem; color: var(--red-dark); }
+.doc-card-body { min-width: 0; flex: 1; }
+.doc-title { font-size: 1.05rem; line-height: 1.3; margin-bottom: .35rem; overflow-wrap: anywhere; }
+.doc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .5rem; color: var(--muted); font-size: .85rem; margin-bottom: .75rem; }
+.doc-badge { display: inline-flex; align-items: center; gap: .3rem; background: var(--tint); color: var(--red-dark); border: 1px solid var(--red-dark); border-radius: 999px; padding: .1rem .6rem; font-size: .74rem; font-weight: 700; }
+.doc-badge--signed { background: var(--white); color: var(--ink); border-color: var(--ink); }
+.doc-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- Footer policy links ---------------------------------- */
+.footer-policies { display: flex; flex-wrap: wrap; justify-content: center; gap: .3rem .6rem; margin-top: .75rem; }
+.footer-policies a { color: rgba(255,255,255,.8); text-decoration: underline; text-underline-offset: 3px; }
+.footer-policies a:hover { color: var(--white); }
+.footer-policies span { color: rgba(255,255,255,.55); }
+
+/* ---- Board of Directors (auto-fit: 3 or 4 members) -------- */
+.team-grid--auto { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem 1.75rem; max-width: 64rem; margin: 0 auto; }
+.team-grid--auto .team-member { flex: 0 1 13rem; }
+@media (max-width: 479px) { .team-grid--auto .team-member { flex-basis: calc(50% - 1rem); } }
+.team-initials { font-family: var(--serif); font-size: 2rem; font-weight: 600; letter-spacing: .02em; color: var(--red-dark); text-transform: none; }
+.team-photo-img { object-fit: cover; padding: 0; }
+.team-member .bio { color: var(--muted); font-size: .88rem; line-height: 1.6; margin-top: .5rem; }

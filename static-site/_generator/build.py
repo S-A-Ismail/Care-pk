@@ -13,9 +13,12 @@
 #      python _generator/build.py
 #  ...to regenerate every page with the header/footer inlined.
 # ============================================================
+import html
+import json
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # -> static-site/
+DATA_DIR = os.path.join(ROOT, "assets", "data")
 
 # ---- Site config -------------------------------------------
 PHONE = "+92 332 3610790"
@@ -47,6 +50,46 @@ REG_VERIFY_URL = "https://www.secp.gov.pk/data-and-statistics/"
 REG_DATE = "30th October 2026"
 REG_ADDRESS = "S. R-6, 7/A, Street 6, Sector 7-A, Korangi Industrial Area Karachi"
 
+# Shown ONCE above every group of policy documents on a page (never per card).
+DOCS_NOTICE = "These documents are pending signatures and will be re-uploaded soon."
+
+
+# ---- Data files (edit the JSON, then re-run this script) ----
+def load_json(name, default):
+    path = os.path.join(DATA_DIR, name)
+    if not os.path.exists(path):
+        print("WARNING: %s missing — related blocks are skipped." % name)
+        return default
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+EVENTS = load_json("events.json", [])            # inclusive dates; status computed in the browser
+MEDIA = {m["id"]: m for m in load_json("media.json", [])}
+OUTPUTS = load_json("media-outputs.json", {})     # written by process_media.py (published media only)
+DOCS = load_json("documents.json", [])            # written by documents_meta.py
+BOARD = load_json("board.json", {"confirmed": False, "members": []})
+DOC_BY_STEM = {d["file"][:-4]: d for d in DOCS if d.get("publish", True)}
+DOC_GROUPS = ["Governance", "Programmes &amp; patients", "People &amp; conduct",
+              "Fundraising &amp; finance", "Website &amp; media"]
+
+BOARD_PAGE = "board-of-directors.html"
+
+
+def noindex(filename):
+    """Pages kept out of search engines, sitemap.xml and the site search."""
+    return filename == BOARD_PAGE and not BOARD.get("confirmed")
+
+
+def logo_src(size=192):
+    """Small logo derivative (process_media.py) if present, else the original."""
+    name = "logo-192.png" if size > 48 else "favicon-48.png"
+    return "assets/" + name if os.path.exists(os.path.join(ROOT, "assets", name)) else "assets/logo.png"
+
+
+def esc(s):
+    return html.escape(s or "", quote=True)
+
 
 def page_url(filename):
     """Absolute canonical URL for a page (index -> site root)."""
@@ -61,6 +104,7 @@ NAV = [
         ("Mission &amp; Vision", "about.html#mission"),
         ("Our Story", "about.html#story"),
         ("Leadership", "about.html#leadership"),
+        ("Board of Directors", BOARD_PAGE),
         ("Governance &amp; Partners", "about.html#governance"),
         ("Policies", "about.html#policies"),
         ("Annual Reports", "about.html#annual-reports"),
@@ -87,6 +131,7 @@ NAV = [
     ]),
     ("Donate", "donate.html", []),
     ("News &amp; Events", "news-events.html", [
+        ("Calendar", "news-events.html#calendar"),
         ("Upcoming", "news-events.html#upcoming"),
         ("Past Events", "news-events.html#past"),
         ("Latest News", "news-events.html#news"),
@@ -186,8 +231,10 @@ def head(title, description, filename):
         '<meta name="description" content="' + description + '">\n'
         '<link rel="canonical" href="' + url + '">\n'
         '<meta property="og:url" content="' + url + '">\n'
+        + ('<meta name="robots" content="noindex">\n' if noindex(filename) else '')
         + (org_jsonld() + '\n' if filename == "index.html" else '') +
-        '<link rel="icon" href="assets/logo.png">\n'
+        '<link rel="icon" href="' + logo_src(48) + '" sizes="48x48">\n'
+        '<link rel="apple-touch-icon" href="' + logo_src(192) + '">\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
         '<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n'
@@ -239,7 +286,7 @@ def header(active):
     nav = (
         '<nav class="navbar"><div class="container">'
         '<a class="brand" href="index.html">'
-        '<img src="assets/logo.png" alt="CARE logo" width="40" height="40">'
+        '<img src="' + logo_src() + '" alt="CARE logo" width="40" height="40">'
         '<span><span class="brand-name">CARE</span><br><span class="brand-tag">' + BRAND_TAG + '</span></span>'
         '</a>'
         '<div class="nav-links">' + links + '</div>'
@@ -279,7 +326,7 @@ def footer():
         '<footer class="site-footer"><div class="container"><div class="footer-grid">'
         # Brand
         '<div class="footer-brand">'
-        '<div class="brand"><img src="assets/logo.png" alt="CARE logo" width="40" height="40">'
+        '<div class="brand"><img src="' + logo_src() + '" alt="CARE logo" width="40" height="40">'
         '<span><span class="brand-name">CARE</span><br><span class="brand-tag">' + BRAND_TAG + '</span></span></div>'
         '<p>CARE is dedicated to serving humanity with compassion, transparency and commitment — improving access to essential medicines and healthcare for those who need it most.</p>'
         '<div class="footer-social">'
@@ -311,23 +358,34 @@ def footer():
         '<div class="footer-bottom">'
         '<p>&copy; <span data-year>2026</span> ' + LEGAL_NAME + ' &middot; Registration No. ' + REG_NO + '</p>'
         '<p style="margin-top:.4rem">carepk.org is the official website of ' + LEGAL_NAME + '.</p>'
+        '<nav class="footer-policies" aria-label="Policies">'
+        '<a href="privacy-policy.html">Privacy Policy</a><span aria-hidden="true">&middot;</span>'
+        '<a href="terms.html">Terms &amp; Conditions</a><span aria-hidden="true">&middot;</span>'
+        '<a href="safeguarding-policy.html">Safeguarding Policy</a><span aria-hidden="true">&middot;</span>'
+        '<a href="news-events.html#photography">Photography &amp; Media Consent</a>'
+        '</nav>'
         '</div>'
         '</footer>'
     )
 
 
-def scripts():
-    return (
+def scripts(filename=""):
+    out = (
         '<script src="assets/js/search-index.js?v=' + VERSION + '"></script>'
         '<script src="assets/js/search.js?v=' + VERSION + '"></script>'
         '<script src="assets/js/main.js?v=' + VERSION + '"></script>'
     )
+    if filename == "news-events.html":
+        # Calendar assets load on this page only (vendored, no CDN at runtime).
+        out += ('\n<script defer src="assets/vendor/fullcalendar/index.global.min.js?v=6.1.22"></script>'
+                '<script defer src="assets/js/events-calendar.js?v=' + VERSION + '"></script>')
+    return out
 
 
 def page(filename, title, description, active, body):
     doc = (
         '<!doctype html>\n<html lang="en">\n<head>\n' + head(title, description, filename) + '\n</head>\n<body>\n'
-        + header(active) + '\n<main>\n' + body + '\n</main>\n' + footer() + '\n' + scripts() + '\n</body>\n</html>\n'
+        + header(active) + '\n<main>\n' + body + '\n</main>\n' + footer() + '\n' + scripts(filename) + '\n</body>\n</html>\n'
     )
     with open(os.path.join(ROOT, filename), "w", encoding="utf-8") as f:
         f.write(doc)
@@ -372,6 +430,123 @@ def cta_band():
         '<a class="btn btn-outline-white" href="get-involved.html#volunteer">Volunteer With Us</a>'
         '</div></div></section>'
     )
+
+
+# ---- Media helpers ------------------------------------------
+# A slot only shows a photo when process_media.py published it (consent is not
+# "required" and the file exists). Anything held or missing falls back to the
+# existing placeholder box — never a broken image.
+def published(mid):
+    return bool(mid) and mid in OUTPUTS and MEDIA.get(mid, {}).get("consent") != "required"
+
+
+def focus_pos(mid):
+    fx, fy = MEDIA[mid].get("focus", [0.5, 0.5])
+    return "object-position:%g%% %g%%" % (round(fx * 100, 1), round(fy * 100, 1))
+
+
+def media_img(mid, kind="card", cls="media-photo"):
+    o = OUTPUTS[mid][kind]
+    style = focus_pos(mid)
+    if MEDIA[mid].get("lowRes"):
+        style += ";max-width:%dpx" % o["width"]          # never display beyond native width
+    return ('<img class="' + cls + '" src="' + o["src"] + '" alt="' + esc(MEDIA[mid]["alt"]) + '" '
+            'width="%d" height="%d" loading="lazy" decoding="async" style="%s">' % (o["width"], o["height"], style))
+
+
+def media_slot(mid, placeholder, min_height="20rem"):
+    """feature-media block: photo if published, otherwise the existing placeholder."""
+    if published(mid):
+        return '<div class="feature-media has-photo">' + media_img(mid) + '</div>'
+    held = ('<!-- media "%s" is consent-held or not yet processed; placeholder shown -->' % mid) if mid else ''
+    return ('<div class="feature-media"><div class="placeholder-box" style="min-height:' + min_height + '">'
+            + held + placeholder + '</div></div>')
+
+
+# ---- Policy document helpers --------------------------------
+MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def fmt_day(iso):
+    y, m, d = (int(x) for x in iso.split("-"))
+    return "%d %s %d" % (d, MONTHS[m - 1], y)
+
+
+def fmt_range(start, end):
+    """en-GB: '17 Jun 2026', '13–16 Apr 2026', '30 Jun – 2 Jul 2026'."""
+    ys, ms, ds = (int(x) for x in start.split("-"))
+    ye, me, de = (int(x) for x in (end or start).split("-"))
+    if (ys, ms, ds) == (ye, me, de):
+        return fmt_day(start)
+    if (ys, ms) == (ye, me):
+        return "%d&ndash;%d %s %d" % (ds, de, MONTHS[ms - 1], ys)
+    if ys == ye:
+        return "%d %s &ndash; %d %s %d" % (ds, MONTHS[ms - 1], de, MONTHS[me - 1], ys)
+    return fmt_day(start) + " &ndash; " + fmt_day(end)
+
+
+def fmt_size(n):
+    return ("%.1f MB" % (n / 1048576.0)) if n >= 1048576 else ("%d KB" % round(n / 1024.0))
+
+
+def doc_badge(d):
+    if d.get("status") == "signed" and d.get("signedOn"):
+        return '<span class="doc-badge doc-badge--signed">Signed ' + fmt_day(d["signedOn"]) + ' &middot; v' + esc(d["version"]) + '</span>'
+    return '<span class="doc-badge">' + icon("clock") + 'Pending signatures</span>'
+
+
+def doc_card(stem):
+    d = DOC_BY_STEM.get(stem)
+    if not d:
+        return ''
+    href = "assets/documents/" + d["file"]
+    title = esc(d["title"])
+    size = fmt_size(d["bytes"])
+    version = '' if d.get("status") == "signed" else '<span>v' + esc(d["version"]) + '</span><span aria-hidden="true">&middot;</span>'
+    return (
+        '<div class="doc-card">'
+        '<div class="doc-card-icon">' + icon("file") + '</div>'
+        '<div class="doc-card-body">'
+        '<h4 class="doc-title">' + title + '</h4>'
+        '<p class="doc-meta">' + version + doc_badge(d) + '<span aria-hidden="true">&middot;</span>'
+        '<span>%d pages &middot; %s</span></p>' % (d["pages"], size) +
+        '<div class="doc-actions">'
+        '<a class="btn btn-outline btn-sm" href="' + href + '" target="_blank" rel="noopener">' + icon("eye") +
+        'View PDF<span class="sr-only">: ' + title + ' (opens in a new tab)</span></a>'
+        '<a class="btn btn-dark btn-sm" href="' + href + '" download>' + icon("download") +
+        'Download<span class="sr-only">: ' + title + ' (PDF, ' + size + ')</span></a>'
+        '</div></div></div>'
+    )
+
+
+def docs_notice():
+    return '<p class="docs-notice" role="note">' + icon("clock") + DOCS_NOTICE + '</p>'
+
+
+def docs_block(primary, related=(), related_label="Related documents"):
+    """Notice once, then the primary card(s), then any related cards."""
+    prim = "".join(doc_card(s) for s in primary)
+    rel = "".join(doc_card(s) for s in related)
+    if not (prim or rel):
+        return '<!-- documents.json missing or all documents unpublished -->'
+    out = '<div class="docs-block">' + docs_notice()
+    if prim:
+        out += '<div class="doc-list">' + prim + '</div>'
+    if rel:
+        out += '<h3 class="docs-subhead">' + related_label + '</h3><div class="doc-list">' + rel + '</div>'
+    return out + '</div>'
+
+
+def docs_grouped():
+    """All published documents, grouped (about.html#policies, resources.html)."""
+    if not DOC_BY_STEM:
+        return '<!-- documents.json missing -->'
+    out = '<div class="docs-block docs-block--grouped">' + docs_notice()
+    for g in DOC_GROUPS:
+        items = [s for s, d in DOC_BY_STEM.items() if esc(d["group"]) == g]
+        if items:
+            out += '<h3 class="docs-subhead">' + g + '</h3><div class="doc-list">' + "".join(doc_card(s) for s in items) + '</div>'
+    return out + '</div>'
 
 
 # ============================================================
@@ -569,7 +744,7 @@ def about():
 
         # Intro / About CARE
         '<section class="section bg-white"><div class="container feature-row">'
-        '<div class="feature-media"><div class="placeholder-box" style="min-height:20rem">Organization photo &mdash; coming soon</div></div>'
+        + media_slot("heat-relief-camp-03", "Organization photo &mdash; coming soon") +
         '<div class="feature-body"><p class="eyebrow">About CARE</p>'
         '<h2>' + BRAND_TAG + '</h2>'
         '<p>CARE is a non-profit organization committed to improving access to essential medicines and healthcare for underserved communities across Pakistan &mdash; driven by student leadership, medical partnerships and compassionate action.</p>'
@@ -612,18 +787,21 @@ def about():
         '<section id="governance" class="section bg-white"><div class="container max-720" style="text-align:center">'
         '<h2 class="section-title">Governance &amp; Partners</h2><div class="red-divider"></div>'
         '<p style="color:var(--mid-gray);line-height:1.8">CARE is governed by its Board of Governors with support from an Advisory Board, and works in partnership with universities, hospitals, NGOs and CSR partners.</p>'
-        '<div class="center-btn"><a class="btn btn-outline" href="governance.html">View Governance</a></div>'
+        '<div class="center-btn cta-actions"><a class="btn btn-outline" href="governance.html">View Governance</a>'
+        '<a class="btn btn-outline" href="' + BOARD_PAGE + '">View Board of Directors</a></div>'
         '</div></section>'
 
         # Policies
         '<section id="policies" class="section bg-off-white"><div class="container max-720" style="text-align:center">'
         '<h2 class="section-title">Policies</h2><div class="red-divider"></div>'
-        '<p style="color:var(--mid-gray);line-height:1.8">Our policies set the standards for how we work and safeguard the people we serve.</p>'
+        '<p style="color:var(--mid-gray);line-height:1.8">CARE&rsquo;s policy documents are available to view and download below.</p>'
         '<div class="cta-actions mt-3">'
         '<a class="btn btn-outline" href="privacy-policy.html">Privacy Policy</a>'
+        '<a class="btn btn-outline" href="terms.html">Terms &amp; Conditions</a>'
         '<a class="btn btn-outline" href="safeguarding-policy.html">Safeguarding Policy</a>'
         '<a class="btn btn-outline" href="volunteer-policy.html">Volunteer Policy</a>'
-        '</div></div></section>'
+        '</div></div>'
+        '<div class="container max-720 mt-4">' + docs_grouped() + '</div></section>'
 
         # Annual Reports
         '<section id="annual-reports" class="section bg-white"><div class="container max-720" style="text-align:center">'
@@ -661,19 +839,35 @@ def programs():
                + "".join('<a href="#' + sid + '">' + title + '</a>' for sid, _, title, _, _ in sections)
                + '</div>')
 
+    # Photo per section (media.json id). Held / missing media keep the placeholder.
+    section_media = {
+        "medical-camps": "free-medical-camp-02",      # consent-held -> placeholder until "confirmed"
+        "health-awareness": "derma-session-02",
+        "community-outreach": "heat-relief-camp-01",
+        "emergency-support": "bls-workshop",
+        "volunteer-initiatives": "blood-donation-drive-03",
+    }
+    section_docs = {
+        "drug-bank": ["care-patient-assistance-policy", "care-medical-assistance-and-referral-policy"],
+        "medical-camps": ["care-patient-assistance-policy", "care-medical-assistance-and-referral-policy",
+                          "care-photography-media-and-consent-policy"],
+    }
+
     rows = ""
     for i, (sid, ic, title, desc, bullets) in enumerate(sections):
-        media = '<div class="feature-media"><div class="placeholder-box" style="min-height:18rem"><!-- TODO: photos pending from Adeena -->Program photo &mdash; coming soon</div></div>'
+        media = media_slot(section_media.get(sid),
+                           '<!-- TODO: photos pending from Adeena -->Program photo &mdash; coming soon', "18rem")
+        docs = ('<div class="mt-4">' + docs_block(section_docs[sid], related_label="") + '</div>') if sid in section_docs else ''
         if desc is None:
             body = ('<div class="feature-body"><div class="badge">' + icon(ic) + '</div>'
                     '<h2>' + title + '</h2>'
                     '<!-- TODO: content pending, CARE team is writing this one -->'
-                    + note("Drug Bank programme copy is being written by the CARE team.") + '</div>')
+                    + note("Drug Bank programme copy is being written by the CARE team.") + docs + '</div>')
         else:
             bl = "".join('<li>' + b + '</li>' for b in bullets)
             body = ('<div class="feature-body"><div class="badge">' + icon(ic) + '</div>'
                     '<h2>' + title + '</h2><p>' + desc + '</p>'
-                    '<ul class="check-list">' + bl + '</ul></div>')
+                    '<ul class="check-list">' + bl + '</ul>' + docs + '</div>')
         reverse = " reverse" if i % 2 == 1 else ""
         bg = "bg-white" if i % 2 == 0 else "bg-off-white"
         inner = (media + body) if i % 2 == 0 else (body + media)
@@ -849,40 +1043,84 @@ def donate():
         '<section class="section--tight bg-dark"><div class="container max-720" style="text-align:center">'
         '<p style="color:rgba(255,255,255,.85);font-style:italic;font-size:1.05rem">&ldquo;Your support can save lives. All donations are used transparently for patient care and operations. We are proud to share regular impact reports with all donors.&rdquo;</p>'
         '</div></section>'
+        # Related policy documents (new block, below the existing content)
+        '<section id="donation-policies" class="section bg-white"><div class="container max-720">'
+        '<h2 class="section-title">Fundraising &amp; Finance Documents</h2><div class="red-divider"></div>'
+        + docs_block(["care-donations-and-fundraising-policy", "care-zakat-and-sadaqah-management-policy",
+                      "care-financial-management-policy"]) +
+        '</div></section>'
+    )
+
+
+def event_media(ev):
+    """Published media for an event, poster first. Held items are simply absent."""
+    items = [mid for mid in ev.get("media", []) if published(mid)]
+    items.sort(key=lambda mid: 0 if MEDIA[mid].get("poster") else 1)
+    return items
+
+
+def event_cover(ev):
+    """Cover id: the event's cover if published, else the first published non-poster item."""
+    if published(ev.get("cover")) and "card" in OUTPUTS[ev["cover"]]:
+        return ev["cover"]
+    return None
+
+
+def events_client_data():
+    """Resolved event data for assets/js/events-calendar.js, embedded in the page
+    (works from file:// — no fetch). Status is NOT included: the browser computes it."""
+    out = []
+    for ev in EVENTS:
+        gallery = []
+        for mid in event_media(ev):
+            m, o = MEDIA[mid], OUTPUTS[mid]
+            if m["type"] == "video":
+                gallery.append({"type": "video", "src": o["video"]["src"], "poster": o["frame"]["src"],
+                                "width": o["video"]["width"], "height": o["video"]["height"], "alt": m["alt"]})
+            else:
+                gallery.append({"type": "image", "src": o["full"]["src"], "width": o["full"]["width"],
+                                "height": o["full"]["height"], "alt": m["alt"], "poster": bool(m.get("poster"))})
+        out.append({k: ev.get(k) for k in ("id", "title", "category", "start", "end", "time", "location", "summary")}
+                   | {"gallery": gallery})
+    return json.dumps(out, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+
+
+def event_card(ev):
+    cover = event_cover(ev)
+    n = len(event_media(ev))
+    if cover:
+        media = media_img(cover, "card", "event-cover")
+    else:
+        media = ('<div class="placeholder-box event-cover-ph"><!-- no published cover (none supplied or consent-held) -->'
+                 'Photos coming soon</div>')
+    meta = ('<div class="event-meta">' + icon("calendar") + '<time datetime="' + ev["start"] + '">'
+            + fmt_range(ev["start"], ev["end"]) + '</time></div>')
+    if ev.get("time"):
+        meta += '<div class="event-meta">' + icon("clock") + esc(ev["time"]) + '</div>'
+    if ev.get("location"):
+        meta += '<div class="event-meta">' + icon("pin") + esc(ev["location"]) + '</div>'
+    else:
+        meta += '<!-- TODO: location not supplied -->'
+    summary = ('<p>' + esc(ev["summary"]) + '</p>') if ev.get("summary") else '<!-- TODO: summary not supplied -->'
+    if ev.get("mediaProvisional"):
+        summary += '<!-- TODO: photo-to-event link is provisional (photo metadata stripped) — confirm -->'
+    label = ("View photos (%d)" % n) if n else "View details"
+    return (
+        '<li class="event-card" data-event-id="' + esc(ev["id"]) + '" data-start="' + ev["start"] + '" data-end="' + ev["end"] + '">'
+        + media +
+        '<div class="event-body"><h3>' + esc(ev["title"]) + '</h3>' + meta + summary +
+        '<button type="button" class="btn btn-outline btn-sm mt-2" data-event-open="' + esc(ev["id"]) + '" hidden>'
+        + label + '<span class="sr-only">: ' + esc(ev["title"]) + '</span></button>'
+        '</div></li>'
     )
 
 
 def news_events():
-    upcoming = [
-        ("25", "May", "Health Awareness Workshop", "Karachi", "10:00 AM", "A free health awareness session covering preventive care, nutrition and hygiene for underserved communities."),
-        ("10", "Jun", "Free Medical Camp", "Karachi", "9:00 AM", "General medical consultations, basic diagnostics and medicine distribution at no cost."),
-        ("20", "Jun", "Blood Donation Drive", "Karachi", "11:00 AM", "Community blood donation drive in partnership with local hospitals. All blood types needed."),
-    ]
-    up_html = ""
-    for day, month, title, loc, time, desc in upcoming:
-        up_html += (
-            '<div class="event-card"><div class="event-date"><div class="day">' + day + '</div>'
-            '<div class="month">' + month + '</div></div>'
-            '<div class="event-body"><h3>' + title + '</h3>'
-            '<div class="event-meta">' + icon("pin") + loc + '</div>'
-            '<div class="event-meta">' + icon("clock") + time + '</div>'
-            '<p>' + desc + '</p></div></div>'
-        )
-
-    past = [
-        ("Flood Relief Medical Camp 2024", "Sep 2024", "Karachi"),
-        ("Winter Medical Aid Drive", "Jan 2025", "Karachi"),
-        ("Community Health Fair", "Mar 2025", "Karachi"),
-    ]
-    past_html = ""
-    for title, date, loc in past:
-        past_html += (
-            '<div class="event-card"><div class="placeholder-box" style="min-height:9rem;border-radius:var(--radius) var(--radius) 0 0">'
-            '<!-- TODO: photos pending from Adeena -->Photo coming soon</div>'
-            '<div class="event-body"><h3>' + title + '</h3>'
-            '<div class="event-meta">' + icon("calendar") + date + '</div>'
-            '<div class="event-meta">' + icon("pin") + loc + '</div></div></div>'
-        )
+    # Events come from assets/data/events.json (newest first). Without JS they all
+    # render as one plain list; events-calendar.js sorts them into Upcoming / Past
+    # against today's date in Asia/Karachi, so the page can never go stale.
+    events = sorted(EVENTS, key=lambda e: (e["end"], e["start"]), reverse=True)
+    cards = "".join(event_card(ev) for ev in events)
 
     news_cats = ["Medical Camps", "Volunteer Activities", "Outreach", "Partnership", "CSR (Dearly Loved)"]
     news_html = ""
@@ -890,28 +1128,69 @@ def news_events():
         news_html += ('<div class="card"><h3>' + cat + '</h3>'
                       '<p>' + todo("latest news content pending") + '</p></div>')
 
+    dialog = (
+        '<dialog class="event-dialog" data-event-dialog aria-labelledby="event-dialog-title">'
+        '<div class="event-dialog-inner">'
+        '<button type="button" class="icon-btn event-dialog-close" data-dialog-close aria-label="Close">' + icon("x") + '</button>'
+        '<p class="eyebrow" data-dialog-status></p>'
+        '<h2 id="event-dialog-title" data-dialog-title></h2>'
+        '<div class="event-dialog-meta" data-dialog-meta></div>'
+        '<p class="event-dialog-summary" data-dialog-summary></p>'
+        '<figure class="event-gallery" data-gallery>'
+        '<div class="event-gallery-stage" data-gallery-stage></div>'
+        '<figcaption class="event-gallery-caption" data-gallery-caption></figcaption>'
+        '</figure>'
+        '<div class="event-gallery-controls" data-gallery-controls>'
+        '<button type="button" class="btn btn-outline btn-sm" data-gallery-prev>&larr; Previous</button>'
+        '<span class="event-gallery-counter" data-gallery-counter aria-live="polite"></span>'
+        '<button type="button" class="btn btn-outline btn-sm" data-gallery-next>Next &rarr;</button>'
+        '</div></div></dialog>'
+    )
+
     return (
         banner("News &amp; Events", "News &amp; Events") +
         '<section class="section bg-white"><div class="container" data-tabs>'
         '<div class="tabs" role="tablist">'
-        '<button class="tab-btn" data-tab="upcoming" aria-selected="true">Upcoming</button>'
-        '<button class="tab-btn" data-tab="past" aria-selected="false">Past Events</button>'
+        '<button class="tab-btn" data-tab="calendar" aria-selected="false">Calendar</button>'
+        '<button class="tab-btn" data-tab="upcoming" aria-selected="false">Upcoming</button>'
+        '<button class="tab-btn" data-tab="past" aria-selected="true">Past Events</button>'
         '<button class="tab-btn" data-tab="news" aria-selected="false">Latest News</button>'
         '</div>'
-        # Upcoming
-        '<div class="tab-panel active" data-panel="upcoming">'
+        # Calendar (built by events-calendar.js)
+        '<div class="tab-panel" data-panel="calendar">'
+        '<h2 class="section-title">Events Calendar</h2><div class="red-divider"></div>'
+        '<p class="calendar-legend"><span class="ev-key ev-key--upcoming" aria-hidden="true"></span>Upcoming'
+        '<span class="ev-key ev-key--past" aria-hidden="true"></span>Past events are muted and labelled &ldquo;Past&rdquo;.</p>'
+        '<div class="events-calendar" data-events-calendar></div>'
+        '</div>'
+        # Upcoming (filled by JS; empty state otherwise)
+        '<div class="tab-panel" data-panel="upcoming">'
         '<h2 class="section-title">Upcoming Events</h2><div class="red-divider"></div>'
-        '<div class="event-grid">' + up_html + '</div></div>'
-        # Past
-        '<div class="tab-panel" data-panel="past">'
-        '<h2 class="section-title">Past Events</h2><div class="red-divider"></div>'
-        '<div class="event-grid">' + past_html + '</div></div>'
+        '<ul class="event-grid" data-events-upcoming></ul>'
+        '<p class="events-empty" data-events-empty>No events announced right now. Follow '
+        '<a href="' + IG + '" target="_blank" rel="noreferrer">' + IG_HANDLE + '</a> on Instagram for updates.</p>'
+        '</div>'
+        # Past — server-rendered list of ALL events (no-JS / SEO fallback); JS moves upcoming ones out.
+        '<div class="tab-panel active" data-panel="past">'
+        '<h2 class="section-title" data-past-heading>Events</h2><div class="red-divider"></div>'
+        '<ul class="event-grid" data-events-past>' + cards + '</ul>'
+        '</div>'
         # News
         '<div class="tab-panel" data-panel="news">'
         '<h2 class="section-title">Latest News</h2>'
         '<p class="section-subtitle">Updates across our programmes</p><div class="red-divider"></div>'
         '<div class="grid grid-3">' + news_html + '</div></div>'
         '</div></section>'
+        # Photography note
+        '<section id="photography" class="section bg-off-white"><div class="container max-720">'
+        '<h2 class="section-title">Photography at CARE Events</h2><div class="red-divider"></div>'
+        '<p class="section-subtitle" style="margin-bottom:2rem">Photos and videos are sometimes taken at CARE events. '
+        'If you would rather not appear in them, or would like a photo of you removed from this website, email '
+        '<a class="text-link" href="mailto:' + EMAIL + '">' + EMAIL + '</a>.</p>'
+        + docs_block(["care-photography-media-and-consent-policy"]) +
+        '</div></section>'
+        + dialog +
+        '<script type="application/json" id="care-events-data">' + events_client_data() + '</script>'
     )
 
 
@@ -930,7 +1209,8 @@ def resources():
         '<div class="cta-actions mt-3">'
         '<a class="btn btn-outline" href="about.html#policies">View Policies</a>'
         '<a class="btn btn-outline" href="about.html#annual-reports">Annual Reports</a>'
-        '</div></div></section>'
+        '</div></div>'
+        '<div class="container max-720 mt-4">' + docs_grouped() + '</div></section>'
     )
 
 
@@ -974,6 +1254,13 @@ def governance():
         '</section>'
         '<h3 style="text-align:center;margin:3rem 0 1.5rem">Board of Governors</h3>' + grid +
         '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm board details and photos") + '</p>'
+        '<div class="center-btn"><a class="btn btn-outline" href="' + BOARD_PAGE + '">View Board of Directors</a></div>'
+        '</div></section>'
+        '<section id="governance-documents" class="section bg-off-white"><div class="container max-720">'
+        '<h2 class="section-title">Governance Documents</h2><div class="red-divider"></div>'
+        + docs_block(["care-governance-policy",
+                      "care-student-council-university-department-representatives-advisory-council-and-patron-governance-policy",
+                      "care-financial-management-policy", "care-procurement-and-asset-management-policy"]) +
         '</div></section>'
     )
 
@@ -1005,15 +1292,49 @@ def faq():
     )
 
 
-def policy_page(title, crumb, intro):
+def policy_page(title, crumb, intro, primary, related=()):
+    # The legal text lives in the PDFs only — never summarised or converted to HTML here.
     return (
         banner(title, crumb) +
         '<section class="section bg-white"><div class="container max-720">'
         '<h2 class="section-title">' + title + '</h2><div class="red-divider"></div>'
         '<p style="color:var(--mid-gray);line-height:1.8;text-align:center">' + intro + '</p>'
-        '<div class="mt-4"><!-- TODO: check whether the org\'s lawyer already drafted these during registration before writing from scratch -->'
-        + note("Before writing this policy from scratch, check whether the organisation&rsquo;s lawyer already drafted it during registration. Final policy text is pending.") +
-        '</div></div></section>'
+        '<div class="mt-4">' + docs_block(primary, related) + '</div>'
+        '</div></section>'
+    )
+
+
+def board_of_directors():
+    # Source: WhatsApp from Junaid, 11 Nov 2026 ("board of directors"). Names exactly as typed,
+    # not yet confirmed with each person. Edit assets/data/board.json — never this function —
+    # to add/rename a Director, add a role/bio, or flip "confirmed" (which drops noindex).
+    cards = ""
+    for m in BOARD.get("members", []):
+        name = esc(m["name"])
+        photo = m.get("photo")
+        if photo and m.get("photoConsent") == "confirmed" and os.path.exists(os.path.join(ROOT, photo)):
+            avatar = ('<img class="team-photo team-photo-img" src="' + esc(photo) + '" alt="Portrait of ' + name + '" '
+                      'width="120" height="120" loading="lazy" decoding="async">')
+        else:
+            parts = m["name"].split()
+            initials = (parts[0][0] + (parts[-1][0] if len(parts) > 1 else "")).upper()
+            avatar = ('<!-- no photo: needs the Director\'s written/electronic consent (photography policy §2.1, §5) -->'
+                      '<div class="team-photo team-initials" aria-hidden="true">' + esc(initials) + '</div>')
+        role = ('<div class="role">' + esc(m["role"]) + '</div>') if m.get("role") else ''
+        bio = ('<p class="bio">' + esc(m["bio"]) + '</p>') if (m.get("bio") or "").strip() else ''
+        cards += ('<div class="team-member">' + avatar + '<div class="name">' + name + '</div>'
+                  '<div class="role">' + esc(m.get("title") or "") + '</div>' + role + bio + '</div>')
+    return (
+        banner("Board of Directors", '<a href="about.html">About</a> / Board of Directors') +
+        '<section class="section bg-white"><div class="container">'
+        '<p class="section-subtitle" style="margin-bottom:3rem">The Directors of CARE Aid &amp; Rehabilitation in Emergency.</p>'
+        '<!-- TODO: names not yet confirmed with each Director; draft Governance Policy §4.1 says the Board has four Directors (three listed). Titles/roles not supplied. -->'
+        '<div class="team-grid team-grid--auto">' + cards + '</div>'
+        '</div></section>'
+        '<section class="section bg-off-white"><div class="container max-720">'
+        '<h2 class="section-title">Related Documents</h2><div class="red-divider"></div>'
+        + docs_block(["care-governance-policy"]) +
+        '</div></section>'
     )
 
 
@@ -1079,6 +1400,12 @@ def contact():
         '<p class="form-status" role="status"></p>'
         '</form></div>'
         '</div></section>'
+        # Complaints & whistleblowing document
+        '<section id="complaints" class="section bg-off-white"><div class="container max-720">'
+        '<h2 class="section-title">Complaints &amp; Whistleblowing</h2><div class="red-divider"></div>'
+        + docs_block(["care-complaints-and-whistleblowing-policy"]) +
+        '<p class="text-center mt-3">See also: <a class="text-link" href="safeguarding-policy.html">Safeguarding Policy</a></p>'
+        '</div></section>'
         # Map placeholder
         '<div class="map-placeholder placeholder-box" style="border-radius:0">'
         '<!-- TODO: Google Maps embed needs an API key; carrying over the placeholder until one is available -->'
@@ -1100,9 +1427,11 @@ PAGES = [
     ("resources.html", "Resources | CARE Pakistan", "Dearly Loved (CSR) and links to policies and reports.", resources, "resources dearly loved csr policies reports"),
     ("governance.html", "Governance | CARE Pakistan", "CARE governance structure and board of governors.", governance, "governance board governors registration accountability"),
     ("faq.html", "FAQ | CARE Pakistan", "Frequently asked questions about donations, security and reach.", faq, "faq questions money secure reach zakat registration"),
-    ("privacy-policy.html", "Privacy Policy | CARE Pakistan", "How CARE handles personal information.", lambda: policy_page("Privacy Policy", "Privacy Policy", "This policy describes how CARE collects, uses and protects personal information."), "privacy policy data personal information"),
-    ("safeguarding-policy.html", "Safeguarding Policy | CARE Pakistan", "How CARE protects the people it serves.", lambda: policy_page("Safeguarding Policy", "Safeguarding Policy", "This policy sets out CARE&rsquo;s commitment to safeguarding the people it serves."), "safeguarding policy protection"),
-    ("volunteer-policy.html", "Volunteer Policy | CARE Pakistan", "The standards and expectations for CARE volunteers.", lambda: policy_page("Volunteer Policy", "Volunteer Policy", "This policy sets out the standards, rights and responsibilities for CARE volunteers."), "volunteer policy standards conduct"),
+    ("privacy-policy.html", "Privacy Policy | CARE Pakistan", "How CARE handles personal information.", lambda: policy_page("Privacy Policy", "Privacy Policy", "This policy describes how CARE collects, uses and protects personal information.", ["care-website-privacy-notice"], ["care-photography-media-and-consent-policy"]), "privacy policy notice data personal information photography consent"),
+    ("terms.html", "Terms & Conditions | CARE Pakistan", "The terms and conditions for using the CARE website.", lambda: policy_page("Terms &amp; Conditions", "Terms &amp; Conditions", "The terms and conditions for using the CARE website.", ["care-website-terms-and-conditions"], ["care-website-privacy-notice"]), "terms conditions website use legal"),
+    ("safeguarding-policy.html", "Safeguarding Policy | CARE Pakistan", "How CARE protects the people it serves.", lambda: policy_page("Safeguarding Policy", "Safeguarding Policy", "This policy sets out CARE&rsquo;s commitment to safeguarding the people it serves.", ["care-safeguarding-policy"], ["care-code-of-conduct-and-ethics", "care-anti-harassment-and-non-discrimination-policy", "care-complaints-and-whistleblowing-policy", "care-photography-media-and-consent-policy"]), "safeguarding policy protection code of conduct harassment complaints whistleblowing"),
+    ("volunteer-policy.html", "Volunteer Policy | CARE Pakistan", "The standards and expectations for CARE volunteers.", lambda: policy_page("Volunteer Policy", "Volunteer Policy", "This policy sets out the standards, rights and responsibilities for CARE volunteers.", ["care-volunteer-policy"], ["care-code-of-conduct-and-ethics", "care-anti-harassment-and-non-discrimination-policy", "care-student-council-university-department-representatives-advisory-council-and-patron-governance-policy"]), "volunteer policy standards conduct student council"),
+    (BOARD_PAGE, "Board of Directors | CARE Pakistan", "The Directors of CARE Aid & Rehabilitation in Emergency.", board_of_directors, "board directors governance"),
     ("testimonials.html", "Testimonials | CARE Pakistan", "Written and video testimonials from those we serve.", testimonials, "testimonials stories patients volunteers reviews"),
     ("contact.html", "Contact Us | CARE Pakistan", "Get in touch with the CARE team.", contact, "contact address phone email message map"),
 ]
@@ -1118,7 +1447,11 @@ REDIRECTS = [
 def build():
     search_entries = []
     for filename, title, desc, fn, keywords in PAGES:
-        page(filename, title, desc, filename, fn())
+        page(filename, title, esc(desc), filename, fn())
+        if noindex(filename):
+            continue   # kept out of the site search (and sitemap) until confirmed
+        if filename == "news-events.html":   # index event titles/categories from events.json
+            keywords += " " + " ".join(e["title"] + " " + e.get("category", "") for e in EVENTS).lower()
         # Clean title for search (strip site suffix)
         short = title.split(" | ")[0]
         search_entries.append({"title": short, "url": filename, "summary": desc, "keywords": keywords})
@@ -1136,7 +1469,7 @@ def build():
     # excluded because they canonicalise elsewhere and would be flagged by Search Console)
     with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
         f.write("User-agent: *\nAllow: /\n\nSitemap: " + SITE_URL + "/sitemap.xml\n")
-    urls = "".join("  <url><loc>" + page_url(fn) + "</loc></url>\n" for fn, *_ in PAGES)
+    urls = "".join("  <url><loc>" + page_url(fn) + "</loc></url>\n" for fn, *_ in PAGES if not noindex(fn))
     with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '</urlset>\n')

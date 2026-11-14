@@ -27,7 +27,9 @@ static-site/
 ├── impact.html             Impact + Impact Dashboard
 ├── get-involved.html       Volunteer / Partner / Corporate / CSR / Universities / Funders
 ├── donate.html             Bank details + other ways to give
-├── news-events.html        Upcoming / Past / Latest News (tabbed)
+├── news-events.html        Calendar / Upcoming / Past / Latest News (tabbed, from events.json)
+├── board-of-directors.html Board of Directors (from board.json)
+├── terms.html              Terms & Conditions (policy page + PDF)
 ├── resources.html          Dearly Loved (CSR)
 ├── governance.html         Governance
 ├── faq.html                FAQ (accordion)
@@ -80,6 +82,50 @@ python _generator/build.py     # rewrites every .html with the header/footer inl
 
 Edit page *content* either directly in the `.html` files, or in `build.py` and re-run it.
 (Re-running overwrites the `.html` files, so don't mix both approaches on the same page.)
+
+## Data-driven content (edit JSON, then rebuild)
+
+All of these live in `assets/data/` and are read by `_generator/build.py`:
+
+| File | What it drives |
+|---|---|
+| `events.json` | News & Events: calendar, Upcoming / Past cards, event dialog. Dates are **inclusive**. Upcoming/past is **computed in the browser** against today's date in Asia/Karachi, never stored. |
+| `media.json` | Every event photo/video: focal point, watermark corner, alt text, consent status. |
+| `media-outputs.json` | Written by `process_media.py` (published outputs and their sizes). Don't edit. |
+| `documents.json` | Policy PDFs: title, version, status, pages, size, group, publish flag. |
+| `board.json` | Board of Directors page. `confirmed: false` = `noindex`, left out of the sitemap and site search. Add a fourth Director here. |
+
+Rebuild order (WSL):
+
+```bash
+~/.venvs/care/bin/python _generator/process_media.py   # photos/videos (needs Pillow + ffmpeg)
+python3 _generator/documents_meta.py                   # PDF metadata (needs poppler-utils)
+python3 _generator/build.py                            # regenerate every .html
+python3 _generator/verify.py                           # links, PDFs, consent gate, board checks
+```
+
+All four are idempotent: running them twice changes nothing.
+
+### Photos and consent
+
+- Originals stay in `../../Pictures` (read-only). Outputs are WebP with no EXIF: `-card` (3:2, ≤ 900×600) and `-full` (long edge ≤ 1600), never upscaled, with the CARE logo watermark.
+- `consent: "required"` media are written to `../../_held-media/` (**outside the repo**) and never into `static-site/`. Their slots show the "Photos coming soon" placeholder. After written consent is on record, set `consent: "confirmed"` and re-run `process_media.py` then `build.py`.
+- `docs/media-publication-checklist.md` (repo root) lists every image with its consent status, for review sign-off.
+
+### Policy documents — re-upload flow
+
+The PDFs in `assets/documents/` are published unchanged and marked **"Pending signatures"**. When a signed version arrives:
+
+1. Replace the PDF in `assets/documents/` **with the same filename**, so existing links and search results keep working.
+2. Run `python3 _generator/documents_meta.py`. This refreshes version, pages and size, and keeps status, signedOn, publish and group.
+3. In `assets/data/documents.json`, set that document's `"status": "signed"` and `"signedOn": "YYYY-MM-DD"`. The badge then reads "Signed {date} · v{version}".
+4. Run `python3 _generator/build.py`.
+
+Set `"publish": false` to hide a document everywhere without deleting the file.
+
+### Calendar library
+
+`assets/vendor/fullcalendar/` holds the **FullCalendar Standard Bundle v6.1.22** (MIT, unmodified; see `VERSION.txt` and `LICENSE.md`). There's no CDN at runtime and no premium plugin. It loads only on `news-events.html`, together with `assets/js/events-calendar.js`.
 
 ## Before going live — TODOs
 
