@@ -31,7 +31,7 @@ IG_HANDLE = "@CARE_JMDC"
 # This is NOT the registered address — that is REG_ADDRESS below.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "14"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "15"  # bump to cache-bust styles.css / JS after a redesign
 
 # ---- Official identity (domain verification, e.g. Google for Nonprofits) ----
 SITE_URL = "https://carepk.org"
@@ -648,16 +648,6 @@ def home():
     for ic, title, desc, href in transparency:
         t_html += ('<a class="t-card" href="' + href + '">' + icon(ic) + '<h4>' + title + '</h4><p>' + desc + '</p></a>')
 
-    testimonials = [
-        ("CARE helped us when we had lost all hope. They not only covered my father&rsquo;s treatment but stayed by our side through his recovery. We will never forget their kindness.", "A Patient&rsquo;s Family", "Lahore"),
-        ("The free medical camp in our village was life-changing. So many families received diagnoses and medicines they could never have afforded otherwise.", "Community Member", "Faisalabad"),
-    ]
-    tcards = ""
-    for quote, author, loc in testimonials:
-        tcards += ('<div class="quote-card"><div class="qmark">&ldquo;</div>'
-                   '<blockquote>' + quote + '</blockquote>'
-                   '<div class="attr"><div class="name">' + author + '</div><div class="loc">' + loc + '</div></div></div>')
-
     return (
         # 1. Hero
         '<section class="hero"><div class="container"><div class="hero-inner">'
@@ -732,14 +722,6 @@ def home():
         '<p class="section-subtitle" style="color:rgba(255,255,255,.7)">How CARE is registered, governed and funded.</p>'
         '<div class="red-divider"></div>'
         '<div class="t-grid">' + t_html + '</div>'
-        '</div></section>'
-
-        # 9. Testimonials
-        '<section class="section bg-off-white"><div class="container">'
-        '<h2 class="section-title">Testimonials</h2>'
-        '<p class="section-subtitle">Words from the people and communities we serve</p><div class="red-divider"></div>'
-        '<div class="grid grid-2">' + tcards + '</div>'
-        '<div class="center-btn"><a class="btn btn-outline" href="testimonials.html">Read More Testimonials</a></div>'
         '</div></section>'
 
         # 10. Closing CTA
@@ -1390,32 +1372,6 @@ def board_of_directors():
     )
 
 
-def testimonials():
-    written = [
-        ("CARE helped us when we had lost all hope. They not only covered my father&rsquo;s treatment but stayed by our side through his recovery. We will never forget their kindness.", "A Patient&rsquo;s Family", "Lahore"),
-        ("The free medical camp in our village was life-changing. So many families received diagnoses and medicines they could never have afforded otherwise.", "Community Member", "Faisalabad"),
-        ("As a volunteer, I have seen firsthand the impact CARE has. The team is selfless, professional and genuinely committed to serving people.", "Volunteer", "Karachi"),
-        ("The free medical camp in Islamabad was a blessing. The doctors were thorough and the medicines were provided without any charge.", "Camp Attendee", "Islamabad"),
-    ]
-    w_html = ""
-    for quote, author, loc in written:
-        w_html += ('<div class="quote-card"><div class="qmark">&ldquo;</div>'
-                   '<blockquote>' + quote + '</blockquote>'
-                   '<div class="attr"><div class="name">' + author + '</div><div class="loc">' + loc + '</div></div></div>')
-    videos = ""
-    for i in range(1, 4):
-        videos += '<div class="placeholder-box" style="aspect-ratio:16/9;min-height:0">Video ' + str(i) + ' coming soon</div>'
-    return (
-        banner("Testimonials", "Testimonials") +
-        '<section class="section bg-white"><div class="container">'
-        '<h2 class="section-title">Written Testimonials</h2><div class="red-divider"></div>'
-        '<div class="grid grid-2">' + w_html + '</div></div></section>'
-        '<section class="section bg-off-white"><div class="container">'
-        '<h2 class="section-title">Video Testimonials</h2><div class="red-divider"></div>'
-        '<div class="grid grid-3">' + videos + '</div></div></section>'
-    )
-
-
 def contact():
     return (
         banner("Contact Us", "Contact Us") +
@@ -1484,7 +1440,6 @@ PAGES = [
     ("safeguarding-policy.html", "Safeguarding Policy | CARE Pakistan", "How CARE protects the people it serves.", lambda: policy_page("Safeguarding Policy", "Safeguarding Policy", "This policy sets out CARE&rsquo;s commitment to safeguarding the people it serves.", ["care-safeguarding-policy"], ["care-code-of-conduct-and-ethics", "care-anti-harassment-and-non-discrimination-policy", "care-complaints-and-whistleblowing-policy", "care-photography-media-and-consent-policy"]), "safeguarding policy protection code of conduct harassment complaints whistleblowing"),
     ("volunteer-policy.html", "Volunteer Policy | CARE Pakistan", "The standards and expectations for CARE volunteers.", lambda: policy_page("Volunteer Policy", "Volunteer Policy", "This policy sets out the standards, rights and responsibilities for CARE volunteers.", ["care-volunteer-policy"], ["care-code-of-conduct-and-ethics", "care-anti-harassment-and-non-discrimination-policy", "care-student-council-university-department-representatives-advisory-council-and-patron-governance-policy"]), "volunteer policy standards conduct student council"),
     (BOARD_PAGE, "Board of Directors | CARE Pakistan", "The Directors of CARE Aid & Rehabilitation in Emergency.", board_of_directors, "board directors governance"),
-    ("testimonials.html", "Testimonials | CARE Pakistan", "Written and video testimonials from those we serve.", testimonials, "testimonials stories patients volunteers reviews"),
     ("contact.html", "Contact Us | CARE Pakistan", "Get in touch with the CARE team.", contact, "contact address phone email message map"),
 ]
 
@@ -1493,6 +1448,7 @@ REDIRECTS = [
     ("what-we-do.html", "programs.html", "Care Programs"),
     ("events.html", "news-events.html", "News &amp; Events"),
     ("join-us.html", "get-involved.html", "Get Involved"),
+    ("testimonials.html", "impact.html", "Impact"),   # placeholder quotes removed; no genuine testimonials on file
 ]
 
 

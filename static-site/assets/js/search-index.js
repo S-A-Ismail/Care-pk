@@ -90,12 +90,6 @@ window.CARE_SEARCH_INDEX = [
     "keywords": "board directors governance"
   },
   {
-    "title": "Testimonials",
-    "url": "testimonials.html",
-    "summary": "Written and video testimonials from those we serve.",
-    "keywords": "testimonials stories patients volunteers reviews"
-  },
-  {
     "title": "Contact Us",
     "url": "contact.html",
     "summary": "Get in touch with the CARE team.",

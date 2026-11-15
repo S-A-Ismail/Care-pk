@@ -36,7 +36,7 @@ static-site/
 ├── privacy-policy.html
 ├── safeguarding-policy.html
 ├── volunteer-policy.html
-├── testimonials.html
+├── testimonials.html        redirect stub → impact (placeholder quotes removed)
 ├── contact.html
 │
 ├── team.html               ─┐  redirect stubs for old routes so old links
