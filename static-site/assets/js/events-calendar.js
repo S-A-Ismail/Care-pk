@@ -67,6 +67,12 @@
     });
   }
   if (emptyMsg) emptyMsg.hidden = upcoming.length > 0;
+  // Past events are grouped by year; hide a year whose events all moved to Upcoming.
+  if (pastList) {
+    pastList.querySelectorAll(".event-year-group").forEach(function (g) {
+      g.hidden = !g.querySelector("[data-event-id]");
+    });
+  }
   if (pastList && !past.length) {
     var none = document.createElement("p");
     none.className = "events-empty";

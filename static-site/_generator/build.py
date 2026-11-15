@@ -31,7 +31,7 @@ IG_HANDLE = "@CARE_JMDC"
 # This is NOT the registered address — that is REG_ADDRESS below.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "9"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "10"  # bump to cache-bust styles.css / JS after a redesign
 
 # ---- Official identity (domain verification, e.g. Google for Nonprofits) ----
 SITE_URL = "https://carepk.org"
@@ -69,6 +69,7 @@ MEDIA = {m["id"]: m for m in load_json("media.json", [])}
 OUTPUTS = load_json("media-outputs.json", {})     # written by process_media.py (published media only)
 DOCS = load_json("documents.json", [])            # written by documents_meta.py
 BOARD = load_json("board.json", {"confirmed": False, "members": []})
+IMPACT = load_json("impact.json", {"figures": [], "partners": [], "milestones": []})  # reported figures, partners, milestones
 DOC_BY_STEM = {d["file"][:-4]: d for d in DOCS if d.get("publish", True)}
 DOC_GROUPS = ["Governance", "Programmes &amp; patients", "People &amp; conduct",
               "Fundraising &amp; finance", "Website &amp; media"]
@@ -328,7 +329,7 @@ def footer():
         '<div class="footer-brand">'
         '<div class="brand"><img src="' + logo_src() + '" alt="CARE logo" width="40" height="40">'
         '<span><span class="brand-name">CARE</span><br><span class="brand-tag">' + BRAND_TAG + '</span></span></div>'
-        '<p>CARE is dedicated to serving humanity with compassion, transparency and commitment — improving access to essential medicines and healthcare for those who need it most.</p>'
+        '<p>CARE is dedicated to serving humanity with compassion, transparency and commitment, and improving access to essential medicines and healthcare for those who need it most.</p>'
         '<div class="footer-social">'
         '<a href="' + FB + '" target="_blank" rel="noreferrer" aria-label="Facebook">' + icon("facebook") + '</a>'
         '<a href="' + IG + '" target="_blank" rel="noreferrer" aria-label="Instagram">' + icon("instagram") + '</a>'
@@ -424,7 +425,7 @@ def cta_band():
     return (
         '<section class="cta-band"><div class="container">'
         '<h2>Ready to Make a Difference?</h2>'
-        '<p>Your support &mdash; whether through donations, volunteering, or spreading the word &mdash; helps us reach more people in need.</p>'
+        '<p>You can donate, volunteer or simply tell someone about CARE. All of it helps us reach more people.</p>'
         '<div class="cta-actions">'
         '<a class="btn btn-dark" href="donate.html">Donate Now</a>'
         '<a class="btn btn-outline-white" href="get-involved.html#volunteer">Volunteer With Us</a>'
@@ -549,6 +550,63 @@ def docs_grouped():
     return out + '</div>'
 
 
+# ---- Board of Directors cards (assets/data/board.json) -------
+def director_cards(compact=False):
+    """Portrait cards for the Directors. A photo is shown only when the file exists
+    and photoConsent is "confirmed"; otherwise the member's initials."""
+    out = ""
+    for i, m in enumerate(BOARD.get("members", [])):
+        name = esc(m["name"])
+        photo = m.get("photo")
+        if photo and m.get("photoConsent") == "confirmed" and os.path.exists(os.path.join(ROOT, photo)):
+            visual = ('<div class="director-photo"><img src="' + esc(photo) + '" alt="Portrait of ' + name + '" '
+                      'width="640" height="800" loading="lazy" decoding="async"></div>')
+        else:
+            parts = m["name"].split()
+            initials = (parts[0][0] + (parts[-1][0] if len(parts) > 1 else "")).upper()
+            visual = ('<!-- no photo: needs the Director\'s consent (photography policy §2.1, §5) -->'
+                      '<div class="director-photo director-photo--initials" aria-hidden="true">' + esc(initials) + '</div>')
+        role = ('<p class="role">' + esc(m["role"]) + '</p>') if m.get("role") else ''
+        bio = ('<p class="bio">' + esc(m["bio"]) + '</p>') if (m.get("bio") or "").strip() and not compact else ''
+        out += ('<article class="director-card">' + visual +
+                '<div class="director-meta"><span class="director-index" aria-hidden="true">%02d</span>' % (i + 1) +
+                '<h3 class="name">' + name + '</h3>'
+                '<p class="role">' + esc(m.get("title") or "") + '</p>' + role + bio + '</div></article>')
+    return '<div class="director-grid' + (' director-grid--compact' if compact else '') + '">' + out + '</div>'
+
+
+# ---- Reported figures (assets/data/impact.json) --------------
+FIGURES_NOTE = ("These figures come from CARE&rsquo;s own activity records and have not been independently audited. "
+                "A registration is not the same as a confirmed donor or a unit of blood collected.")
+
+
+def figure_grid():
+    out = ""
+    for f in IMPACT.get("figures", []):
+        out += ('<div class="figure-card"><div class="figure-value">' + esc(f["value"]) + '</div>'
+                '<div class="figure-label">' + esc(f["label"]) + '</div>'
+                '<div class="figure-detail">' + esc(f["detail"]) + '</div></div>')
+    return '<div class="figure-grid">' + out + '</div>'
+
+
+CATEGORY_LABELS = [
+    ("Medical Camp", "Medical camps"), ("Blood Drive", "Blood donation drives"),
+    ("Awareness", "Awareness sessions"), ("Course", "Training courses and workshops"),
+    ("Community Outreach", "Community outreach"), ("Institutional", "Closing ceremonies"),
+    ("Sports", "Sports Week"),
+]
+
+
+def bar_rows(pairs):
+    top = max([n for _, n in pairs] or [1])
+    out = ""
+    for label, n in pairs:
+        out += ('<div class="bar-row"><span class="bar-label">' + label + '</span>'
+                '<span class="bar-track" aria-hidden="true"><span class="bar-fill" style="width:%d%%"></span></span>' % round(100.0 * n / top) +
+                '<span class="bar-count">%d</span></div>' % n)
+    return '<div class="bar-list">' + out + '</div>'
+
+
 # ============================================================
 #  PAGE CONTENT
 # ============================================================
@@ -567,13 +625,7 @@ def home():
         cards_html += ('<a class="card" href="' + href + '"><div class="card-icon">' + icon(ic) +
                        '</div><h3>' + title + '</h3><p>' + desc + '</p></a>')
 
-    impact_labels = ["Patients Supported", "Medications Provided", "Medical Camps",
-                     "Volunteers", "Partner Hospitals", "Beneficiary Families"]
-    matrix = ""
-    for lbl in impact_labels:
-        matrix += ('<div class="card"><div class="stat-value" style="color:var(--mid-gray);font-size:1.15rem">Coming soon</div>'
-                   '<div class="stat-label" style="margin-top:.35rem">' + lbl + '</div>'
-                   '<div style="margin-top:.6rem">' + todo("figure pending") + '</div></div>')
+    events_on_record = len(EVENTS)
 
     journey = ["Patient Visits Care", "Medical Assessment", "Prescription Verification",
                "Medicine Support", "Follow-up", "Improved Healthcare Outcomes"]
@@ -583,15 +635,7 @@ def home():
         if i < len(journey) - 1:
             flow += '<div class="flow-arrow">' + icon("arrow-right") + '</div>'
 
-    partners = [
-        ("book", "Universities"), ("home", "Hospitals"), ("users", "NGOs"),
-        ("briefcase", "CSR Partners"), ("heart", "Sponsors"), ("plus-square", "Medical Suppliers"),
-        ("shield", "Government Collaborations"),
-    ]
-    partner_html = ""
-    for ic, name in partners:
-        partner_html += ('<div class="partner-cat">' + icon(ic) + '<h4>' + name + '</h4>'
-                         '<p>Logos coming soon</p></div>')
+    partner_html = "".join('<li>' + esc(n) + '</li>' for n in IMPACT.get("partners", []))
 
     transparency = [
         ("file", "Annual Report", "Yearly overview of our work and reach.", "about.html#annual-reports"),
@@ -627,9 +671,9 @@ def home():
 
         # 2. Impact snapshot teaser
         '<section class="stat-strip"><div class="container">'
-        '<div class="stat-item">' + icon("users") + '<div><div class="stat-value">500+</div><div class="stat-label">Patients Supported</div></div></div>'
-        '<!-- TODO: confirm volunteer figure with CARE team -->'
-        '<div class="stat-item">' + icon("heart") + '<div><div class="stat-value">50+</div><div class="stat-label">Dedicated Volunteers</div></div></div>'
+        '<div class="stat-item">' + icon("users") + '<div><div class="stat-value">180</div><div class="stat-label">Patients served at the 2023 Free Eye Camp</div></div></div>'
+        '<div class="stat-item">' + icon("heart") + '<div><div class="stat-value">134</div><div class="stat-label">Students registered for the 2026 blood drive</div></div></div>'
+        '<div class="stat-item">' + icon("calendar") + '<div><div class="stat-value">' + str(events_on_record) + '</div><div class="stat-label">Events on record since 2022</div></div></div>'
         '</div></section>'
 
         # 3. Why CARE Exists
@@ -657,9 +701,9 @@ def home():
         # 5. Our Impact matrix
         '<section class="section bg-white"><div class="container">'
         '<h2 class="section-title">Our Impact</h2>'
-        '<p class="section-subtitle">Verified figures are being finalised by the CARE team.</p><div class="red-divider"></div>'
-        '<!-- TODO: CARE team to supply verified figures for all six -->'
-        '<div class="grid grid-3">' + matrix + '</div>'
+        '<p class="section-subtitle">The numbers we have on record so far.</p><div class="red-divider"></div>'
+        + figure_grid() +
+        '<p class="figure-note">' + FIGURES_NOTE + '</p>'
         '<div class="center-btn"><a class="btn btn-outline" href="impact.html">See Full Impact</a></div>'
         '</div></section>'
 
@@ -670,17 +714,16 @@ def home():
         '<div class="flow">' + flow + '</div>'
         '<div class="grid grid-3 mt-4">'
         '<!-- TODO: photos pending from Adeena -->'
-        '<div class="placeholder-box">Volunteers distributing medication &mdash; photo coming soon</div>'
-        '<div class="placeholder-box">Prescription verification &mdash; photo coming soon</div>'
-        '<div class="placeholder-box">Zakat form being completed &mdash; photo coming soon</div>'
+        '<div class="placeholder-box">Volunteers distributing medication: photo coming soon</div>'
+        '<div class="placeholder-box">Prescription verification: photo coming soon</div>'
+        '<div class="placeholder-box">Zakat form being completed: photo coming soon</div>'
         '</div></div></section>'
 
         # 7. Partners
         '<section class="section bg-white"><div class="container">'
         '<h2 class="section-title">Our Partners</h2>'
-        '<p class="section-subtitle">We work alongside a growing network of partners across sectors.</p><div class="red-divider"></div>'
-        '<div class="partner-grid">' + partner_html + '</div>'
-        '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("partner logos and names pending") + '</p>'
+        '<p class="section-subtitle">Hospitals, welfare organisations and student societies CARE has worked with.</p><div class="red-divider"></div>'
+        '<ul class="partner-list">' + partner_html + '</ul>'
         '</div></section>'
 
         # 8. Transparency
@@ -708,28 +751,21 @@ def about():
     mv = [
         ("Our Mission", "To provide immediate, compassionate medical care and patient support to underserved communities, regardless of financial status."),
         ("Our Vision", "A Pakistan where every person has access to dignified, quality healthcare in times of crisis and beyond."),
-        ("Our Values", "Compassion, Transparency, Integrity, Community &mdash; the four pillars that guide every decision and action we take."),
+        ("Our Values", "Compassion, Transparency, Integrity and Community. These four guide every decision we take."),
     ]
     mv_html = ""
     for title, text in mv:
         mv_html += '<div class="info-box"><h3>' + title + '</h3><p>' + text + '</p></div>'
 
-    milestones = [
-        ("Founding", "CARE was founded with a mission to improve access to healthcare for underserved communities."),
-        ("Drug Bank Launched", "Established our Drug Bank to support access to essential, prescribed medicines."),
-        ("First Medical Camp", "Held our first free medical camp, bringing consultations and medicines to the community."),
-        ("First 1,000 Patients", "Reached an early milestone of supporting our first cohort of patients."),
-        ("University Partnerships", "Partnered with universities to power student-led volunteer initiatives."),
-        ("Expansion", "Expanded programs and community outreach to serve more people."),
-    ]
+    # Milestones come from assets/data/impact.json (source: CARE activities report 2022-2026).
+    milestones = [(esc(m["when"]), esc(m["text"])) for m in IMPACT.get("milestones", [])]
+    milestones.append((REG_DATE, "CARE was registered with the SECP as a Section 42 not-for-profit company."))
     tl = ""
     for year, event in milestones:
         tl += ('<div class="timeline-item"><div class="year">' + year + '</div>'
                '<p style="color:var(--mid-gray)">' + event + '</p></div>')
 
     core = [("Dr. Junaid", "Founder &amp; President"), ("Sana Khan", "General Secretary"), ("Ahmad Raza", "Operations Manager")]
-    board = [("Prof. Tariq Mehmood", "Chairman, Board of Governors"), ("Dr. Ayesha Siddiqui", "Board Member"),
-             ("Mr. Kamran Ali", "Board Member"), ("Dr. Farrukh Nazar", "Board Member")]
     advisory = [("Dr. Sara Malik", "Medical Advisor"), ("Mr. Bilal Chaudhry", "Legal Advisor"), ("Ms. Hina Javed", "Strategy Advisor")]
 
     def team_grid(members):
@@ -744,11 +780,11 @@ def about():
 
         # Intro / About CARE
         '<section class="section bg-white"><div class="container feature-row">'
-        + media_slot("heat-relief-camp-03", "Organization photo &mdash; coming soon") +
+        + media_slot("heat-relief-camp-03", "Organization photo coming soon") +
         '<div class="feature-body"><p class="eyebrow">About CARE</p>'
         '<h2>' + BRAND_TAG + '</h2>'
-        '<p>CARE is a non-profit organization committed to improving access to essential medicines and healthcare for underserved communities across Pakistan &mdash; driven by student leadership, medical partnerships and compassionate action.</p>'
-        '<p>We help bridge gaps in care by supporting access to medicines, promoting preventive health, and working alongside hospitals and community partners to improve health outcomes.</p>'
+        '<p>CARE is a non-profit organization that started as a student-led welfare effort at Jinnah Medical &amp; Dental College in Karachi. We help people get the medicines and healthcare they would otherwise go without.</p>'
+        '<p>That means free medical camps, blood donation drives, a Drug Bank for patients who can&rsquo;t afford their prescriptions, health awareness sessions and first response training, run together with hospitals and welfare organisations.</p>'
         '<a class="btn btn-primary" href="programs.html">Our Programs</a>'
         '</div></div></section>'
 
@@ -761,15 +797,14 @@ def about():
         # Our Story + milestones
         '<section id="story" class="section bg-white"><div class="container">'
         '<h2 class="section-title">Our Story</h2>'
-        '<p class="section-subtitle">Founded to make healthcare more accessible &mdash; and growing ever since.</p>'
+        '<p class="section-subtitle">From one seminar in 2022 to medical camps, blood drives and a Drug Bank.</p>'
         '<div class="red-divider"></div>'
         '<div class="prose max-720" style="text-align:center">'
-        '<p>CARE began with a simple conviction: that no one should go without essential care because of cost or circumstance. From a small student-led effort, we have grown into an organization running a Drug Bank, medical camps and community outreach.</p>'
+        '<p>CARE started in 2022 as a student-led welfare effort at Jinnah Medical &amp; Dental College, known on campus as CARE by JMDC. The first event was a breast cancer awareness seminar that October. Since then the work has grown into medical camps, blood drives, a Drug Bank and training courses, run with hospitals and welfare organisations in Karachi.</p>'
         '<p><a href="governance.html#registration" style="color:var(--red);text-decoration:underline;text-underline-offset:3px">'
         + LEGAL_NAME + ' is a registered nonprofit in Pakistan. carepk.org is our official website.</a></p>'
         '</div>'
-        '<div class="max-720 mt-4"><!-- TODO: confirm founding/launch date with Junaid Bhai -->'
-        + note("confirm founding / launch dates and other milestone dates with Junaid Bhai.") +
+        '<div class="max-720 mt-4">'
         '<div class="timeline mt-3">' + tl + '</div></div>'
         '</div></section>'
 
@@ -777,16 +812,17 @@ def about():
         '<section id="leadership" class="section bg-off-white"><div class="container">'
         '<h2 class="section-title">Leadership</h2>'
         '<p class="section-subtitle">The people who guide and carry out our work</p><div class="red-divider"></div>'
-        '<h3 style="text-align:center;margin-bottom:1.5rem">Core Team</h3>' + team_grid(core) +
-        '<h3 style="text-align:center;margin:3rem 0 1.5rem">Board of Governors</h3>' + team_grid(board) +
+        '<h3 style="text-align:center;margin-bottom:2rem">Board of Directors</h3>' + director_cards(compact=True) +
+        '<div class="center-btn" style="margin-top:2.5rem"><a class="btn btn-outline" href="' + BOARD_PAGE + '">Meet the Board</a></div>'
+        '<h3 style="text-align:center;margin:4rem 0 1.5rem">Core Team</h3>' + team_grid(core) +
         '<h3 style="text-align:center;margin:3rem 0 1.5rem">Advisory Board</h3>' + team_grid(advisory) +
-        '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm names, roles and photos of leadership") + '</p>'
+        '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm names, roles and photos of the core team and advisory board") + '</p>'
         '</div></section>'
 
         # Governance & Partners
         '<section id="governance" class="section bg-white"><div class="container max-720" style="text-align:center">'
         '<h2 class="section-title">Governance &amp; Partners</h2><div class="red-divider"></div>'
-        '<p style="color:var(--mid-gray);line-height:1.8">CARE is governed by its Board of Governors with support from an Advisory Board, and works in partnership with universities, hospitals, NGOs and CSR partners.</p>'
+        '<p style="color:var(--mid-gray);line-height:1.8">CARE is governed by its Board of Directors and works with hospitals, welfare organisations and student societies.</p>'
         '<div class="center-btn cta-actions"><a class="btn btn-outline" href="governance.html">View Governance</a>'
         '<a class="btn btn-outline" href="' + BOARD_PAGE + '">View Board of Directors</a></div>'
         '</div></section>'
@@ -806,8 +842,13 @@ def about():
         # Annual Reports
         '<section id="annual-reports" class="section bg-white"><div class="container max-720" style="text-align:center">'
         '<h2 class="section-title">Annual Reports</h2><div class="red-divider"></div>'
-        '<!-- TODO: reports pending -->'
-        + note("Annual Reports and Financial Statements will be published here as downloadable PDFs once available.") +
+        '<p style="color:var(--mid-gray);line-height:1.8">A review of CARE&rsquo;s activities from October 2022 to November 2026 has been prepared for the Board of Directors. The figures and the record of events from it are on the Impact and News &amp; Events pages.</p>'
+        '<div class="cta-actions mt-3">'
+        '<a class="btn btn-outline" href="impact.html">See the figures</a>'
+        '<a class="btn btn-outline" href="news-events.html#past">See the events</a>'
+        '</div>'
+        '<!-- TODO: publish annual report and financial statement PDFs here once final -->'
+        '<p class="mt-3" style="color:var(--mid-gray);font-size:.9rem">Annual reports and financial statements will be published here as PDFs once they are final.</p>'
         '</div></section>'
 
         + cta_band()
@@ -815,25 +856,26 @@ def about():
 
 
 def programs():
+    # Copy below is drawn from CARE's activities report (2022-2026). No figure here is an estimate.
     sections = [
         ("drug-bank", "plus-square", "Drug Bank",
-         None,  # content pending
-         []),
+         "CARE opened its Drug Bank in May 2024 to help patients who can&rsquo;t afford the medicines they have been prescribed. In December 2024 the patient assistance protocol was revised to focus on injectable medications.",
+         ["Opened in May 2024", "Support with prescribed medicines", "Assistance protocol focused on injectable medications"]),
         ("medical-camps", "truck", "Medical Camps",
-         "Free medical camps bring general consultations, basic diagnostics and medicine distribution directly to underserved communities at no cost.",
-         ["10+ free medical camps yearly", "Consultations, diagnostics and medicines", "Community-based locations"]),
+         "Free medical camps take doctors and student volunteers to people who would otherwise not see one. So far they have been held at Sohail Trust Hospital, a government school in Korangi, Al-Furqan Welfare, Anmol Zindagi Old Age Home and Mubarak Village.",
+         ["ENT, eye and paediatric camps", "General medicine, dental, physiotherapy and gynaecology consultations", "180 patients served at the 2023 Free Eye Camp"]),
         ("health-awareness", "book", "Health Awareness",
-         "Preventive health awareness sessions help communities make informed decisions before health problems become more serious.",
-         ["Preventive health education", "Nutrition and hygiene sessions", "School and community programs"]),
+         "Awareness sessions cover conditions that are easier to deal with when they are caught early. Past sessions have covered breast cancer, rheumatic heart disease, thalassemia and skin care.",
+         ["Seminars and workshops with specialists", "Thalassemia awareness and screening", "Sessions held with Sohail Trust Hospital"]),
         ("community-outreach", "users", "Community Outreach &amp; Patient Support",
-         "We support patients in continuing and completing treatment &mdash; covering medicines, diagnostics and follow-up &mdash; and run outreach that brings healthcare closer to people who struggle to access it.",
-         ["500+ patients supported financially", "Medicine distribution drives", "Hospital bill assistance"]),
+         "Some of the work is simply showing up where the need is. That has included a flood relief appeal in October 2025 and a Heat Relief Camp at Sohail Trust Hospital in 2026, where volunteers handed out cold drinks.",
+         ["Heat Relief Camp with the JMDC Sports Society", "Flood relief appeal with GSIG", "Patient assistance for those who can&rsquo;t afford treatment"]),
         ("emergency-support", "heart", "Emergency Support",
-         "Timely assistance for patients and families facing urgent medical need, so critical care is not delayed by cost.",
-         ["Rapid patient assistance", "Support in urgent medical need", "Coordination with hospitals"]),
+         "In an emergency the first few minutes matter most, so CARE trains students to respond. The courses cover basic life support, CPR and essential first aid.",
+         ["Basic Life Support workshops with FRIP", "First Responders Course with REVIVE", "Hands-on practice on training manikins"]),
         ("volunteer-initiatives", "clipboard", "Volunteer Initiatives",
-         "Student-led volunteer initiatives power our programs and develop the next generation of changemakers.",
-         ["Student leadership", "Medical &amp; paramedic volunteers", "Outreach and administration teams"]),
+         "CARE is run by student volunteers. They organise the blood drives, staff the camps and raise funds through sports galas, movie screenings and cultural events.",
+         ["Blood drives with Saylani Welfare and Indus Hospital &amp; Health Network", "134 students registered for the August 2026 drive", "Fundraising at Sports Week and campus events"]),
     ]
     anchors = ('<div class="anchor-nav">'
                + "".join('<a href="#' + sid + '">' + title + '</a>' for sid, _, title, _, _ in sections)
@@ -856,7 +898,7 @@ def programs():
     rows = ""
     for i, (sid, ic, title, desc, bullets) in enumerate(sections):
         media = media_slot(section_media.get(sid),
-                           '<!-- TODO: photos pending from Adeena -->Program photo &mdash; coming soon', "18rem")
+                           '<!-- TODO: photos pending from Adeena -->Program photo coming soon', "18rem")
         docs = ('<div class="mt-4">' + docs_block(section_docs[sid], related_label="") + '</div>') if sid in section_docs else ''
         if desc is None:
             body = ('<div class="feature-body"><div class="badge">' + icon(ic) + '</div>'
@@ -883,25 +925,48 @@ def programs():
 
 
 def impact():
-    labels = ["Patients Supported", "Medications Provided", "Medical Camps",
-              "Volunteers", "Partner Hospitals", "Beneficiary Families"]
-    matrix = ""
-    for lbl in labels:
-        matrix += ('<div class="card"><div class="stat-value" style="color:var(--mid-gray);font-size:1.15rem">Coming soon</div>'
-                   '<div class="stat-label" style="margin-top:.35rem">' + lbl + '</div>'
-                   '<div style="margin-top:.6rem">' + todo("figure pending") + '</div></div>')
+    areas = [
+        ("Clinical outreach", "Medical camps have covered ENT care, eye screening, paediatric consultations, general medicine, dental services, physiotherapy and gynaecology."),
+        ("Patient welfare", "The Drug Bank opened in May 2024. In December 2024 the patient assistance protocol was revised to focus on injectable medications."),
+        ("Blood donation", "Blood drives run with Saylani Welfare and Indus Hospital &amp; Health Network, with students as both donors and volunteers."),
+        ("Training", "Basic Life Support and First Responders courses, run with FRIP and REVIVE."),
+        ("Fundraising", "Sports galas, movie screenings, cultural events and donation appeals pay for the welfare work."),
+        ("Relief", "A flood relief appeal in October 2025 and a Heat Relief Camp in 2026."),
+    ]
+    areas_html = "".join('<div class="info-box"><h3>' + a + '</h3><p>' + b + '</p></div>' for a, b in areas)
+
+    # Counted from events.json, so the dashboard always matches the calendar.
+    by_type = [(label, sum(1 for e in EVENTS if e.get("category") == cat)) for cat, label in CATEGORY_LABELS]
+    by_type = [(l, n) for l, n in by_type if n]
+    years = sorted({e["start"][:4] for e in EVENTS})
+    by_year = [(y, sum(1 for e in EVENTS if e["start"][:4] == y)) for y in years]
+    span = (years[0] + " to " + years[-1]) if years else ""
+
     return (
         banner("Impact", "Impact") +
         '<section id="numbers" class="section bg-white"><div class="container">'
         '<h2 class="section-title">Our Impact in Numbers</h2>'
-        '<p class="section-subtitle">Verified figures are being finalised by the CARE team.</p><div class="red-divider"></div>'
-        '<!-- TODO: blocked on verified figures, same as homepage -->'
-        '<div class="grid grid-3">' + matrix + '</div>'
+        '<p class="section-subtitle">The numbers we have on record so far.</p><div class="red-divider"></div>'
+        + figure_grid() +
+        '<p class="figure-note">' + FIGURES_NOTE + '</p>'
+        '<div class="prose max-720 mt-4" style="text-align:center">'
+        '<p>We only publish a number when we can trace it to a record. There is no overall total for patients, blood units or funds raised yet, because the older records are not complete enough to add up.</p>'
+        '</div>'
         '</div></section>'
-        '<section id="dashboard" class="section bg-off-white"><div class="container">'
+        '<section id="areas" class="section bg-off-white"><div class="container">'
+        '<h2 class="section-title">Where the Work Happens</h2>'
+        '<p class="section-subtitle">Six areas CARE has worked in since 2022</p><div class="red-divider"></div>'
+        '<div class="grid grid-3">' + areas_html + '</div>'
+        '</div></section>'
+        '<section id="dashboard" class="section bg-white"><div class="container">'
         '<h2 class="section-title">Impact Dashboard</h2>'
-        '<p class="section-subtitle">Detailed breakdowns by programme, region and year</p><div class="red-divider"></div>'
-        + '<div class="max-720">' + note("Impact Dashboard is blocked on verified figures. Once the CARE team supplies the numbers, this area will show breakdowns (e.g. patients by programme, medicines by category, camps by city).") + '</div>'
+        '<p class="section-subtitle">Events on record, ' + span + ', counted from the events calendar</p><div class="red-divider"></div>'
+        '<div class="grid grid-2 dash-grid">'
+        '<div class="dash-panel"><h3>By type</h3>' + bar_rows(by_type) + '</div>'
+        '<div class="dash-panel"><h3>By year</h3>' + bar_rows(by_year) + '</div>'
+        '</div>'
+        '<p class="figure-note">Only events with a confirmed date are counted. Announcements that we could not confirm took place are left out.</p>'
+        '<div class="center-btn"><a class="btn btn-outline" href="news-events.html#calendar">Open the events calendar</a></div>'
         '</div></section>'
         + cta_band()
     )
@@ -1034,7 +1099,7 @@ def donate():
         '<h2 style="font-size:1.6rem">Other Ways to Donate</h2></div>'
         + ways_html +
         '<div class="amount-box mt-3" data-amounts>'
-        '<div style="color:var(--primary);font-weight:600;margin-bottom:.5rem">Online Payment &mdash; Coming Soon</div>'
+        '<div style="color:var(--primary);font-weight:600;margin-bottom:.5rem">Online Payment: Coming Soon</div>'
         '<div style="color:var(--mid-gray);font-size:.9rem">Secure online donations via card / mobile wallets will be available shortly.</div>'
         '<div class="amount-grid">' + amt_btns + '</div>'
         '</div></div>'
@@ -1090,9 +1155,14 @@ def event_card(ev):
     n = len(event_media(ev))
     if cover:
         media = media_img(cover, "card", "event-cover")
-    else:
-        media = ('<div class="placeholder-box event-cover-ph"><!-- no published cover (none supplied or consent-held) -->'
+    elif ev.get("media"):
+        media = ('<div class="placeholder-box event-cover-ph"><!-- photos exist but are consent-held or not yet processed -->'
                  'Photos coming soon</div>')
+    else:
+        # No photos on file for this event: show the date block instead of an empty photo slot.
+        y, mo, d = ev["start"].split("-")
+        media = ('<div class="event-date" aria-hidden="true"><div class="day">' + str(int(d)) + '</div>'
+                 '<div class="month">' + MONTHS[int(mo) - 1] + ' ' + y + '</div></div>')
     meta = ('<div class="event-meta">' + icon("calendar") + '<time datetime="' + ev["start"] + '">'
             + fmt_range(ev["start"], ev["end"]) + '</time></div>')
     if ev.get("time"):
@@ -1120,7 +1190,10 @@ def news_events():
     # render as one plain list; events-calendar.js sorts them into Upcoming / Past
     # against today's date in Asia/Karachi, so the page can never go stale.
     events = sorted(EVENTS, key=lambda e: (e["end"], e["start"]), reverse=True)
-    cards = "".join(event_card(ev) for ev in events)
+    cards = ""
+    for year in sorted({e["start"][:4] for e in events}, reverse=True):
+        cards += ('<section class="event-year-group"><h3 class="event-year">' + year + '</h3><ul class="event-grid">'
+                  + "".join(event_card(ev) for ev in events if ev["start"][:4] == year) + '</ul></section>')
 
     news_cats = ["Medical Camps", "Volunteer Activities", "Outreach", "Partnership", "CSR (Dearly Loved)"]
     news_html = ""
@@ -1173,7 +1246,7 @@ def news_events():
         # Past — server-rendered list of ALL events (no-JS / SEO fallback); JS moves upcoming ones out.
         '<div class="tab-panel active" data-panel="past">'
         '<h2 class="section-title" data-past-heading>Events</h2><div class="red-divider"></div>'
-        '<ul class="event-grid" data-events-past>' + cards + '</ul>'
+        '<div data-events-past>' + cards + '</div>'
         '</div>'
         # News
         '<div class="tab-panel" data-panel="news">'
@@ -1215,14 +1288,6 @@ def resources():
 
 
 def governance():
-    board = [("Prof. Tariq Mehmood", "Chairman, Board of Governors"), ("Dr. Ayesha Siddiqui", "Board Member"),
-             ("Mr. Kamran Ali", "Board Member"), ("Dr. Farrukh Nazar", "Board Member")]
-    grid = '<div class="team-grid">'
-    for name, role in board:
-        grid += ('<div class="team-member"><div class="team-photo">Photo</div>'
-                 '<div class="name">' + name + '</div><div class="role">' + role + '</div></div>')
-    grid += '</div>'
-
     # Legal Registration — reuses the existing .bank-row key/value styling (no new CSS).
     reg_rows = [
         ("Legal name", LEGAL_NAME),
@@ -1252,9 +1317,8 @@ def governance():
         '<h3 id="registration-title" style="text-align:center;margin-bottom:1.5rem">Legal Registration</h3>'
         + reg_dl +
         '</section>'
-        '<h3 style="text-align:center;margin:3rem 0 1.5rem">Board of Governors</h3>' + grid +
-        '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm board details and photos") + '</p>'
-        '<div class="center-btn"><a class="btn btn-outline" href="' + BOARD_PAGE + '">View Board of Directors</a></div>'
+        '<h3 style="text-align:center;margin:4rem 0 2rem">Board of Directors</h3>' + director_cards(compact=True) +
+        '<div class="center-btn" style="margin-top:2.5rem"><a class="btn btn-outline" href="' + BOARD_PAGE + '">Meet the Board</a></div>'
         '</div></section>'
         '<section id="governance-documents" class="section bg-off-white"><div class="container max-720">'
         '<h2 class="section-title">Governance Documents</h2><div class="red-divider"></div>'
@@ -1268,13 +1332,13 @@ def governance():
 def faq():
     items = [
         ("Where does my money go?",
-         'Donations support CARE&rsquo;s programmes &mdash; essential medicines and the Drug Bank, medical camps, patient support, and community outreach. ' + todo("CARE team to confirm the exact allocation breakdown.")),
+         'Donations support CARE&rsquo;s programmes: essential medicines and the Drug Bank, medical camps, patient support and community outreach. ' + todo("CARE team to confirm the exact allocation breakdown.")),
         ("How secure is it?",
          'Contributions can be made by direct bank transfer to our verified account, and all donations are used transparently for patient care and operations, with regular impact reports shared with donors. ' + todo("confirm security / receipting details.")),
         ("How many people does it reach?",
-         'CARE has supported hundreds of patients and dozens of volunteers to date. Verified, up-to-date figures are being finalised &mdash; see the <a href="impact.html">Impact</a> page. ' + todo("verified reach figures pending.")),
+         'The numbers we can trace to a record are on the Impact page. For example, 180 patients were served at the 2023 Free Eye Camp and 134 students registered for the August 2026 blood drive. There is no overall total yet, because the older records are not complete enough to add up.'),
         ("[TODO] Confirm the intended 4th FAQ topic",
-         '<!-- TODO: confirm the intended 4th FAQ topic --> ' + todo("one FAQ item from the original notes came through unclear &mdash; possibly about registration / legitimacy, or Zakat / tax eligibility (a Zakat form was mentioned elsewhere in the notes). Confirm the intended question and answer.")),
+         '<!-- TODO: confirm the intended 4th FAQ topic --> ' + todo("one FAQ item from the original notes came through unclear, possibly about registration / legitimacy, or Zakat / tax eligibility (a Zakat form was mentioned elsewhere in the notes). Confirm the intended question and answer.")),
     ]
     acc = '<div class="accordion">'
     for q, a in items:
@@ -1305,31 +1369,19 @@ def policy_page(title, crumb, intro, primary, related=()):
 
 
 def board_of_directors():
-    # Source: WhatsApp from Junaid, 11 Nov 2026 ("board of directors"). Names exactly as typed,
-    # not yet confirmed with each person. Edit assets/data/board.json — never this function —
-    # to add/rename a Director, add a role/bio, or flip "confirmed" (which drops noindex).
-    cards = ""
-    for m in BOARD.get("members", []):
-        name = esc(m["name"])
-        photo = m.get("photo")
-        if photo and m.get("photoConsent") == "confirmed" and os.path.exists(os.path.join(ROOT, photo)):
-            avatar = ('<img class="team-photo team-photo-img" src="' + esc(photo) + '" alt="Portrait of ' + name + '" '
-                      'width="120" height="120" loading="lazy" decoding="async">')
-        else:
-            parts = m["name"].split()
-            initials = (parts[0][0] + (parts[-1][0] if len(parts) > 1 else "")).upper()
-            avatar = ('<!-- no photo: needs the Director\'s written/electronic consent (photography policy §2.1, §5) -->'
-                      '<div class="team-photo team-initials" aria-hidden="true">' + esc(initials) + '</div>')
-        role = ('<div class="role">' + esc(m["role"]) + '</div>') if m.get("role") else ''
-        bio = ('<p class="bio">' + esc(m["bio"]) + '</p>') if (m.get("bio") or "").strip() else ''
-        cards += ('<div class="team-member">' + avatar + '<div class="name">' + name + '</div>'
-                  '<div class="role">' + esc(m.get("title") or "") + '</div>' + role + bio + '</div>')
+    # Edit assets/data/board.json, never this function, to add or rename a Director,
+    # add a role or bio, or change a portrait. "confirmed": false adds noindex and
+    # keeps the page out of the sitemap and site search.
+    n = len(BOARD.get("members", []))
     return (
         banner("Board of Directors", '<a href="about.html">About</a> / Board of Directors') +
-        '<section class="section bg-white"><div class="container">'
-        '<p class="section-subtitle" style="margin-bottom:3rem">The Directors of CARE Aid &amp; Rehabilitation in Emergency.</p>'
-        '<!-- TODO: names not yet confirmed with each Director; draft Governance Policy §4.1 says the Board has four Directors (three listed). Titles/roles not supplied. -->'
-        '<div class="team-grid team-grid--auto">' + cards + '</div>'
+        '<section class="section bg-white directors"><div class="container">'
+        '<div class="directors-head">'
+        '<p class="eyebrow">Governance</p>'
+        '<h2>The Directors of CARE Aid &amp; Rehabilitation in Emergency.</h2>'
+        '</div>'
+        '<!-- TODO: titles/roles not supplied; draft Governance Policy §4.1 says the Board has four Directors (%d listed). -->' % n +
+        director_cards() +
         '</div></section>'
         '<section class="section bg-off-white"><div class="container max-720">'
         '<h2 class="section-title">Related Documents</h2><div class="red-divider"></div>'
@@ -1352,7 +1404,7 @@ def testimonials():
                    '<div class="attr"><div class="name">' + author + '</div><div class="loc">' + loc + '</div></div></div>')
     videos = ""
     for i in range(1, 4):
-        videos += '<div class="placeholder-box" style="aspect-ratio:16/9;min-height:0">Video ' + str(i) + ' &mdash; coming soon</div>'
+        videos += '<div class="placeholder-box" style="aspect-ratio:16/9;min-height:0">Video ' + str(i) + ' coming soon</div>'
     return (
         banner("Testimonials", "Testimonials") +
         '<section class="section bg-white"><div class="container">'
@@ -1370,7 +1422,7 @@ def contact():
         '<section class="section bg-white"><div class="container grid grid-2">'
         # Info
         '<div><h2 style="font-size:1.8rem;margin-bottom:1rem">Get In Touch</h2>'
-        '<p style="color:var(--mid-gray);line-height:1.8;margin-bottom:2rem">Have a question, want to volunteer, or need our help? Reach out &mdash; our team is available to assist you.</p>'
+        '<p style="color:var(--mid-gray);line-height:1.8;margin-bottom:2rem">Have a question, want to volunteer, or need our help? Reach out and our team will help.</p>'
         '<div style="display:flex;flex-direction:column;gap:1.25rem">'
         '<div style="display:flex;gap:1rem"><div class="card-icon" style="width:2.5rem;height:2.5rem;margin:0">' + icon("pin") + '</div>'
         '<div><div style="font-weight:600">Office Address</div>'
@@ -1409,7 +1461,7 @@ def contact():
         # Map placeholder
         '<div class="map-placeholder placeholder-box" style="border-radius:0">'
         '<!-- TODO: Google Maps embed needs an API key; carrying over the placeholder until one is available -->'
-        'Google Maps embed &mdash; pending API key</div>'
+        'Google Maps embed pending API key</div>'
     )
 
 
@@ -1417,15 +1469,15 @@ def contact():
 #  BUILD
 # ============================================================
 PAGES = [
-    ("index.html", "CARE — Healthcare Within Reach", "Improving access to essential medicines, healthcare services, and community support for underserved populations across Pakistan.", home, "medicines drug bank medical camps volunteers donate emergency"),
-    ("about.html", "About Us | CARE Pakistan", "Our mission, story, leadership, governance and policies.", about, "mission vision values story leadership board governors advisory policies annual reports"),
+    ("index.html", "CARE | Healthcare Within Reach", "Improving access to essential medicines, healthcare services, and community support for underserved populations across Pakistan.", home, "medicines drug bank medical camps volunteers donate emergency"),
+    ("about.html", "About Us | CARE Pakistan", "Our mission, story, leadership, governance and policies.", about, "mission vision values story leadership board directors advisory policies annual reports history milestones"),
     ("programs.html", "Care Programs | CARE Pakistan", "Drug Bank, medical camps, health awareness, community outreach, emergency support and volunteer initiatives.", programs, "drug bank medical camps health awareness community outreach emergency volunteer"),
-    ("impact.html", "Impact | CARE Pakistan", "Our impact in numbers and the impact dashboard.", impact, "impact statistics patients medicines camps volunteers hospitals families dashboard"),
+    ("impact.html", "Impact | CARE Pakistan", "Our impact in numbers and the impact dashboard.", impact, "impact statistics figures patients eye camp cataract blood drive registrations camps dashboard"),
     ("get-involved.html", "Get Involved | CARE Pakistan", "Volunteer, partner, corporate, CSR, universities and funders.", get_involved, "volunteer partner corporate csr universities funders join"),
     ("donate.html", "Donate | CARE Pakistan", "Bank details and other ways to donate to CARE.", donate, "donate bank meezan iban jazzcash easypaisa zakat give"),
     ("news-events.html", "News & Events | CARE Pakistan", "Upcoming and past events, plus the latest news.", news_events, "news events workshops medical camp blood donation past latest"),
     ("resources.html", "Resources | CARE Pakistan", "Dearly Loved (CSR) and links to policies and reports.", resources, "resources dearly loved csr policies reports"),
-    ("governance.html", "Governance | CARE Pakistan", "CARE governance structure and board of governors.", governance, "governance board governors registration accountability"),
+    ("governance.html", "Governance | CARE Pakistan", "CARE legal registration, Board of Directors and governance documents.", governance, "governance board directors registration accountability secp"),
     ("faq.html", "FAQ | CARE Pakistan", "Frequently asked questions about donations, security and reach.", faq, "faq questions money secure reach zakat registration"),
     ("privacy-policy.html", "Privacy Policy | CARE Pakistan", "How CARE handles personal information.", lambda: policy_page("Privacy Policy", "Privacy Policy", "This policy describes how CARE collects, uses and protects personal information.", ["care-website-privacy-notice"], ["care-photography-media-and-consent-policy"]), "privacy policy notice data personal information photography consent"),
     ("terms.html", "Terms & Conditions | CARE Pakistan", "The terms and conditions for using the CARE website.", lambda: policy_page("Terms &amp; Conditions", "Terms &amp; Conditions", "The terms and conditions for using the CARE website.", ["care-website-terms-and-conditions"], ["care-website-privacy-notice"]), "terms conditions website use legal"),

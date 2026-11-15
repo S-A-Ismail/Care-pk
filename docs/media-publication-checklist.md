@@ -18,7 +18,7 @@ Fill in *Reviewed by / Date* by hand when consent is checked.
 | `heat-relief-camp-01` | heat-relief-camp-2026 | not-required | Low — poster / no identifiable individuals | Published |  | | |
 | `heat-relief-camp-02` | heat-relief-camp-2026 | unverified | Medium — identifiable people, consent not yet confirmed | Published |  | | |
 | `heat-relief-camp-03` | heat-relief-camp-2026 | unverified | Medium — identifiable people, consent not yet confirmed | Published |  | | |
-| `old-age-home-visit` | — | required | High — patients / minors identifiable | HELD (outside repo) | low-res source 567x423 | | |
+| `old-age-home-visit` | anmol-zindagi-medical-camp-2026 | required | High — patients / minors identifiable | HELD (outside repo) | low-res source 567x423 | | |
 | `sports-carnival-awareness-standees-01` | sports-week-2026 | not-required | Low — poster / no identifiable individuals | Published | video, copied as-is | | |
 | `sports-carnival-awareness-standees-02` | sports-week-2026 | not-required | Low — poster / no identifiable individuals | Published | video, copied as-is | | |
 | `sports-carnival-awareness-standees-03` | sports-week-2026 | not-required | Low — poster / no identifiable individuals | Published | video, copied as-is | | |
@@ -47,4 +47,5 @@ Fill in *Reviewed by / Date* by hand when consent is checked.
 
 ## Source files not in media.json (not processed, not published)
 
+- `Patient report.jpeg`
 - `sports-carnival-01.jpeg`

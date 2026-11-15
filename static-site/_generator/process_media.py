@@ -222,6 +222,42 @@ def logo_derivatives():
         write_if_changed(os.path.join(ROOT, "assets", name), buf.getvalue())
 
 
+# ---- Board of Directors portraits ------------------------------
+BOARD_JSON = os.path.join(ROOT, "assets", "data", "board.json")
+PORTRAIT = (640, 800)        # 4:5
+
+
+def board_sources():
+    with open(BOARD_JSON, encoding="utf-8") as f:
+        return [m for m in json.load(f).get("members", []) if m.get("photoSource")]
+
+
+def board_portraits():
+    """4:5 crop around the face, max 640x800, WebP, no EXIF, no watermark, never upscaled.
+    Only written when photoConsent is "confirmed"."""
+    for m in board_sources():
+        out = os.path.join(ROOT, m["photo"])
+        if m.get("photoConsent") != "confirmed":
+            if os.path.exists(out):
+                os.remove(out)
+                stats["removed"].append(out)
+            continue
+        img = to_srgb(Image.open(os.path.join(SRC_DIR, m["photoSource"])))
+        W, H = img.size
+        fx, fy = m.get("photoFocus", [0.5, 0.4])
+        if W / H > 0.8:
+            ch, cw = H, int(round(H * 0.8))
+        else:
+            cw, ch = W, int(round(W / 0.8))
+        left = int(round(clamp(fx * W - cw / 2, 0, W - cw)))
+        top = int(round(clamp(fy * H - ch / 2, 0, H - ch)))
+        im = img.crop((left, top, left + cw, top + ch))
+        if cw > PORTRAIT[0]:
+            im = im.resize(PORTRAIT, Image.LANCZOS)
+        data, _q = encode_webp(im, CARD_BUDGET, os.path.basename(out))
+        write_if_changed(out, data)
+
+
 # ---- main ---------------------------------------------------
 def main():
     with open(MEDIA_JSON, encoding="utf-8") as f:
@@ -287,6 +323,7 @@ def main():
 
     write_if_changed(OUTPUTS_JSON, (json.dumps(outputs, indent=2, sort_keys=True) + "\n").encode("utf-8"))
     logo_derivatives()
+    board_portraits()
 
     # ---- consent assertion: nothing under static-site/ derives from a held image
     bad = []
@@ -315,8 +352,9 @@ def write_checklist(media, outputs):
             "unverified": "Medium — identifiable people, consent not yet confirmed",
             "confirmed": "Recorded consent on file",
             "not-required": "Low — poster / no identifiable individuals"}
-    listed = {m["source"] for m in media}
-    unlisted = sorted(fn for fn in os.listdir(SRC_DIR) if fn not in listed)
+    listed = {m["source"] for m in media} | {m["photoSource"] for m in board_sources()}
+    unlisted = sorted(fn for fn in os.listdir(SRC_DIR) if fn not in listed
+                      and fn.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".mp4", ".mov")))
     lines = [
         "# Media publication checklist",
         "",

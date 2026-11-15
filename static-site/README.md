@@ -93,7 +93,8 @@ All of these live in `assets/data/` and are read by `_generator/build.py`:
 | `media.json` | Every event photo/video: focal point, watermark corner, alt text, consent status. |
 | `media-outputs.json` | Written by `process_media.py` (published outputs and their sizes). Don't edit. |
 | `documents.json` | Policy PDFs: title, version, status, pages, size, group, publish flag. |
-| `board.json` | Board of Directors page. `confirmed: false` = `noindex`, left out of the sitemap and site search. Add a fourth Director here. |
+| `impact.json` | Reported figures, partner names and story milestones (Home, About, Impact). Only numbers traceable to a record. |
+| `board.json` | Board of Directors page and the Directors shown on About and Governance. Portraits are cropped by `process_media.py` from `photoSource`. `confirmed: false` = `noindex`, left out of the sitemap and site search. Add a fourth Director here. |
 
 Rebuild order (WSL):
 

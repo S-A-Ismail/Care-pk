@@ -1,6 +1,6 @@
 window.CARE_SEARCH_INDEX = [
   {
-    "title": "CARE — Healthcare Within Reach",
+    "title": "CARE",
     "url": "index.html",
     "summary": "Improving access to essential medicines, healthcare services, and community support for underserved populations across Pakistan.",
     "keywords": "medicines drug bank medical camps volunteers donate emergency"
@@ -9,7 +9,7 @@ window.CARE_SEARCH_INDEX = [
     "title": "About Us",
     "url": "about.html",
     "summary": "Our mission, story, leadership, governance and policies.",
-    "keywords": "mission vision values story leadership board governors advisory policies annual reports"
+    "keywords": "mission vision values story leadership board directors advisory policies annual reports history milestones"
   },
   {
     "title": "Care Programs",
@@ -21,7 +21,7 @@ window.CARE_SEARCH_INDEX = [
     "title": "Impact",
     "url": "impact.html",
     "summary": "Our impact in numbers and the impact dashboard.",
-    "keywords": "impact statistics patients medicines camps volunteers hospitals families dashboard"
+    "keywords": "impact statistics figures patients eye camp cataract blood drive registrations camps dashboard"
   },
   {
     "title": "Get Involved",
@@ -39,7 +39,7 @@ window.CARE_SEARCH_INDEX = [
     "title": "News & Events",
     "url": "news-events.html",
     "summary": "Upcoming and past events, plus the latest news.",
-    "keywords": "news events workshops medical camp blood donation past latest sports week sports awareness session: skin rejuvenation (dermatology) awareness medical camp — anmol zindagi medical camp heat relief camp community outreach medical camp — mubarak village medical camp blood donation drive blood drive first responder course (bls workshop) course"
+    "keywords": "news events workshops medical camp blood donation past latest breast cancer awareness seminar awareness free ent medical camp medical camp blood donation campaign blood drive free eye camp medical camp care closing ceremony institutional basic life support workshop course free paediatric medical camp medical camp care closing ceremony, session 2023–2024 institutional thalassemia awareness walk awareness first response and cpr workshop (frip level 1) course free medical camp with gsig medical camp free eye camp medical camp sports week sports awareness session: skin rejuvenation (dermatology) awareness medical camp — anmol zindagi medical camp heat relief camp community outreach medical camp — mubarak village medical camp blood donation drive blood drive first responder course (bls workshop) course"
   },
   {
     "title": "Resources",
@@ -50,8 +50,8 @@ window.CARE_SEARCH_INDEX = [
   {
     "title": "Governance",
     "url": "governance.html",
-    "summary": "CARE governance structure and board of governors.",
-    "keywords": "governance board governors registration accountability"
+    "summary": "CARE legal registration, Board of Directors and governance documents.",
+    "keywords": "governance board directors registration accountability secp"
   },
   {
     "title": "FAQ",
@@ -82,6 +82,12 @@ window.CARE_SEARCH_INDEX = [
     "url": "volunteer-policy.html",
     "summary": "The standards and expectations for CARE volunteers.",
     "keywords": "volunteer policy standards conduct student council"
+  },
+  {
+    "title": "Board of Directors",
+    "url": "board-of-directors.html",
+    "summary": "The Directors of CARE Aid & Rehabilitation in Emergency.",
+    "keywords": "board directors governance"
   },
   {
     "title": "Testimonials",

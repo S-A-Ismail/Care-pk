@@ -110,7 +110,7 @@ main = re.search(r"<main>(.*)</main>", bp, re.S).group(1)
 visible = re.sub(r"<[^>]+>", " ", re.sub(r"<!--.*?-->", "", main, flags=re.S))
 if re.search(r"\bTODO\b|coming soon", visible, re.I):
     fail("board page shows visible TODO / coming soon text")
-names = re.findall(r'<div class="name">([^<]+)</div>', main)
+names = re.findall(r'class="name">([^<]+)<', main)
 want = [m["name"] for m in board["members"]]
 if names != want:
     fail("board names %s != board.json %s" % (names, want))

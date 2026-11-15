@@ -620,3 +620,71 @@ button { font-family: inherit; cursor: pointer; }
 .team-initials { font-family: var(--serif); font-size: 2rem; font-weight: 600; letter-spacing: .02em; color: var(--red-dark); text-transform: none; }
 .team-photo-img { object-fit: cover; padding: 0; }
 .team-member .bio { color: var(--muted); font-size: .88rem; line-height: 1.6; margin-top: .5rem; }
+
+/* ============================================================
+   Directors, reported figures, partners, event archive
+   ============================================================ */
+:root { --mid-gray: var(--muted); }   /* used inline across pages; was never defined */
+
+/* ---- Board of Directors: editorial portrait cards ---------- */
+.directors-head { max-width: 46rem; margin: 0 0 4.5rem; }
+.directors-head h2 { font-size: clamp(2rem, 4.4vw, 3.3rem); margin-top: 1.1rem; letter-spacing: -0.025em; }
+.director-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 3.5rem 2.75rem; max-width: 68rem; margin: 0 auto; }
+.director-card { position: relative; }
+@media (min-width: 900px) { .director-grid:not(.director-grid--compact) .director-card:nth-child(even) { margin-top: 3.5rem; } }
+.director-photo { position: relative; aspect-ratio: 4 / 5; border-radius: 4px; background: var(--tint); box-shadow: 14px 14px 0 var(--tint); transition: box-shadow .5s var(--ease), transform .5s var(--ease); }
+.director-photo::after { content: ""; position: absolute; left: 0; bottom: 0; width: 3.5rem; height: 4px; background: var(--red); }
+.director-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: block; }
+.director-card:hover .director-photo { box-shadow: 8px 8px 0 var(--red); transform: translate(3px, 3px); }
+.director-photo--initials { display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 4rem; font-weight: 600; color: var(--red-dark); }
+.director-meta { position: relative; padding: 1.75rem 0 0 3.25rem; }
+.director-index { position: absolute; left: 0; top: 1.7rem; font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 1.5rem; line-height: 1; color: var(--red); }
+.director-meta .name { font-family: var(--serif); font-size: 1.55rem; font-weight: 600; letter-spacing: -0.015em; line-height: 1.15; }
+.director-meta .role { font-family: var(--sans); font-size: .72rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-top: .55rem; }
+.director-meta .bio { color: var(--muted); font-size: .95rem; line-height: 1.7; margin-top: .9rem; }
+.director-grid--compact { max-width: 46rem; gap: 2.5rem 2rem; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+.director-grid--compact .director-photo { box-shadow: 8px 8px 0 var(--tint); }
+.director-grid--compact .director-meta { padding: 1.25rem 0 0; text-align: left; }
+.director-grid--compact .director-index { display: none; }
+.director-grid--compact .director-meta .name { font-size: 1.15rem; }
+@media (max-width: 559px) {
+  .director-grid:not(.director-grid--compact) { grid-template-columns: 1fr; max-width: 21rem; }
+  .director-grid--compact { grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; }
+  .director-photo { box-shadow: 10px 10px 0 var(--tint); }
+}
+
+/* ---- Reported figures ---------------------------------------- */
+.figure-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 2px solid var(--ink); }
+@media (min-width: 900px) { .figure-grid { grid-template-columns: repeat(4, 1fr); } }
+.figure-card { padding: 2rem 1.5rem 2.25rem 0; border-bottom: 1px solid var(--line); }
+.figure-card + .figure-card { padding-left: 1.5rem; border-left: 1px solid var(--line); }
+@media (max-width: 899px) { .figure-card:nth-child(odd) { padding-left: 0; border-left: none; } }
+.figure-value { font-family: var(--serif); font-weight: 600; font-size: clamp(3.2rem, 8vw, 5.5rem); line-height: .95; letter-spacing: -0.04em; color: var(--ink); }
+.figure-card:first-child .figure-value { color: var(--red); }
+.figure-label { font-weight: 700; font-size: 1rem; margin-top: 1rem; }
+.figure-detail { color: var(--muted); font-size: .86rem; margin-top: .25rem; }
+.figure-note { color: var(--muted); font-size: .85rem; line-height: 1.6; max-width: 46rem; margin: 1.5rem 0 0; }
+.stat-strip .stat-value { color: #fff; }
+
+/* ---- Dashboard bars ------------------------------------------- */
+.dash-grid { gap: 3rem; }
+.dash-panel h3 { font-size: 1.3rem; margin-bottom: 1.25rem; padding-bottom: .75rem; border-bottom: 2px solid var(--ink); }
+.bar-list { display: flex; flex-direction: column; gap: .85rem; }
+.bar-row { display: grid; grid-template-columns: minmax(7rem, 12rem) 1fr 2rem; align-items: center; gap: .9rem; font-size: .92rem; }
+.bar-label { font-weight: 600; }
+.bar-track { height: .55rem; background: var(--tint); border-radius: 999px; overflow: hidden; }
+.bar-fill { display: block; height: 100%; background: var(--red); border-radius: 999px; }
+.bar-count { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; text-align: right; }
+
+/* ---- Partner names -------------------------------------------- */
+.partner-list { display: flex; flex-wrap: wrap; justify-content: center; gap: .65rem; max-width: 60rem; margin: 0 auto; }
+.partner-list li { border: 1.5px solid var(--line); background: var(--white); border-radius: 999px; padding: .6rem 1.2rem; font-weight: 600; font-size: .92rem; transition: border-color .25s, transform .3s var(--ease); }
+.partner-list li:hover { border-color: var(--red); transform: translateY(-2px); }
+
+/* ---- Events archive by year ------------------------------------ */
+.event-year-group + .event-year-group { margin-top: 4.5rem; }
+.event-year-group[hidden] { display: none; }
+.event-year { font-family: var(--serif); font-style: italic; font-weight: 600; font-size: clamp(2.6rem, 6vw, 4rem); line-height: 1; color: var(--red); letter-spacing: -0.03em; margin-bottom: 1.75rem; display: flex; align-items: center; gap: 1.25rem; }
+.event-year::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.event-card .event-date { padding: 2rem 1.5rem; }
+.event-card .event-date .month { letter-spacing: .14em; }
