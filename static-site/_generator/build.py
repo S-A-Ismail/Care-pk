@@ -31,7 +31,7 @@ IG_HANDLE = "@CARE_JMDC"
 # This is NOT the registered address — that is REG_ADDRESS below.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "12"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "13"  # bump to cache-bust styles.css / JS after a redesign
 
 # ---- Official identity (domain verification, e.g. Google for Nonprofits) ----
 SITE_URL = "https://carepk.org"
@@ -480,10 +480,10 @@ def fmt_range(start, end):
     if (ys, ms, ds) == (ye, me, de):
         return fmt_day(start)
     if (ys, ms) == (ye, me):
-        return "%d&ndash;%d %s %d" % (ds, de, MONTHS[ms - 1], ys)
+        return "%d to %d %s %d" % (ds, de, MONTHS[ms - 1], ys)
     if ys == ye:
-        return "%d %s &ndash; %d %s %d" % (ds, MONTHS[ms - 1], de, MONTHS[me - 1], ys)
-    return fmt_day(start) + " &ndash; " + fmt_day(end)
+        return "%d %s to %d %s %d" % (ds, MONTHS[ms - 1], de, MONTHS[me - 1], ys)
+    return fmt_day(start) + " to " + fmt_day(end)
 
 
 def fmt_size(n):
