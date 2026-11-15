@@ -1,5 +1,5 @@
 /* ============================================================
-   CARE — events calendar, upcoming/past split, event dialog
+   CARE: events calendar, upcoming/past split, event dialog
    Loaded (defer) on news-events.html only, after the vendored
    FullCalendar Standard bundle. Progressive enhancement: without
    JS every event is still listed as a plain card.
