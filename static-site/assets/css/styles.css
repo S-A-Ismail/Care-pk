@@ -730,3 +730,12 @@ button { font-family: inherit; cursor: pointer; }
 .docs-single .doc-list, .split-body .doc-list { grid-template-columns: 1fr; }
 .split-head > .mt-3 { margin-top: 0; }
 @media (max-width: 899px) { .split-head { margin-bottom: 1.5rem; } }
+
+/* ---- Program row without a photo: text left, documents right ---- */
+.feature-row--solo { grid-template-columns: 1fr; }
+@media (min-width: 1024px) {
+  .feature-row--solo .feature-body { display: grid; grid-template-columns: 1fr 1fr; column-gap: 3.5rem; align-items: start; }
+  .feature-row--solo .feature-body > * { grid-column: 1; }
+  .feature-row--solo .feature-body > .feature-docs { grid-column: 2; grid-row: 1 / span 6; margin-top: 0; }
+}
+.event-gallery[hidden] { display: none; }

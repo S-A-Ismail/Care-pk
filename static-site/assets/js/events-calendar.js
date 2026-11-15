@@ -228,11 +228,10 @@
     stopMedia();
     stage.innerHTML = "";
     var g = current.gallery || [];
+    var galleryEl = $("[data-gallery]");
+    if (galleryEl) galleryEl.hidden = !g.length;
     if (!g.length) {
-      var ph = document.createElement("div");
-      ph.className = "placeholder-box";
-      ph.textContent = "Photos coming soon";
-      stage.appendChild(ph);
+      // No published photos for this event: show details only (no "coming soon" box).
       caption.textContent = "";
       controls.hidden = true;
       return;

@@ -31,7 +31,7 @@ IG_HANDLE = "@CARE_JMDC"
 # This is NOT the registered address — that is REG_ADDRESS below.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "15"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "16"  # bump to cache-bust styles.css / JS after a redesign
 
 # ---- Official identity (domain verification, e.g. Google for Nonprofits) ----
 SITE_URL = "https://carepk.org"
@@ -49,6 +49,12 @@ REG_QR_ID = "6551"
 REG_VERIFY_URL = "https://www.secp.gov.pk/data-and-statistics/"
 REG_DATE = "30th October 2026"
 REG_ADDRESS = "S. R-6, 7/A, Street 6, Sector 7-A, Korangi Industrial Area Karachi"
+
+# Placeholders ("coming soon" boxes, TODO badges, unconfirmed names, empty bank rows...)
+# stay in this file for context but are NOT rendered on the site. Set to True to see
+# them again while working (for example to review what is still missing).
+SHOW_PLACEHOLDERS = False
+
 
 # Shown ONCE above every group of policy documents on a page (never per card).
 DOCS_NOTICE = "These documents are pending signatures and will be re-uploaded soon."
@@ -135,10 +141,10 @@ NAV = [
         ("Calendar", "news-events.html#calendar"),
         ("Upcoming", "news-events.html#upcoming"),
         ("Past Events", "news-events.html#past"),
-        ("Latest News", "news-events.html#news"),
+    ] + ([("Latest News", "news-events.html#news")] if SHOW_PLACEHOLDERS else []) + [
     ]),
     ("Resources", "resources.html", [
-        ("Dearly Loved (CSR)", "resources.html#dearly-loved"),
+    ] + ([("Dearly Loved (CSR)", "resources.html#dearly-loved")] if SHOW_PLACEHOLDERS else []) + [
         ("Policies &amp; Reports", "resources.html#policies-reports"),
     ]),
     ("Contact", "contact.html", []),
@@ -187,12 +193,21 @@ def icon(name, cls=""):
             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%s</svg>') % (c, inner)
 
 
+def ph(markup):
+    """Render placeholder markup only when SHOW_PLACEHOLDERS is on."""
+    return markup if SHOW_PLACEHOLDERS else ''
+
+
 def todo(text):
-    """Visible [TODO] tag + rendered note text (also carries an HTML comment)."""
+    """Visible [TODO] tag + note text when SHOW_PLACEHOLDERS is on; otherwise an HTML comment only."""
+    if not SHOW_PLACEHOLDERS:
+        return '<!-- TODO: ' + text.replace("--", "-") + ' -->'
     return '<!-- TODO --><span class="todo">TODO</span> ' + text
 
 
 def note(text):
+    if not SHOW_PLACEHOLDERS:
+        return todo(text)
     return '<div class="pending-note">' + todo(text) + '</div>'
 
 
@@ -460,6 +475,8 @@ def media_slot(mid, placeholder, min_height="20rem"):
     if published(mid):
         return '<div class="feature-media has-photo">' + media_img(mid) + '</div>'
     held = ('<!-- media "%s" is consent-held or not yet processed; placeholder shown -->' % mid) if mid else ''
+    if not SHOW_PLACEHOLDERS:
+        return held          # no photo yet: render nothing (callers switch to a one-column row)
     return ('<div class="feature-media"><div class="placeholder-box" style="min-height:' + min_height + '">'
             + held + placeholder + '</div></div>')
 
@@ -702,12 +719,13 @@ def home():
         '<h2 class="section-title">The Patient Journey</h2>'
         '<p class="section-subtitle">How support reaches a patient, step by step</p><div class="red-divider"></div>'
         '<div class="flow">' + flow + '</div>'
-        '<div class="grid grid-3 mt-4">'
         '<!-- TODO: photos pending from Adeena -->'
-        '<div class="placeholder-box">Volunteers distributing medication: photo coming soon</div>'
-        '<div class="placeholder-box">Prescription verification: photo coming soon</div>'
-        '<div class="placeholder-box">Zakat form being completed: photo coming soon</div>'
-        '</div></div></section>'
+        + ph('<div class="grid grid-3 mt-4">'
+             '<div class="placeholder-box">Volunteers distributing medication: photo coming soon</div>'
+             '<div class="placeholder-box">Prescription verification: photo coming soon</div>'
+             '<div class="placeholder-box">Zakat form being completed: photo coming soon</div>'
+             '</div>') +
+        '</div></section>'
 
         # 7. Partners
         '<section class="section bg-white"><div class="container">'
@@ -796,9 +814,10 @@ def about():
         '<p class="section-subtitle">The people who run CARE</p><div class="red-divider"></div>'
         '<h3 style="margin-bottom:1.5rem">Board of Directors</h3>' + director_cards(compact=True) +
         '<div class="center-btn" style="margin-top:2rem"><a class="btn btn-outline" href="' + BOARD_PAGE + '">Meet the Board</a></div>'
-        '<h3 style="margin:3rem 0 1.5rem">Core Team</h3>' + team_grid(core) +
-        '<h3 style="margin:3rem 0 1.5rem">Advisory Board</h3>' + team_grid(advisory) +
-        '<p class="mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm names, roles and photos of the core team and advisory board") + '</p>'
+        # Core Team / Advisory Board names are unconfirmed mock-up placeholders: kept here, not rendered.
+        + ph('<h3 style="margin:3rem 0 1.5rem">Core Team</h3>' + team_grid(core) +
+             '<h3 style="margin:3rem 0 1.5rem">Advisory Board</h3>' + team_grid(advisory) +
+             '<p class="mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm names, roles and photos of the core team and advisory board") + '</p>') +
         '</div></section>'
 
         # Governance & Partners
@@ -881,7 +900,7 @@ def programs():
     for i, (sid, ic, title, desc, bullets) in enumerate(sections):
         media = media_slot(section_media.get(sid),
                            '<!-- TODO: photos pending from Adeena -->Program photo coming soon', "18rem")
-        docs = ('<div class="mt-4">' + docs_block(section_docs[sid], related_label="") + '</div>') if sid in section_docs else ''
+        docs = ('<div class="feature-docs mt-4">' + docs_block(section_docs[sid], related_label="") + '</div>') if sid in section_docs else ''
         if desc is None:
             body = ('<div class="feature-body"><div class="badge">' + icon(ic) + '</div>'
                     '<h2>' + title + '</h2>'
@@ -892,7 +911,8 @@ def programs():
             body = ('<div class="feature-body"><div class="badge">' + icon(ic) + '</div>'
                     '<h2>' + title + '</h2><p>' + desc + '</p>'
                     '<ul class="check-list">' + bl + '</ul>' + docs + '</div>')
-        reverse = " reverse" if i % 2 == 1 else ""
+        has_media = "feature-media" in media
+        reverse = (" reverse" if i % 2 == 1 else "") if has_media else " feature-row--solo"
         bg = "bg-white" if i % 2 == 0 else "bg-off-white"
         inner = (media + body) if i % 2 == 0 else (body + media)
         rows += ('<section id="' + sid + '" class="section ' + bg + '"><div class="container feature-row' + reverse + '">'
@@ -1071,20 +1091,31 @@ def donate():
         # Bank details
         '<div><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">' + icon("bank", "") +
         '<h2 style="font-size:1.6rem">Bank Details</h2></div>'
-        '<p style="color:var(--mid-gray);font-size:.9rem;margin-bottom:1.5rem">Transfer directly to our account. Donations go to patient care and running costs.</p>'
-        '<div data-bank>' + bank_html + '</div>'
-        '<p class="mt-2">' + todo("bank details pending confirmation") + '</p>'
-        '<button class="btn btn-primary mt-3" data-download-bank>' + icon("download") + 'Download Bank Details</button>'
+        + (
+            # Real account details are not available yet: the empty rows stay in code only.
+            '<p style="color:var(--mid-gray);font-size:.9rem;margin-bottom:1.5rem">Transfer directly to our account. Donations go to patient care and running costs.</p>'
+            '<div data-bank>' + bank_html + '</div>'
+            '<p class="mt-2">' + todo("bank details pending confirmation") + '</p>'
+            '<button class="btn btn-primary mt-3" data-download-bank>' + icon("download") + 'Download Bank Details</button>'
+            if SHOW_PLACEHOLDERS else
+            '<!-- TODO: bank details pending; placeholder rows hidden -->'
+            '<p style="color:var(--mid-gray);line-height:1.8;margin-bottom:1.25rem;max-width:34rem">For a bank transfer, call or email us and we will share the account details. Donations go to patient care and running costs.</p>'
+            '<div class="cta-actions">'
+            '<a class="btn btn-primary" href="' + PHONE_HREF + '">' + icon("phone") + PHONE + '</a>'
+            '<a class="btn btn-outline" href="mailto:' + EMAIL + '">' + icon("mail") + EMAIL + '</a>'
+            '</div>'
+        ) +
         '</div>'
         # Other ways + amounts
         '<div><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">' + icon("dollar") +
         '<h2 style="font-size:1.6rem">Other Ways to Donate</h2></div>'
         + ways_html +
-        '<div class="amount-box mt-3" data-amounts>'
-        '<div style="color:var(--primary);font-weight:600;margin-bottom:.5rem">Online Payment: Coming Soon</div>'
-        '<div style="color:var(--mid-gray);font-size:.9rem">Online donations by card and mobile wallet are not available yet.</div>'
-        '<div class="amount-grid">' + amt_btns + '</div>'
-        '</div></div>'
+        ph('<div class="amount-box mt-3" data-amounts>'
+           '<div style="color:var(--primary);font-weight:600;margin-bottom:.5rem">Online Payment: Coming Soon</div>'
+           '<div style="color:var(--mid-gray);font-size:.9rem">Online donations by card and mobile wallet are not available yet.</div>'
+           '<div class="amount-grid">' + amt_btns + '</div>'
+           '</div>') +
+        '</div>'
         '</div></section>'
         # Trust statement
         '<section class="section--tight bg-dark"><div class="container max-720">'
@@ -1137,7 +1168,7 @@ def event_card(ev):
     n = len(event_media(ev))
     if cover:
         media = media_img(cover, "card", "event-cover")
-    elif ev.get("media"):
+    elif ev.get("media") and SHOW_PLACEHOLDERS:
         media = ('<div class="placeholder-box event-cover-ph"><!-- photos exist but are consent-held or not yet processed -->'
                  'Photos coming soon</div>')
     else:
@@ -1209,7 +1240,7 @@ def news_events():
         '<button class="tab-btn" data-tab="calendar" aria-selected="false">Calendar</button>'
         '<button class="tab-btn" data-tab="upcoming" aria-selected="false">Upcoming</button>'
         '<button class="tab-btn" data-tab="past" aria-selected="true">Past Events</button>'
-        '<button class="tab-btn" data-tab="news" aria-selected="false">Latest News</button>'
+        + ph('<button class="tab-btn" data-tab="news" aria-selected="false">Latest News</button>') +
         '</div>'
         # Calendar (built by events-calendar.js)
         '<div class="tab-panel" data-panel="calendar">'
@@ -1231,10 +1262,10 @@ def news_events():
         '<div data-events-past>' + cards + '</div>'
         '</div>'
         # News
-        '<div class="tab-panel" data-panel="news">'
-        '<h2 class="section-title">Latest News</h2>'
-        '<p class="section-subtitle">Updates across our programmes</p><div class="red-divider"></div>'
-        '<div class="grid grid-3">' + news_html + '</div></div>'
+        + ph('<div class="tab-panel" data-panel="news">'
+             '<h2 class="section-title">Latest News</h2>'
+             '<p class="section-subtitle">Updates across our programmes</p><div class="red-divider"></div>'
+             '<div class="grid grid-3">' + news_html + '</div></div>') +
         '</div></section>'
         # Photography note
         '<section id="photography" class="section bg-off-white"><div class="container max-720">'
@@ -1252,12 +1283,13 @@ def news_events():
 def resources():
     return (
         banner("Resources", "Resources") +
-        '<section id="dearly-loved" class="section bg-white"><div class="container">'
-        '<h2 class="section-title">Dearly Loved (CSR)</h2>'
-        '<p class="section-subtitle">Our corporate social responsibility programme</p><div class="red-divider"></div>'
-        '<div class="max-720"><!-- TODO: content pending -->'
-        + note("Dearly Loved (CSR) programme content is pending.") + '</div>'
-        '</div></section>'
+        '<!-- TODO: Dearly Loved (CSR) programme content pending -->'
+        + ph('<section id="dearly-loved" class="section bg-white"><div class="container">'
+             '<h2 class="section-title">Dearly Loved (CSR)</h2>'
+             '<p class="section-subtitle">Our corporate social responsibility programme</p><div class="red-divider"></div>'
+             '<div class="max-720">' + note("Dearly Loved (CSR) programme content is pending.") + '</div>'
+             '</div></section>') +
+        ''
         '<section id="policies-reports" class="section bg-off-white"><div class="container max-720">'
         '<h2 class="section-title">Policies &amp; Reports</h2><div class="red-divider"></div>'
         '<p style="color:var(--mid-gray);line-height:1.8">Our policies and annual reports live on the About page.</p>'
@@ -1322,6 +1354,8 @@ def faq():
         ("[TODO] Confirm the intended 4th FAQ topic",
          '<!-- TODO: confirm the intended 4th FAQ topic --> ' + todo("one FAQ item from the original notes came through unclear, possibly about registration / legitimacy, or Zakat / tax eligibility (a Zakat form was mentioned elsewhere in the notes). Confirm the intended question and answer.")),
     ]
+    if not SHOW_PLACEHOLDERS:
+        items = [it for it in items if not it[0].startswith("[TODO]")]
     acc = '<div class="accordion">'
     for q, a in items:
         acc += ('<div class="acc-item">'
@@ -1415,9 +1449,9 @@ def contact():
         '<p class="mt-3">See also: <a class="text-link" href="safeguarding-policy.html">Safeguarding Policy</a></p>'
         '</div></section>'
         # Map placeholder
-        '<div class="map-placeholder placeholder-box" style="border-radius:0">'
-        '<!-- TODO: Google Maps embed needs an API key; carrying over the placeholder until one is available -->'
-        'Google Maps embed pending API key</div>'
+        '<!-- TODO: Google Maps embed needs an API key -->'
+        + ph('<div class="map-placeholder placeholder-box" style="border-radius:0">'
+             'Google Maps embed pending API key</div>')
     )
 
 
