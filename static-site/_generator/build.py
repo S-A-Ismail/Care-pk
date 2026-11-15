@@ -31,7 +31,7 @@ IG_HANDLE = "@CARE_JMDC"
 # This is NOT the registered address — that is REG_ADDRESS below.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "10"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "11"  # bump to cache-bust styles.css / JS after a redesign
 
 # ---- Official identity (domain verification, e.g. Google for Nonprofits) ----
 SITE_URL = "https://carepk.org"
@@ -329,7 +329,7 @@ def footer():
         '<div class="footer-brand">'
         '<div class="brand"><img src="' + logo_src() + '" alt="CARE logo" width="40" height="40">'
         '<span><span class="brand-name">CARE</span><br><span class="brand-tag">' + BRAND_TAG + '</span></span></div>'
-        '<p>CARE is dedicated to serving humanity with compassion, transparency and commitment, and improving access to essential medicines and healthcare for those who need it most.</p>'
+        '<p>CARE is a student-led non-profit in Karachi. We help people get the medicines and healthcare they would otherwise go without.</p>'
         '<div class="footer-social">'
         '<a href="' + FB + '" target="_blank" rel="noreferrer" aria-label="Facebook">' + icon("facebook") + '</a>'
         '<a href="' + IG + '" target="_blank" rel="noreferrer" aria-label="Instagram">' + icon("instagram") + '</a>'
@@ -424,7 +424,7 @@ def banner(title, crumb):
 def cta_band():
     return (
         '<section class="cta-band"><div class="container">'
-        '<h2>Ready to Make a Difference?</h2>'
+        '<h2>Want to help?</h2>'
         '<p>You can donate, volunteer or simply tell someone about CARE. All of it helps us reach more people.</p>'
         '<div class="cta-actions">'
         '<a class="btn btn-dark" href="donate.html">Donate Now</a>'
@@ -613,12 +613,12 @@ def bar_rows(pairs):
 
 def home():
     what_we_do_cards = [
-        ("plus-square", "Essential Medicines &amp; Drug Bank", "Supporting access to prescribed medicines through our Drug Bank for patients who cannot afford them.", "programs.html#drug-bank"),
-        ("truck", "Medical Outreach &amp; Health Camps", "Free medical camps and outreach that bring consultations, diagnostics and medicines to underserved communities.", "programs.html#medical-camps"),
-        ("book", "Health Education &amp; Prevention", "Preventive health awareness sessions that help communities make informed decisions before problems become serious.", "programs.html#health-awareness"),
-        ("activity", "Patient Support Services", "Helping patients continue and complete treatment through practical and financial support.", "programs.html#community-outreach"),
-        ("users", "Volunteer &amp; Student Leadership", "Student-led volunteer initiatives that power our programs and develop the next generation of changemakers.", "programs.html#volunteer-initiatives"),
-        ("heart", "Emergency Assistance", "Timely support for patients and families facing urgent medical need.", "programs.html#emergency-support"),
+        ("plus-square", "Essential Medicines &amp; Drug Bank", "Prescribed medicines for patients who can&rsquo;t afford them, through our Drug Bank.", "programs.html#drug-bank"),
+        ("truck", "Medical Outreach &amp; Health Camps", "Free medical camps with consultations and check-ups, held where people need them.", "programs.html#medical-camps"),
+        ("book", "Health Education &amp; Prevention", "Awareness sessions on conditions that are easier to treat when they are caught early.", "programs.html#health-awareness"),
+        ("activity", "Patient Support Services", "Practical and financial help so patients can finish their treatment.", "programs.html#community-outreach"),
+        ("users", "Volunteer &amp; Student Leadership", "Students organise the camps, blood drives and fundraisers.", "programs.html#volunteer-initiatives"),
+        ("heart", "Emergency Assistance", "Help for patients in urgent need, and first response training for students.", "programs.html#emergency-support"),
     ]
     cards_html = ""
     for ic, title, desc, href in what_we_do_cards:
@@ -638,10 +638,10 @@ def home():
     partner_html = "".join('<li>' + esc(n) + '</li>' for n in IMPACT.get("partners", []))
 
     transparency = [
-        ("file", "Annual Report", "Yearly overview of our work and reach.", "about.html#annual-reports"),
+        ("file", "Annual Report", "What we did each year.", "about.html#annual-reports"),
         ("dollar", "Financial Statements", "How funds are received and used.", "about.html#annual-reports"),
-        ("book", "Policies", "The standards that guide our work.", "about.html#policies"),
-        ("shield", "Safeguarding", "Protecting those we serve.", "safeguarding-policy.html"),
+        ("book", "Policies", "The policies we work under.", "about.html#policies"),
+        ("shield", "Safeguarding", "How we protect the people we serve.", "safeguarding-policy.html"),
         ("check", "Registration", "Our legal registration details.", "governance.html#registration"),
     ]
     t_html = ""
@@ -663,7 +663,7 @@ def home():
         '<section class="hero"><div class="container"><div class="hero-inner">'
         '<p class="eyebrow">' + BRAND_TAG + '</p>'
         '<h1>Healthcare Within Reach</h1>'
-        '<p>Improving access to essential medicines, healthcare services, and community support for underserved populations across Pakistan through student leadership, medical partnerships, and compassionate action.</p>'
+        '<p>CARE is a student-led non-profit in Karachi. We run free medical camps, blood drives and a Drug Bank for people who can&rsquo;t afford the care they need.</p>'
         '<div class="hero-cta">'
         '<a class="btn btn-primary" href="donate.html">' + icon("heart") + 'Donate Now</a>'
         '<a class="btn btn-outline-white" href="get-involved.html#volunteer">' + icon("users") + 'Join Our Mission</a>'
@@ -680,20 +680,19 @@ def home():
         '<section class="section bg-white"><div class="container">'
         '<h2 class="section-title">Why CARE Exists</h2><div class="red-divider"></div>'
         '<div class="prose max-720" style="text-align:center">'
-        '<p>Access to healthcare is influenced by more than the availability of hospitals and clinics. For many individuals and families, the cost of medicines, limited health awareness, and barriers to ongoing care can make treatment difficult to complete.</p>'
-        '<p>CARE was established to help bridge these gaps by supporting access to essential medicines, promoting preventive health, and working alongside healthcare institutions and community partners to improve health outcomes.</p>'
-        '<p>Through collaboration, volunteer engagement, and responsible stewardship of resources, we strive to make healthcare more accessible for those who need it most.</p>'
-        '</div>'
+        '<p>Having a hospital nearby is only part of it. For a lot of families the cost of medicines, or not knowing enough about a condition, is what stops treatment partway.</p>'
+        '<p>CARE was set up to help with that. We support patients with medicines, run health awareness sessions and work with hospitals and welfare organisations.</p>'
+                '</div>'
         '<div class="grid grid-3 mt-4">'
-        '<div class="info-box"><h3>Barriers to Care</h3><p>Patients may face financial or practical challenges that delay or interrupt treatment.</p></div>'
-        '<div class="info-box"><h3>Community Health</h3><p>Preventive education and outreach help communities make informed decisions before health problems become more serious.</p></div>'
-        '<div class="info-box"><h3>Collaborative Solutions</h3><p>CARE works with healthcare professionals, volunteers, hospitals, and community partners to improve access to essential healthcare services.</p></div>'
+        '<div class="info-box"><h3>Barriers to Care</h3><p>Cost and practical problems can delay treatment or stop it partway.</p></div>'
+        '<div class="info-box"><h3>Community Health</h3><p>Awareness sessions help people act before a health problem gets serious.</p></div>'
+        '<div class="info-box"><h3>Working Together</h3><p>CARE works with doctors, volunteers, hospitals and welfare organisations.</p></div>'
         '</div></div></section>'
 
         # 4. What We Do
         '<section class="section bg-off-white"><div class="container">'
         '<h2 class="section-title">What We Do</h2>'
-        '<p class="section-subtitle">Comprehensive support for a healthier tomorrow</p><div class="red-divider"></div>'
+        '<p class="section-subtitle">The work, in six parts</p><div class="red-divider"></div>'
         '<div class="grid grid-3">' + cards_html + '</div>'
         '<div class="center-btn"><a class="btn btn-primary" href="programs.html">Explore Our Programs</a></div>'
         '</div></section>'
@@ -729,7 +728,7 @@ def home():
         # 8. Transparency
         '<section class="section transparency"><div class="container">'
         '<h2 class="section-title" style="color:#fff">Transparency &amp; Accountability</h2>'
-        '<p class="section-subtitle" style="color:rgba(255,255,255,.7)">We are committed to open, responsible stewardship of every contribution.</p>'
+        '<p class="section-subtitle" style="color:rgba(255,255,255,.7)">How CARE is registered, governed and funded.</p>'
         '<div class="red-divider"></div>'
         '<div class="t-grid">' + t_html + '</div>'
         '</div></section>'
@@ -811,7 +810,7 @@ def about():
         # Leadership
         '<section id="leadership" class="section bg-off-white"><div class="container">'
         '<h2 class="section-title">Leadership</h2>'
-        '<p class="section-subtitle">The people who guide and carry out our work</p><div class="red-divider"></div>'
+        '<p class="section-subtitle">The people who run CARE</p><div class="red-divider"></div>'
         '<h3 style="text-align:center;margin-bottom:2rem">Board of Directors</h3>' + director_cards(compact=True) +
         '<div class="center-btn" style="margin-top:2.5rem"><a class="btn btn-outline" href="' + BOARD_PAGE + '">Meet the Board</a></div>'
         '<h3 style="text-align:center;margin:4rem 0 1.5rem">Core Team</h3>' + team_grid(core) +
@@ -868,10 +867,10 @@ def programs():
          "Awareness sessions cover conditions that are easier to deal with when they are caught early. Past sessions have covered breast cancer, rheumatic heart disease, thalassemia and skin care.",
          ["Seminars and workshops with specialists", "Thalassemia awareness and screening", "Sessions held with Sohail Trust Hospital"]),
         ("community-outreach", "users", "Community Outreach &amp; Patient Support",
-         "Some of the work is simply showing up where the need is. That has included a flood relief appeal in October 2025 and a Heat Relief Camp at Sohail Trust Hospital in 2026, where volunteers handed out cold drinks.",
+         "Some of the work is relief. That has included a flood relief appeal in October 2025 and a Heat Relief Camp at Sohail Trust Hospital in 2026, where volunteers handed out cold drinks.",
          ["Heat Relief Camp with the JMDC Sports Society", "Flood relief appeal with GSIG", "Patient assistance for those who can&rsquo;t afford treatment"]),
         ("emergency-support", "heart", "Emergency Support",
-         "In an emergency the first few minutes matter most, so CARE trains students to respond. The courses cover basic life support, CPR and essential first aid.",
+         "CARE trains students in first response. The courses cover basic life support, CPR and essential first aid.",
          ["Basic Life Support workshops with FRIP", "First Responders Course with REVIVE", "Hands-on practice on training manikins"]),
         ("volunteer-initiatives", "clipboard", "Volunteer Initiatives",
          "CARE is run by student volunteers. They organise the blood drives, staff the camps and raise funds through sports galas, movie screenings and cultural events.",
@@ -974,12 +973,12 @@ def impact():
 
 def get_involved():
     paths = [
-        ("volunteer", "users", "Volunteer", "Give your time and skills across our field teams, medical camps, or administrative support."),
+        ("volunteer", "users", "Volunteer", "Help at medical camps, in the field or with admin work."),
         ("partner", "link", "Partner", "Organisations and institutions that want to work with us on programmes and outreach."),
-        ("corporate", "briefcase", "Corporate", "Companies looking to support our mission through corporate giving or employee engagement."),
-        ("csr", "heart", "CSR", "Structured corporate social responsibility collaborations, including the Dearly Loved programme."),
-        ("universities", "book", "Universities", "Academic partners for student-led initiatives, research and volunteering."),
-        ("funders", "dollar", "Funders", "Grant-makers, donors and philanthropists funding our work at scale."),
+        ("corporate", "briefcase", "Corporate", "Companies that want to give, or get their staff involved."),
+        ("csr", "heart", "CSR", "CSR partnerships, including the Dearly Loved programme."),
+        ("universities", "book", "Universities", "Universities that want to work with us on student projects, research and volunteering."),
+        ("funders", "dollar", "Funders", "Grant-makers and donors who want to fund our work."),
     ]
     anchors = ('<div class="anchor-nav">'
                + "".join('<a href="#' + pid + '">' + title + '</a>' for pid, _, title, _ in paths)
@@ -1053,7 +1052,7 @@ def get_involved():
         banner("Get Involved", "Get Involved") +
         '<section class="section bg-white"><div class="container">'
         '<h2 class="section-title">Six Ways to Get Involved</h2>'
-        '<p class="section-subtitle">Choose the path that fits you or your organisation.</p><div class="red-divider"></div>'
+        '<p class="section-subtitle">Pick the one that fits you or your organisation.</p><div class="red-divider"></div>'
         + anchors +
         '<div class="grid grid-3">' + cards + '</div>'
         '</div></section>'
@@ -1089,7 +1088,7 @@ def donate():
         # Bank details
         '<div><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">' + icon("bank", "") +
         '<h2 style="font-size:1.6rem">Bank Details</h2></div>'
-        '<p style="color:var(--mid-gray);font-size:.9rem;margin-bottom:1.5rem">Transfer directly to our account. All donations are used transparently for patient care and operations.</p>'
+        '<p style="color:var(--mid-gray);font-size:.9rem;margin-bottom:1.5rem">Transfer directly to our account. Donations go to patient care and running costs.</p>'
         '<div data-bank>' + bank_html + '</div>'
         '<p class="mt-2">' + todo("bank details pending confirmation") + '</p>'
         '<button class="btn btn-primary mt-3" data-download-bank>' + icon("download") + 'Download Bank Details</button>'
@@ -1100,13 +1099,13 @@ def donate():
         + ways_html +
         '<div class="amount-box mt-3" data-amounts>'
         '<div style="color:var(--primary);font-weight:600;margin-bottom:.5rem">Online Payment: Coming Soon</div>'
-        '<div style="color:var(--mid-gray);font-size:.9rem">Secure online donations via card / mobile wallets will be available shortly.</div>'
+        '<div style="color:var(--mid-gray);font-size:.9rem">Online donations by card and mobile wallet are not available yet.</div>'
         '<div class="amount-grid">' + amt_btns + '</div>'
         '</div></div>'
         '</div></section>'
         # Trust statement
         '<section class="section--tight bg-dark"><div class="container max-720" style="text-align:center">'
-        '<p style="color:rgba(255,255,255,.85);font-style:italic;font-size:1.05rem">&ldquo;Your support can save lives. All donations are used transparently for patient care and operations. We are proud to share regular impact reports with all donors.&rdquo;</p>'
+        '<p style="color:rgba(255,255,255,.85);font-style:italic;font-size:1.05rem">Donations go to patient care and running costs. The figures we can stand behind are on the Impact page.</p>'
         '</div></section>'
         # Related policy documents (new block, below the existing content)
         '<section id="donation-policies" class="section bg-white"><div class="container max-720">'
@@ -1334,7 +1333,7 @@ def faq():
         ("Where does my money go?",
          'Donations support CARE&rsquo;s programmes: essential medicines and the Drug Bank, medical camps, patient support and community outreach. ' + todo("CARE team to confirm the exact allocation breakdown.")),
         ("How secure is it?",
-         'Contributions can be made by direct bank transfer to our verified account, and all donations are used transparently for patient care and operations, with regular impact reports shared with donors. ' + todo("confirm security / receipting details.")),
+         'You can donate by direct bank transfer to CARE&rsquo;s own account. Donations go to patient care and running costs. ' + todo("confirm security / receipting details.")),
         ("How many people does it reach?",
          'The numbers we can trace to a record are on the Impact page. For example, 180 patients were served at the 2023 Free Eye Camp and 134 students registered for the August 2026 blood drive. There is no overall total yet, because the older records are not complete enough to add up.'),
         ("[TODO] Confirm the intended 4th FAQ topic",
@@ -1422,7 +1421,7 @@ def contact():
         '<section class="section bg-white"><div class="container grid grid-2">'
         # Info
         '<div><h2 style="font-size:1.8rem;margin-bottom:1rem">Get In Touch</h2>'
-        '<p style="color:var(--mid-gray);line-height:1.8;margin-bottom:2rem">Have a question, want to volunteer, or need our help? Reach out and our team will help.</p>'
+        '<p style="color:var(--mid-gray);line-height:1.8;margin-bottom:2rem">Have a question, want to volunteer or need help? Send us a message and we&rsquo;ll get back to you.</p>'
         '<div style="display:flex;flex-direction:column;gap:1.25rem">'
         '<div style="display:flex;gap:1rem"><div class="card-icon" style="width:2.5rem;height:2.5rem;margin:0">' + icon("pin") + '</div>'
         '<div><div style="font-weight:600">Office Address</div>'
@@ -1469,7 +1468,7 @@ def contact():
 #  BUILD
 # ============================================================
 PAGES = [
-    ("index.html", "CARE | Healthcare Within Reach", "Improving access to essential medicines, healthcare services, and community support for underserved populations across Pakistan.", home, "medicines drug bank medical camps volunteers donate emergency"),
+    ("index.html", "CARE | Healthcare Within Reach", "CARE is a student-led non-profit in Karachi running free medical camps, blood drives and a Drug Bank.", home, "medicines drug bank medical camps volunteers donate emergency"),
     ("about.html", "About Us | CARE Pakistan", "Our mission, story, leadership, governance and policies.", about, "mission vision values story leadership board directors advisory policies annual reports history milestones"),
     ("programs.html", "Care Programs | CARE Pakistan", "Drug Bank, medical camps, health awareness, community outreach, emergency support and volunteer initiatives.", programs, "drug bank medical camps health awareness community outreach emergency volunteer"),
     ("impact.html", "Impact | CARE Pakistan", "Our impact in numbers and the impact dashboard.", impact, "impact statistics figures patients eye camp cataract blood drive registrations camps dashboard"),

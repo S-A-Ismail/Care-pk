@@ -2,7 +2,7 @@ window.CARE_SEARCH_INDEX = [
   {
     "title": "CARE",
     "url": "index.html",
-    "summary": "Improving access to essential medicines, healthcare services, and community support for underserved populations across Pakistan.",
+    "summary": "CARE is a student-led non-profit in Karachi running free medical camps, blood drives and a Drug Bank.",
     "keywords": "medicines drug bank medical camps volunteers donate emergency"
   },
   {
