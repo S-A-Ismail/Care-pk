@@ -31,7 +31,7 @@ IG_HANDLE = "@CARE_JMDC"
 # This is NOT the registered address — that is REG_ADDRESS below.
 ADDRESS = "Jinnah Medical &amp; Dental College, 22-23 Shaheed-e-Millat Road, Karachi-74000"
 FORMSPREE = "https://formspree.io/f/YOUR_FORM_ID"  # TODO: replace once account is set up
-VERSION = "11"  # bump to cache-bust styles.css / JS after a redesign
+VERSION = "12"  # bump to cache-bust styles.css / JS after a redesign
 
 # ---- Official identity (domain verification, e.g. Google for Nonprofits) ----
 SITE_URL = "https://carepk.org"
@@ -678,11 +678,11 @@ def home():
 
         # 3. Why CARE Exists
         '<section class="section bg-white"><div class="container">'
-        '<h2 class="section-title">Why CARE Exists</h2><div class="red-divider"></div>'
-        '<div class="prose max-720" style="text-align:center">'
+        '<div class="split"><div class="split-head"><h2 class="section-title">Why CARE Exists</h2><div class="red-divider"></div></div>'
+        '<div class="split-body prose">'
         '<p>Having a hospital nearby is only part of it. For a lot of families the cost of medicines, or not knowing enough about a condition, is what stops treatment partway.</p>'
         '<p>CARE was set up to help with that. We support patients with medicines, run health awareness sessions and work with hospitals and welfare organisations.</p>'
-                '</div>'
+                '</div></div>'
         '<div class="grid grid-3 mt-4">'
         '<div class="info-box"><h3>Barriers to Care</h3><p>Cost and practical problems can delay treatment or stop it partway.</p></div>'
         '<div class="info-box"><h3>Community Health</h3><p>Awareness sessions help people act before a health problem gets serious.</p></div>'
@@ -794,40 +794,40 @@ def about():
         '</div></section>'
 
         # Our Story + milestones
-        '<section id="story" class="section bg-white"><div class="container">'
+        '<section id="story" class="section bg-white"><div class="container split"><div class="split-head">'
         '<h2 class="section-title">Our Story</h2>'
         '<p class="section-subtitle">From one seminar in 2022 to medical camps, blood drives and a Drug Bank.</p>'
         '<div class="red-divider"></div>'
-        '<div class="prose max-720" style="text-align:center">'
+        '<div class="prose">'
         '<p>CARE started in 2022 as a student-led welfare effort at Jinnah Medical &amp; Dental College, known on campus as CARE by JMDC. The first event was a breast cancer awareness seminar that October. Since then the work has grown into medical camps, blood drives, a Drug Bank and training courses, run with hospitals and welfare organisations in Karachi.</p>'
         '<p><a href="governance.html#registration" style="color:var(--red);text-decoration:underline;text-underline-offset:3px">'
         + LEGAL_NAME + ' is a registered nonprofit in Pakistan. carepk.org is our official website.</a></p>'
-        '</div>'
-        '<div class="max-720 mt-4">'
-        '<div class="timeline mt-3">' + tl + '</div></div>'
+        '</div></div>'
+        '<div class="split-body">'
+        '<div class="timeline">' + tl + '</div></div>'
         '</div></section>'
 
         # Leadership
         '<section id="leadership" class="section bg-off-white"><div class="container">'
         '<h2 class="section-title">Leadership</h2>'
         '<p class="section-subtitle">The people who run CARE</p><div class="red-divider"></div>'
-        '<h3 style="text-align:center;margin-bottom:2rem">Board of Directors</h3>' + director_cards(compact=True) +
-        '<div class="center-btn" style="margin-top:2.5rem"><a class="btn btn-outline" href="' + BOARD_PAGE + '">Meet the Board</a></div>'
-        '<h3 style="text-align:center;margin:4rem 0 1.5rem">Core Team</h3>' + team_grid(core) +
-        '<h3 style="text-align:center;margin:3rem 0 1.5rem">Advisory Board</h3>' + team_grid(advisory) +
-        '<p class="text-center mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm names, roles and photos of the core team and advisory board") + '</p>'
+        '<h3 style="margin-bottom:1.5rem">Board of Directors</h3>' + director_cards(compact=True) +
+        '<div class="center-btn" style="margin-top:2rem"><a class="btn btn-outline" href="' + BOARD_PAGE + '">Meet the Board</a></div>'
+        '<h3 style="margin:3rem 0 1.5rem">Core Team</h3>' + team_grid(core) +
+        '<h3 style="margin:3rem 0 1.5rem">Advisory Board</h3>' + team_grid(advisory) +
+        '<p class="mt-3" style="color:var(--mid-gray);font-size:.85rem">' + todo("confirm names, roles and photos of the core team and advisory board") + '</p>'
         '</div></section>'
 
         # Governance & Partners
-        '<section id="governance" class="section bg-white"><div class="container max-720" style="text-align:center">'
-        '<h2 class="section-title">Governance &amp; Partners</h2><div class="red-divider"></div>'
+        '<section id="governance" class="section bg-white"><div class="container split"><div class="split-head">'
+        '<h2 class="section-title">Governance &amp; Partners</h2><div class="red-divider"></div></div><div class="split-body">'
         '<p style="color:var(--mid-gray);line-height:1.8">CARE is governed by its Board of Directors and works with hospitals, welfare organisations and student societies.</p>'
         '<div class="center-btn cta-actions"><a class="btn btn-outline" href="governance.html">View Governance</a>'
         '<a class="btn btn-outline" href="' + BOARD_PAGE + '">View Board of Directors</a></div>'
-        '</div></section>'
+        '</div></div></section>'
 
         # Policies
-        '<section id="policies" class="section bg-off-white"><div class="container max-720" style="text-align:center">'
+        '<section id="policies" class="section bg-off-white"><div class="container max-720">'
         '<h2 class="section-title">Policies</h2><div class="red-divider"></div>'
         '<p style="color:var(--mid-gray);line-height:1.8">CARE&rsquo;s policy documents are available to view and download below.</p>'
         '<div class="cta-actions mt-3">'
@@ -839,8 +839,8 @@ def about():
         '<div class="container max-720 mt-4">' + docs_grouped() + '</div></section>'
 
         # Annual Reports
-        '<section id="annual-reports" class="section bg-white"><div class="container max-720" style="text-align:center">'
-        '<h2 class="section-title">Annual Reports</h2><div class="red-divider"></div>'
+        '<section id="annual-reports" class="section bg-white"><div class="container split"><div class="split-head">'
+        '<h2 class="section-title">Annual Reports</h2><div class="red-divider"></div></div><div class="split-body">'
         '<p style="color:var(--mid-gray);line-height:1.8">A review of CARE&rsquo;s activities from October 2022 to November 2026 has been prepared for the Board of Directors. The figures and the record of events from it are on the Impact and News &amp; Events pages.</p>'
         '<div class="cta-actions mt-3">'
         '<a class="btn btn-outline" href="impact.html">See the figures</a>'
@@ -848,7 +848,7 @@ def about():
         '</div>'
         '<!-- TODO: publish annual report and financial statement PDFs here once final -->'
         '<p class="mt-3" style="color:var(--mid-gray);font-size:.9rem">Annual reports and financial statements will be published here as PDFs once they are final.</p>'
-        '</div></section>'
+        '</div></div></section>'
 
         + cta_band()
     )
@@ -948,7 +948,7 @@ def impact():
         '<p class="section-subtitle">The numbers we have on record so far.</p><div class="red-divider"></div>'
         + figure_grid() +
         '<p class="figure-note">' + FIGURES_NOTE + '</p>'
-        '<div class="prose max-720 mt-4" style="text-align:center">'
+        '<div class="prose max-720 mt-4">'
         '<p>We only publish a number when we can trace it to a record. There is no overall total for patients, blood units or funds raised yet, because the older records are not complete enough to add up.</p>'
         '</div>'
         '</div></section>'
@@ -1104,7 +1104,7 @@ def donate():
         '</div></div>'
         '</div></section>'
         # Trust statement
-        '<section class="section--tight bg-dark"><div class="container max-720" style="text-align:center">'
+        '<section class="section--tight bg-dark"><div class="container max-720">'
         '<p style="color:rgba(255,255,255,.85);font-style:italic;font-size:1.05rem">Donations go to patient care and running costs. The figures we can stand behind are on the Impact page.</p>'
         '</div></section>'
         # Related policy documents (new block, below the existing content)
@@ -1256,7 +1256,7 @@ def news_events():
         # Photography note
         '<section id="photography" class="section bg-off-white"><div class="container max-720">'
         '<h2 class="section-title">Photography at CARE Events</h2><div class="red-divider"></div>'
-        '<p class="section-subtitle" style="margin-bottom:2rem">Photos and videos are sometimes taken at CARE events. '
+        '<p class="section-subtitle" style="margin-bottom:1.5rem">Photos and videos are sometimes taken at CARE events. '
         'If you would rather not appear in them, or would like a photo of you removed from this website, email '
         '<a class="text-link" href="mailto:' + EMAIL + '">' + EMAIL + '</a>.</p>'
         + docs_block(["care-photography-media-and-consent-policy"]) +
@@ -1275,7 +1275,7 @@ def resources():
         '<div class="max-720"><!-- TODO: content pending -->'
         + note("Dearly Loved (CSR) programme content is pending.") + '</div>'
         '</div></section>'
-        '<section id="policies-reports" class="section bg-off-white"><div class="container max-720" style="text-align:center">'
+        '<section id="policies-reports" class="section bg-off-white"><div class="container max-720">'
         '<h2 class="section-title">Policies &amp; Reports</h2><div class="red-divider"></div>'
         '<p style="color:var(--mid-gray);line-height:1.8">Our policies and annual reports live on the About page.</p>'
         '<div class="cta-actions mt-3">'
@@ -1313,11 +1313,11 @@ def governance():
         '<h2 class="section-title">Governance Structure</h2>'
         '<p class="section-subtitle">How CARE is governed and held accountable</p><div class="red-divider"></div>'
         '<section id="registration" class="max-720" aria-labelledby="registration-title">'
-        '<h3 id="registration-title" style="text-align:center;margin-bottom:1.5rem">Legal Registration</h3>'
+        '<h3 id="registration-title" style="margin-bottom:1.5rem">Legal Registration</h3>'
         + reg_dl +
         '</section>'
-        '<h3 style="text-align:center;margin:4rem 0 2rem">Board of Directors</h3>' + director_cards(compact=True) +
-        '<div class="center-btn" style="margin-top:2.5rem"><a class="btn btn-outline" href="' + BOARD_PAGE + '">Meet the Board</a></div>'
+        '<h3 style="margin:3rem 0 1.5rem">Board of Directors</h3>' + director_cards(compact=True) +
+        '<div class="center-btn" style="margin-top:2rem"><a class="btn btn-outline" href="' + BOARD_PAGE + '">Meet the Board</a></div>'
         '</div></section>'
         '<section id="governance-documents" class="section bg-off-white"><div class="container max-720">'
         '<h2 class="section-title">Governance Documents</h2><div class="red-divider"></div>'
@@ -1359,10 +1359,10 @@ def policy_page(title, crumb, intro, primary, related=()):
     # The legal text lives in the PDFs only — never summarised or converted to HTML here.
     return (
         banner(title, crumb) +
-        '<section class="section bg-white"><div class="container max-720">'
+        '<section class="section bg-white"><div class="container split"><div class="split-head">'
         '<h2 class="section-title">' + title + '</h2><div class="red-divider"></div>'
-        '<p style="color:var(--mid-gray);line-height:1.8;text-align:center">' + intro + '</p>'
-        '<div class="mt-4">' + docs_block(primary, related) + '</div>'
+        '<p class="mt-3" style="color:var(--mid-gray);line-height:1.8">' + intro + '</p></div>'
+        '<div class="split-body docs-single">' + docs_block(primary, related) + '</div>'
         '</div></section>'
     )
 
@@ -1455,7 +1455,7 @@ def contact():
         '<section id="complaints" class="section bg-off-white"><div class="container max-720">'
         '<h2 class="section-title">Complaints &amp; Whistleblowing</h2><div class="red-divider"></div>'
         + docs_block(["care-complaints-and-whistleblowing-policy"]) +
-        '<p class="text-center mt-3">See also: <a class="text-link" href="safeguarding-policy.html">Safeguarding Policy</a></p>'
+        '<p class="mt-3">See also: <a class="text-link" href="safeguarding-policy.html">Safeguarding Policy</a></p>'
         '</div></section>'
         # Map placeholder
         '<div class="map-placeholder placeholder-box" style="border-radius:0">'
