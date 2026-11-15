@@ -42,9 +42,9 @@
     end = end || start;
     var a = parts(start), b = parts(end);
     if (start === end) return fmtDay(start);
-    if (a.y === b.y && a.m === b.m) return a.d + "\u2013" + b.d + " " + MONTHS[a.m - 1] + " " + a.y;
-    if (a.y === b.y) return a.d + " " + MONTHS[a.m - 1] + " \u2013 " + b.d + " " + MONTHS[b.m - 1] + " " + a.y;
-    return fmtDay(start) + " \u2013 " + fmtDay(end);
+    if (a.y === b.y && a.m === b.m) return a.d + " to " + b.d + " " + MONTHS[a.m - 1] + " " + a.y;
+    if (a.y === b.y) return a.d + " " + MONTHS[a.m - 1] + " to " + b.d + " " + MONTHS[b.m - 1] + " " + a.y;
+    return fmtDay(start) + " to " + fmtDay(end);
   }
 
   var TODAY = todayKarachi();
