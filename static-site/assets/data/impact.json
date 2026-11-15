@@ -1,0 +1,30 @@
+{
+  "source": "CARE Annual Activities & Impact Report, Historical Review 2022-2026 (compiled from the @care_jmdc Instagram archive, 14 Nov 2026). Figures are reported by CARE and are not independently audited.",
+  "figures": [
+    {"value": "180", "label": "Patients served", "detail": "Free Eye Camp, September 2023"},
+    {"value": "20",  "label": "Cataract surgery pathways", "detail": "Reported after the 2023 Eye Camp"},
+    {"value": "134", "label": "Student registrations", "detail": "CARE × Indus Hospital Blood Drive, August 2026"},
+    {"value": "2",   "label": "Days of eye camp", "detail": "September 2023"}
+  ],
+  "partners": [
+    "Sohail Trust Hospital",
+    "Medicare Cardiac & General Hospital",
+    "Saylani Welfare",
+    "Indus Hospital & Health Network",
+    "First Response and Intensive Preparedness (FRIP)",
+    "GSIG (JMDC)",
+    "Sehat (JMDC)",
+    "Al Furqan Welfare",
+    "REVIVE",
+    "JMDC Sports Society"
+  ],
+  "milestones": [
+    {"when": "October 2022", "text": "CARE's first event, a Breast Cancer Awareness Seminar at the Dr Zaki Hasan Auditorium, Jinnah Medical & Dental College."},
+    {"when": "February 2023", "text": "The first medical camp, a free ENT camp at Sohail Trust Hospital with ENT specialists and student volunteers."},
+    {"when": "September 2023", "text": "A two-day Free Eye Camp at Sohail Trust Hospital. 180 patients were served and 20 people were identified for free cataract surgery."},
+    {"when": "May 2024", "text": "The Drug Bank opened, and the first blood drive of a six-month series with Saylani Welfare took place."},
+    {"when": "August 2024", "text": "A Basic Life Support workshop for MBBS students, run with FRIP."},
+    {"when": "October 2025", "text": "A flood relief appeal with GSIG, and a free medical camp at Al-Furqan Welfare covering general medicine, dental care, physiotherapy, paediatrics and gynaecology."},
+    {"when": "2026", "text": "Medical camps at Anmol Zindagi Old Age Home and Mubarak Village, a Heat Relief Camp, a blood drive with Indus Hospital and a First Responders Course with REVIVE."}
+  ]
+}

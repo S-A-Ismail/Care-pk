@@ -1,0 +1,231 @@
+{
+  "blood-donation-drive-01": {
+    "card": {
+      "bytes": 58374,
+      "height": 600,
+      "q": 80,
+      "src": "assets/images/events/blood-donation-drive-01-card.webp",
+      "width": 900
+    },
+    "full": {
+      "bytes": 158112,
+      "height": 1600,
+      "q": 80,
+      "src": "assets/images/events/blood-donation-drive-01-full.webp",
+      "width": 1200
+    },
+    "type": "image"
+  },
+  "blood-donation-drive-02": {
+    "card": {
+      "bytes": 62714,
+      "height": 600,
+      "q": 80,
+      "src": "assets/images/events/blood-donation-drive-02-card.webp",
+      "width": 900
+    },
+    "full": {
+      "bytes": 151118,
+      "height": 1600,
+      "q": 80,
+      "src": "assets/images/events/blood-donation-drive-02-full.webp",
+      "width": 1200
+    },
+    "type": "image"
+  },
+  "blood-donation-drive-03": {
+    "card": {
+      "bytes": 50242,
+      "height": 600,
+      "q": 80,
+      "src": "assets/images/events/blood-donation-drive-03-card.webp",
+      "width": 900
+    },
+    "full": {
+      "bytes": 105562,
+      "height": 1600,
+      "q": 80,
+      "src": "assets/images/events/blood-donation-drive-03-full.webp",
+      "width": 1200
+    },
+    "type": "image"
+  },
+  "bls-workshop": {
+    "card": {
+      "bytes": 32854,
+      "height": 378,
+      "q": 80,
+      "src": "assets/images/events/bls-workshop-card.webp",
+      "width": 567
+    },
+    "full": {
+      "bytes": 36992,
+      "height": 423,
+      "q": 80,
+      "src": "assets/images/events/bls-workshop-full.webp",
+      "width": 567
+    },
+    "type": "image"
+  },
+  "derma-session-01": {
+    "card": {
+      "bytes": 33820,
+      "height": 600,
+      "q": 80,
+      "src": "assets/images/events/derma-session-01-card.webp",
+      "width": 900
+    },
+    "full": {
+      "bytes": 81652,
+      "height": 1200,
+      "q": 80,
+      "src": "assets/images/events/derma-session-01-full.webp",
+      "width": 1600
+    },
+    "type": "image"
+  },
+  "derma-session-02": {
+    "card": {
+      "bytes": 39656,
+      "height": 600,
+      "q": 80,
+      "src": "assets/images/events/derma-session-02-card.webp",
+      "width": 900
+    },
+    "full": {
+      "bytes": 115908,
+      "height": 1600,
+      "q": 80,
+      "src": "assets/images/events/derma-session-02-full.webp",
+      "width": 900
+    },
+    "type": "image"
+  },
+  "heat-relief-camp-01": {
+    "card": {
+      "bytes": 53686,
+      "height": 600,
+      "q": 80,
+      "src": "assets/images/events/heat-relief-camp-01-card.webp",
+      "width": 900
+    },
+    "full": {
+      "bytes": 165534,
+      "height": 1600,
+      "q": 80,
+      "src": "assets/images/events/heat-relief-camp-01-full.webp",
+      "width": 1200
+    },
+    "type": "image"
+  },
+  "heat-relief-camp-02": {
+    "card": {
+      "bytes": 93462,
+      "height": 600,
+      "q": 72,
+      "src": "assets/images/events/heat-relief-camp-02-card.webp",
+      "width": 900
+    },
+    "full": {
+      "bytes": 251696,
+      "height": 1600,
+      "q": 72,
+      "src": "assets/images/events/heat-relief-camp-02-full.webp",
+      "width": 1200
+    },
+    "type": "image"
+  },
+  "heat-relief-camp-03": {
+    "card": {
+      "bytes": 81910,
+      "height": 600,
+      "q": 72,
+      "src": "assets/images/events/heat-relief-camp-03-card.webp",
+      "width": 900
+    },
+    "full": {
+      "bytes": 250976,
+      "height": 1200,
+      "q": 80,
+      "src": "assets/images/events/heat-relief-camp-03-full.webp",
+      "width": 1600
+    },
+    "type": "image"
+  },
+  "sohail-trust-and-care-joint-skin-rejuvenation-session": {
+    "full": {
+      "bytes": 157248,
+      "height": 1402,
+      "q": 80,
+      "src": "assets/images/events/sohail-trust-and-care-joint-skin-rejuvenation-session-full.webp",
+      "width": 1122
+    },
+    "type": "image"
+  },
+  "sports-carnival-awareness-standees-01": {
+    "card": {
+      "bytes": 13562,
+      "height": 309,
+      "q": 80,
+      "src": "assets/images/events/sports-carnival-awareness-standees-01-poster.webp",
+      "width": 464
+    },
+    "frame": {
+      "bytes": 31540,
+      "height": 832,
+      "q": 80,
+      "src": "assets/images/events/sports-carnival-awareness-standees-01-frame.webp",
+      "width": 464
+    },
+    "type": "video",
+    "video": {
+      "height": 832,
+      "src": "assets/videos/events/sports-carnival-awareness-standees-01.mp4",
+      "width": 464
+    }
+  },
+  "sports-carnival-awareness-standees-02": {
+    "card": {
+      "bytes": 12884,
+      "height": 309,
+      "q": 80,
+      "src": "assets/images/events/sports-carnival-awareness-standees-02-poster.webp",
+      "width": 464
+    },
+    "frame": {
+      "bytes": 20484,
+      "height": 832,
+      "q": 80,
+      "src": "assets/images/events/sports-carnival-awareness-standees-02-frame.webp",
+      "width": 464
+    },
+    "type": "video",
+    "video": {
+      "height": 832,
+      "src": "assets/videos/events/sports-carnival-awareness-standees-02.mp4",
+      "width": 464
+    }
+  },
+  "sports-carnival-awareness-standees-03": {
+    "card": {
+      "bytes": 18530,
+      "height": 480,
+      "q": 80,
+      "src": "assets/images/events/sports-carnival-awareness-standees-03-poster.webp",
+      "width": 720
+    },
+    "frame": {
+      "bytes": 32534,
+      "height": 1280,
+      "q": 80,
+      "src": "assets/images/events/sports-carnival-awareness-standees-03-frame.webp",
+      "width": 720
+    },
+    "type": "video",
+    "video": {
+      "height": 1280,
+      "src": "assets/videos/events/sports-carnival-awareness-standees-03.mp4",
+      "width": 720
+    }
+  }
+}

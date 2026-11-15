@@ -1,0 +1,8 @@
+{
+  "confirmed": true,
+  "members": [
+    {"name": "Syed Junaid Humail",  "title": "Director", "role": null, "photo": "assets/images/board/syed-junaid-humail.webp",  "photoSource": "Junaid.jpeg", "photoFocus": [0.47, 0.37], "photoConsent": "confirmed", "photoConsentNote": "Portrait supplied by Ismail on 15 Nov 2026 for this page", "bio": null},
+    {"name": "Faraz Ahmed Hingora", "title": "Director", "role": null, "photo": "assets/images/board/faraz-ahmed-hingora.webp", "photoSource": "Faraz.jpeg",  "photoFocus": [0.50, 0.42], "photoConsent": "confirmed", "photoConsentNote": "Portrait supplied by Ismail on 15 Nov 2026 for this page", "bio": null},
+    {"name": "Amima Khan",          "title": "Director", "role": null, "photo": "assets/images/board/amima-khan.webp",          "photoSource": "Amima.jpeg",  "photoFocus": [0.50, 0.38], "photoConsent": "confirmed", "photoConsentNote": "Portrait supplied by Ismail on 15 Nov 2026 for this page", "bio": null}
+  ]
+}

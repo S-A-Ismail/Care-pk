@@ -1,0 +1,178 @@
+[
+  {
+    "file": "care-governance-policy.pdf",
+    "title": "Governance Policy",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 25,
+    "bytes": 317840,
+    "publish": true,
+    "group": "Governance"
+  },
+  {
+    "file": "care-student-council-university-department-representatives-advisory-council-and-patron-governance-policy.pdf",
+    "title": "Student Council, University Department Representatives, Advisory Council & Patron Governance Policy",
+    "version": "1.1",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 32,
+    "bytes": 415233,
+    "publish": true,
+    "group": "Governance"
+  },
+  {
+    "file": "care-financial-management-policy.pdf",
+    "title": "Financial Management Policy",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 32,
+    "bytes": 440639,
+    "publish": true,
+    "group": "Fundraising & finance"
+  },
+  {
+    "file": "care-procurement-and-asset-management-policy.pdf",
+    "title": "Procurement & Asset Management Policy",
+    "version": "2.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 31,
+    "bytes": 446299,
+    "publish": true,
+    "group": "Fundraising & finance"
+  },
+  {
+    "file": "care-donations-and-fundraising-policy.pdf",
+    "title": "Donations & Fundraising Policy",
+    "version": "2.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 31,
+    "bytes": 398503,
+    "publish": true,
+    "group": "Fundraising & finance"
+  },
+  {
+    "file": "care-zakat-and-sadaqah-management-policy.pdf",
+    "title": "Zakat & Sadaqah Management Policy",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 28,
+    "bytes": 387700,
+    "publish": true,
+    "group": "Fundraising & finance"
+  },
+  {
+    "file": "care-patient-assistance-policy.pdf",
+    "title": "Patient Assistance Policy",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 30,
+    "bytes": 362043,
+    "publish": true,
+    "group": "Programmes & patients"
+  },
+  {
+    "file": "care-medical-assistance-and-referral-policy.pdf",
+    "title": "Medical Assistance & Referral Policy",
+    "version": "2.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 28,
+    "bytes": 382770,
+    "publish": true,
+    "group": "Programmes & patients"
+  },
+  {
+    "file": "care-safeguarding-policy.pdf",
+    "title": "Safeguarding Policy",
+    "version": "2.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 27,
+    "bytes": 346510,
+    "publish": true,
+    "group": "People & conduct"
+  },
+  {
+    "file": "care-code-of-conduct-and-ethics.pdf",
+    "title": "Code of Conduct & Ethics Policy",
+    "version": "2.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 28,
+    "bytes": 357358,
+    "publish": true,
+    "group": "People & conduct"
+  },
+  {
+    "file": "care-anti-harassment-and-non-discrimination-policy.pdf",
+    "title": "Anti-Harassment & Non-Discrimination Policy",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 24,
+    "bytes": 361921,
+    "publish": true,
+    "group": "People & conduct"
+  },
+  {
+    "file": "care-complaints-and-whistleblowing-policy.pdf",
+    "title": "Complaints & Whistleblowing Policy",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 19,
+    "bytes": 338591,
+    "publish": true,
+    "group": "People & conduct"
+  },
+  {
+    "file": "care-volunteer-policy.pdf",
+    "title": "Volunteer Policy",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 7,
+    "bytes": 269818,
+    "publish": true,
+    "group": "People & conduct"
+  },
+  {
+    "file": "care-photography-media-and-consent-policy.pdf",
+    "title": "Photography, Media & Consent Policy",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 23,
+    "bytes": 359707,
+    "publish": true,
+    "group": "Website & media"
+  },
+  {
+    "file": "care-website-privacy-notice.pdf",
+    "title": "Website Privacy Notice",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 6,
+    "bytes": 267629,
+    "publish": true,
+    "group": "Website & media"
+  },
+  {
+    "file": "care-website-terms-and-conditions.pdf",
+    "title": "Website Terms & Conditions",
+    "version": "1.0",
+    "status": "pending-signature",
+    "signedOn": null,
+    "pages": 9,
+    "bytes": 284561,
+    "publish": true,
+    "group": "Website & media"
+  }
+]

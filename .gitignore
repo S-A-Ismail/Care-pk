@@ -37,3 +37,14 @@ WhatsApp*.jpg
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# consent-held media must never enter the repo (CARE photography policy) — guard in case the folder is moved here
+_held-media/
+**/_held-media/
+
+# generator cache / python bytecode
+static-site/_generator/_cache/
+__pycache__/
+
+# local editor/preview config
+.claude/
